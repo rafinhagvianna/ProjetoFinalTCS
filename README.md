@@ -1,58 +1,87 @@
 # ProjetoFinalTCS
+---
 
+### 🌐 Visão Geral do Sistema
 
-### 🧭 Visão Geral do Projeto
-
-**Objetivo:** Reduzir o tempo de espera em filas de banco por meio de um aplicativo que coleta informações prévias do cliente, orienta conforme o tipo de atendimento e organiza a fila com inteligência.
+**Componentes principais:**
+- **Portal do Cliente**: Agendamento de serviços, preenchimento de informações prévias e acompanhamento do atendimento.
+- **Sistema de Triagem**: Avalia prioridade e direciona o atendimento com base no tipo de serviço.
+- **Painel do Funcionário (Backoffice)**: Acesso à agenda, triagens, histórico e atendimento personalizado.
 
 ---
 
-### 🧱 Estrutura Básica do Sistema
+### 📐 Arquitetura Geral
 
-**Frontend (Angular):**
-- Tela de login/cadastro
-- Tela para escolha do serviço bancário
-- Orientações e FAQs conforme o tipo de serviço escolhido
-- Painel de status (posição na fila, estimativa de tempo)
-
-**Backend (Spring Boot):**
-- Autenticação com JWT
-- APIs REST para registro e autenticação de usuários
-- APIs para cadastro e consulta de solicitações
-- Sistema de fila inteligente
-- Dashboard para os atendentes verem quem está na fila e por quê
-
-**Banco de Dados (por exemplo, PostgreSQL):**
-- Usuários
-- Tipos de serviço
-- Solicitações
-- Histórico de atendimentos
+**Camadas do sistema:**
+- **Frontend (Angular)**  
+- **API REST (Spring Boot)**  
+- **Banco de Dados (SQL Server)**  
+- **Autenticação** via JWT  
+- **Hospedagem** em ambiente cloud (ex: Azure ou AWS)
 
 ---
 
-### ⛓️ Fluxo Principal do Usuário
+### 📋 Funcionalidades
 
-1. **Login/Cadastro**
-2. **Seleção do serviço bancário** (ex: abrir conta, renegociar dívida, saque, etc.)
-3. **Orientações automáticas** (ex: documentos necessários)
-4. **Fila virtual** com estimativa de espera
-5. **Atendimento com base no perfil do cliente** – o funcionário acessa os dados antes mesmo do atendimento iniciar
+#### 1. Cliente (Agendamento e Triagem)
+- Login / Cadastro
+- Escolha do serviço bancário (ex: abertura de conta, crédito, atendimento com gerente)
+- Sugestão de horário disponível
+- Preenchimento de dados pré-triagem (documentos, necessidades, perfil)
+- Confirmação e lembrete por e-mail/SMS
+- Acompanhamento em tempo real do atendimento
+
+#### 2. Triagem Inteligente
+- Classificação do atendimento (complexidade, prioridade)
+- Agrupamento por setor/responsável
+- Encaminhamento para a fila correta
+- Estatísticas de tempo médio por serviço
+
+#### 3. Funcionário do Banco
+- Login com perfil autorizado
+- Visualização da agenda de atendimentos e fila de espera
+- Acesso à ficha do cliente e respostas da triagem
+- Início e encerramento de atendimentos
+- Histórico e relatórios de produtividade
+
+---
+
+### ⚙️ Stack Tecnológica
+
+#### Backend: Spring Boot
+- Spring Web (REST API)
+- Spring Security (JWT)
+- Spring Data JPA
+- SQL Server Driver
+- Lombok
+
+#### Frontend: Angular
+- Angular CLI 17+
+- Angular Material
+- NgRx (opcional para estados complexos)
+- Integração com API via HttpClient
+
+#### Banco de Dados: SQL Server
+- Tabelas: `users`, `appointments`, `services`, `triage_answers`, `employees`, `roles`, `sessions`, `notifications`
 
 ---
 
-### 🛠️ Recursos Adicionais
+### 🔄 Integrações
 
-- **Notificações em tempo real** com WebSocket (ex: "você é o próximo")
-- **Chat com atendente** ou bot para perguntas frequentes
-- **Login com biometria ou token temporário** para agilidade
-
----
-
-### 🚀 Primeiros Passos
-
-1. **Criar o escopo técnico detalhado** (posso te ajudar com isso!)
-2. **Definir as tecnologias complementares** (autenticação, banco, deploy, etc.)
-3. **Montar os protótipos de telas com Figma ou similar**
-4. **Iniciar desenvolvimento com módulos bem definidos**
+- API de envio de notificações (Twilio, SendGrid)
+- Login com autenticação multifator (opcional)
+- Painel administrativo com dashboards (ex: PrimeNG ou ngx-charts)
 
 ---
+
+### 🛠️ Etapas de Implementação
+
+| Fase | Entregas principais |
+|------|---------------------|
+| 1. Levantamento | Mapeamento dos serviços, perfis e jornadas |
+| 2. Design | Prototipação do frontend, estrutura da API |
+| 3. Backend | Desenvolvimento da API REST com validações e segurança |
+| 4. Frontend | Interface responsiva com Angular |
+| 5. Integração | Comunicação entre front, API e banco |
+| 6. Testes | Unitários, integração, performance |
+
