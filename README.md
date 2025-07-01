@@ -19,6 +19,7 @@
 - **Autenticação** via JWT  
 - **Hospedagem** em ambiente cloud (ex: Azure ou AWS)
 - **Documentação das Requisições**  (Swagger)
+- **Metodologia Ágil** (Kanban)
 
 ---
 
