@@ -15,9 +15,10 @@
 **Camadas do sistema:**
 - **Frontend (Angular)**  
 - **API REST (Spring Boot)**  
-- **Banco de Dados (SQL Server)**  
+- **Banco de Dados (MongoDB e SQL Server)**  
 - **Autenticação** via JWT  
 - **Hospedagem** em ambiente cloud (ex: Azure ou AWS)
+- **Documentação das Requisições**  (Swagger)
 
 ---
 
