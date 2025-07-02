@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
+import static java.rmi.server.LogStream.log;
 
 @Service
 public class SetorService {
@@ -27,7 +30,7 @@ public class SetorService {
         setor.setPrioridade(setorRequest.prioridade());
 
         setorRepository.save(setor);
-        System.out.println("Setor criado com sucesso!");
+        log("Setor criado com sucesso!");
 
         return new SetorResponse(setor.getId(), setor.getNome(), setor.getDescricao(), setor.isAtivo(), setor.getPrioridade());
     }
@@ -42,5 +45,69 @@ public class SetorService {
                         setor.isAtivo(),
                         setor.getPrioridade()))
                 .toList();
+    }
+
+    public List<SetorResponse> buscarSetorAtivo() {
+        List<Setor> setoresAtivos = setorRepository.findByIsAtivo(true);
+
+        return setoresAtivos.stream()
+                .map(setor -> new SetorResponse(
+                        setor.getId(),
+                        setor.getNome(),
+                        setor.getDescricao(),
+                        setor.isAtivo(),
+                        setor.getPrioridade()))
+                .toList();
+
+    }
+
+    public List<SetorResponse> buscarSetorInativo() {
+        List<Setor> setoresInativos = setorRepository.findByIsAtivo(false);
+
+        return setoresInativos.stream()
+                .map(setor -> new SetorResponse(
+                        setor.getId(),
+                        setor.getNome(),
+                        setor.getDescricao(),
+                        setor.isAtivo(),
+                        setor.getPrioridade()))
+                .toList();
+    }
+
+    public boolean retornarStatusSetor(String nomeSetor) {
+
+        Optional<Setor> setor = setorRepository.findByNome(nomeSetor);
+
+        return setor
+                .map(Setor::isAtivo)
+                .orElse(false);
+    }
+
+    public SetorResponse atualizarSetor(String id, SetorRequest setorRequest) {
+        Setor setorExistente = setorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Setor com ID '" + id + "' não encontrado."));
+
+
+        setorExistente.setNome(setorRequest.nome());
+        setorExistente.setDescricao(setorRequest.descricao());
+        setorExistente.setAtivo(setorRequest.isAtivo());
+        setorExistente.setPrioridade(setorRequest.prioridade());
+
+        setorRepository.save(setorExistente);
+
+        return new SetorResponse(
+                setorExistente.getId(),
+                setorExistente.getNome(),
+                setorExistente.getDescricao(),
+                setorExistente.isAtivo(),
+                setorExistente.getPrioridade()
+        );
+    }
+
+    public void removerSetor(String id){
+        if((!setorRepository.existsById(id))){
+            throw new RuntimeException("Setor com ID '" + id + "' não encontrado para remoção.");
+        }
+        setorRepository.deleteById(id);
     }
 }

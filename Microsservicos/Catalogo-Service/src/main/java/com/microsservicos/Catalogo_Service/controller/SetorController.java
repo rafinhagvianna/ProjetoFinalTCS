@@ -34,6 +34,38 @@ public class SetorController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<SetorResponse> listarSetores(){
+
         return setorService.listarSetores();
     }
+
+    @GetMapping("/ativos")
+    @ResponseStatus(HttpStatus.OK)
+    public List<SetorResponse> buscarSetorAtivo(){
+        return setorService.buscarSetorAtivo();
+    }
+
+    @GetMapping("/inativos")
+    @ResponseStatus(HttpStatus.LOCKED)
+    public List<SetorResponse> buscarSetorInativo(){
+        return setorService.buscarSetorInativo();
+    }
+
+    @GetMapping("/status")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean buscarSetorStatus(@RequestParam("nome") String nome){
+        return setorService.retornarStatusSetor(nome);
+    }
+
+    @PatchMapping("{id}") // Atualiza apenas os campos informados no corpo da requisição, e não o registro inteiro, como o PUT;
+    @ResponseStatus(HttpStatus.OK)
+    public SetorResponse atualizarSetor(@PathVariable String id, @RequestBody SetorRequest setorRequest){
+        return setorService.atualizarSetor(id, setorRequest);
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removerSetor(@PathVariable String id){
+        setorService.removerSetor(id);
+    }
+
 }
