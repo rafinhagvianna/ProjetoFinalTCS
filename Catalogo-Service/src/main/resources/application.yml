@@ -1,0 +1,22 @@
+spring:
+  application:
+    name:
+      Catalogo-Service
+  doc:
+    swagger-ui:
+      path:
+        /swagger-ui.html
+    api:
+      api-docs:
+        path:
+          /api-docs
+
+data:
+  mongodb:
+    uri: mongodb://localhost:27017//catalogo-service
+
+server:
+  port:
+    8084
+
+
