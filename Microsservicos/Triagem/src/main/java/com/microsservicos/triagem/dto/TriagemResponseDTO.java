@@ -3,6 +3,7 @@ package com.microsservicos.triagem.dto;
 import com.microsservicos.triagem.enums.StatusTriagem;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record TriagemResponseDTO(
         Long id,
@@ -14,5 +15,6 @@ public record TriagemResponseDTO(
         LocalDateTime horarioSolicitacao,
         LocalDateTime horarioEstimadoAtendimento,
         Integer tempoEstimadoMinutos,
-        Integer prioridade
+        Integer prioridade,
+        List<DocumentoPendenteResponseDTO> documentosPendentes
 ) { }

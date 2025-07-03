@@ -20,6 +20,22 @@ spring:
             hibernate:
                 dialect: org.hibernate.dialect.SQLServerDialect
 
+    profiles:
+        active: dev
+
+#eureka:
+#    client:
+#        serviceUrl:
+#            defaultZone: http://localhost:8761/eureka # URL do seu Eureka Server (ajuste a porta se for diferente)
+#    instance:
+#        preferIpAddress: true
+
+clients:
+    catalogo-service:
+        url: http://localhost:9000/catalogo
+    cadastro-cliente-service:
+        url: http://localhost:9000/cliente
+
 server:
     port: 8081
 
