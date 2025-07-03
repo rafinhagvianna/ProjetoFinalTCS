@@ -45,6 +45,33 @@ public class AgendamentoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Agendamento> atualizarEspecifico(@PathVariable UUID id, @RequestBody Agendamento atualizado) {
+        return service.buscarPorId(id)
+                .map(agendamentoExistente -> {
+                    if (atualizado.getUsuarioId() != null)
+                        agendamentoExistente.setUsuarioId(atualizado.getUsuarioId());
+
+                    if (atualizado.getAtendenteId() != null)
+                        agendamentoExistente.setAtendenteId(atualizado.getAtendenteId());
+
+                    if (atualizado.getServicoId() != null)
+                        agendamentoExistente.setServicoId(atualizado.getServicoId());
+
+                    if (atualizado.getDataHora() != null)
+                        agendamentoExistente.setDataHora(atualizado.getDataHora());
+
+                    if (atualizado.getAtendidoEm() != null)
+                        agendamentoExistente.setAtendidoEm(atualizado.getAtendidoEm());
+
+                    if (atualizado.getObservacoes() != null)
+                        agendamentoExistente.setObservacoes(atualizado.getObservacoes());
+
+                    return ResponseEntity.ok(service.salvar(agendamentoExistente));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable UUID id) {
         if (service.buscarPorId(id).isPresent()) {
