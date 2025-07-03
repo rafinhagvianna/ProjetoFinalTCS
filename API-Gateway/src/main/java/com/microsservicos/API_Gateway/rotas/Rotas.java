@@ -1,14 +1,19 @@
 package com.microsservicos.API_Gateway.rotas;
 
+import org.springframework.cloud.gateway.server.mvc.filter.CircuitBreakerFilterFunctions;
 import org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions;
 import org.springframework.cloud.gateway.server.mvc.handler.HandlerFunctions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.function.RequestPredicates;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
+import java.net.URI;
+
 import static org.springframework.cloud.gateway.server.mvc.filter.FilterFunctions.setPath;
+import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
 
 
 @Configuration
@@ -16,18 +21,20 @@ public class Rotas {
 
     @Bean
     public RouterFunction<ServerResponse> setorServiceRota(){
-        return GatewayRouterFunctions.route("setor_service")
+        return route("setor_service")
                 .route(RequestPredicates.path("/api/setor"), HandlerFunctions.http("http://localhost:8084"))
                 .route(RequestPredicates.path("/api/setor/ativos"), HandlerFunctions.http("http://localhost:8084"))
                 .route(RequestPredicates.path("/api/setor/inativos"), HandlerFunctions.http("http://localhost:8084"))
                 .route(RequestPredicates.path("/api/setor/status"), HandlerFunctions.http("http://localhost:8084"))
                 .route(RequestPredicates.path("/api/setor/{id}"), HandlerFunctions.http("http://localhost:8084"))
+                .filter(CircuitBreakerFilterFunctions.circuitBreaker("setorServiceCircuitBreaker",
+                        URI.create("forward://fallbackRoute")))
                 .build();
     }
 
     @Bean
     public RouterFunction<ServerResponse> setorServiceSwaggerRota(){
-        return GatewayRouterFunctions.route("setor_service_swagger")
+        return route("setor_service_swagger")
                 .route(RequestPredicates.path("/aggregate/setor-service/v3/api-docs"), HandlerFunctions.http("http://localhost:8084"))
                 .filter(setPath("/v3/api-docs"))
                 .build();
@@ -36,7 +43,7 @@ public class Rotas {
 
     @Bean
     public RouterFunction<ServerResponse> triagemServiceRota(){
-        return GatewayRouterFunctions.route("triagem_service")
+        return route("triagem_service")
                 .route(RequestPredicates.path("/api/triagem"), HandlerFunctions.http("http://localhost:8081"))
                 .route(RequestPredicates.path("api/triagem/proxima"), HandlerFunctions.http("http://localhost:8081"))
                 .build();
@@ -44,7 +51,7 @@ public class Rotas {
 
     @Bean
     public RouterFunction<ServerResponse> triagemServiceSwaggerRota(){
-        return GatewayRouterFunctions.route("triagem_service_swagger")
+        return route("triagem_service_swagger")
                 .route(RequestPredicates.path("/aggregate/triagem-service/v3/api-docs"), HandlerFunctions.http("http://localhost:8081"))
                 .filter(setPath("/v3/api-docs"))
                 .build();
@@ -52,28 +59,28 @@ public class Rotas {
 
     @Bean
     public RouterFunction<ServerResponse> agendamentoServiceRota(){
-        return GatewayRouterFunctions.route("agendamento_service")
+        return route("agendamento_service")
                 .route(RequestPredicates.path("/api/agendamento"), HandlerFunctions.http("http://localhost:8082"))
                 .build();
     }
 
     @Bean
     public RouterFunction<ServerResponse> atendimentoServiceRota(){
-        return GatewayRouterFunctions.route("atendimento_service")
+        return route("atendimento_service")
                 .route(RequestPredicates.path("/api/atendimento"), HandlerFunctions.http("http://localhost:8083"))
                 .build();
     }
 
     @Bean
     public RouterFunction<ServerResponse> documentacaoServiceRota(){
-        return GatewayRouterFunctions.route("documentacao_service")
+        return route("documentacao_service")
                 .route(RequestPredicates.path("/api/documentacao"), HandlerFunctions.http("http://localhost:8085"))
                 .build();
     }
 
     @Bean
     public RouterFunction<ServerResponse> clienteServiceRota(){
-        return GatewayRouterFunctions.route("cliente_service")
+        return route("cliente_service")
                 .route(RequestPredicates.path("/api/cliente"), HandlerFunctions.http("http://localhost:8086"))
                 .route(RequestPredicates.path("/api/cliente/login"), HandlerFunctions.http("http:localhost:8086"))
                 .build();
@@ -81,9 +88,21 @@ public class Rotas {
 
     @Bean
     public RouterFunction<ServerResponse> clienteSwaggerRota(){
-        return GatewayRouterFunctions.route("cliente_service_swagger")
+        return route("cliente_service_swagger")
                 .route(RequestPredicates.path("/aggregate/cliente-service/v3/api-docs"), HandlerFunctions.http("http://localhost:8086"))
                 .filter(setPath("/v3/api-docs"))
                 .build();
+    }
+
+
+
+    // Circuit Breaker
+
+    @Bean
+    public RouterFunction<ServerResponse> fallbackRoute(){
+        return route("fallbackRoute")
+                .GET("/falbackRoute", request -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE).body("Serviço indisponível, tente novamente mais tarde."))
+                .build();
+
     }
 }
