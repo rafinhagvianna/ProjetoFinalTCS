@@ -38,6 +38,15 @@ public class Rotas {
     public RouterFunction<ServerResponse> triagemServiceRota(){
         return GatewayRouterFunctions.route("triagem_service")
                 .route(RequestPredicates.path("/api/triagem"), HandlerFunctions.http("http://localhost:8081"))
+                .route(RequestPredicates.path("api/triagem/proxima"), HandlerFunctions.http("http://localhost:8081"))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> triagemServiceSwaggerRota(){
+        return GatewayRouterFunctions.route("triagem_service_swagger")
+                .route(RequestPredicates.path("/aggregate/triagem-service/v3/api-docs"), HandlerFunctions.http("http://localhost:8081"))
+                .filter(setPath("/v3/api-docs"))
                 .build();
     }
 
@@ -59,6 +68,22 @@ public class Rotas {
     public RouterFunction<ServerResponse> documentacaoServiceRota(){
         return GatewayRouterFunctions.route("documentacao_service")
                 .route(RequestPredicates.path("/api/documentacao"), HandlerFunctions.http("http://localhost:8085"))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> clienteServiceRota(){
+        return GatewayRouterFunctions.route("cliente_service")
+                .route(RequestPredicates.path("/api/cliente"), HandlerFunctions.http("http://localhost:8086"))
+                .route(RequestPredicates.path("/api/cliente/login"), HandlerFunctions.http("http:localhost:8086"))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> clienteSwaggerRota(){
+        return GatewayRouterFunctions.route("cliente_service_swagger")
+                .route(RequestPredicates.path("/aggregate/cliente-service/v3/api-docs"), HandlerFunctions.http("http://localhost:8086"))
+                .filter(setPath("/v3/api-docs"))
                 .build();
     }
 }
