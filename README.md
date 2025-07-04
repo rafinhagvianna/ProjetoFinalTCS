@@ -1,4 +1,7 @@
-# ProjetoFinalTCS
+# Projeto BankFlow
+
+![image](https://github.com/user-attachments/assets/98027553-1670-4938-975d-a7cab2da6986)
+
 ---
 
 ### 🌐 Visão Geral do Sistema
