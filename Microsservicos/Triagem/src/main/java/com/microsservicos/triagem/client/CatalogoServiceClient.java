@@ -5,35 +5,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.UUID;
 
-@FeignClient(name = "catalogo-service", url = "${clients.catalogo-service.url:}")
+// Ajuste o name e a url conforme sua configuração real do FeignClient
+//@FeignClient(name = "catalogo-service", url = "${clients.catalogo-service.url}")
 public interface CatalogoServiceClient {
 
-    /**
-     * Busca a lista de tipos de documentos necessários para um serviço específico.
-     * Ex: GET http://catalogo-service/catalogo/servicos/{servicoId}/documentos-necessarios
-     *
-     * @param servicoId O ID do serviço.
-     * @return Uma lista de TipoDocumentoResponse (ID e nome do documento).
-     */
-    @GetMapping("/catalogo/servicos/{servicoId}/documentos-necessarios")
-    List<TipoDocumentoResponse> getDocumentosNecessariosParaServico(@PathVariable("servicoId") Long servicoId);
+    @GetMapping("/api/catalogo/servicos/{servicoId}/documentos")
+    List<TipoDocumentoResponse> getDocumentosNecessariosParaServico(@PathVariable("servicoId") UUID servicoId);
 
-    /**
-     * Busca o nome de um serviço específico.
-     * Ex: GET http://catalogo-service/catalogo/servicos/{servicoId}/nome
-     * (Este endpoint deve retornar apenas uma String no Catalogo-Service)
-     *
-     * @param servicoId O ID do serviço.
-     * @return O nome do serviço como String.
-     */
-    @GetMapping("/catalogo/servicos/{servicoId}/nome")
-    String getNomeServico(@PathVariable("servicoId") Long servicoId);
+    @GetMapping("/api/catalogo/servicos/{servicoId}/nome")
+    String getNomeServico(@PathVariable("servicoId") UUID servicoId);
 
-    /*
-     * Opcional: Se o seu Catalogo-Service tiver um endpoint que retorna o objeto completo
-     * ServicoResponse para o ID do serviço.
-     * @GetMapping("/catalogo/servicos/{servicoId}")
-     * ServicoResponse getServicoById(@PathVariable("servicoId") Long servicoId);
-     */
+    // NOVO MÉTODO: Para obter o serviço completo com duração
+    @GetMapping("/api/catalogo/servicos/{servicoId}")
+    ServicoResponse getServicoById(@PathVariable("servicoId") UUID servicoId); // <-- NOVO MÉTODO
 }

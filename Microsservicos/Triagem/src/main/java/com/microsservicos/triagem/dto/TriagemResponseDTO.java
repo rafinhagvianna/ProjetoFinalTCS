@@ -4,11 +4,12 @@ import com.microsservicos.triagem.enums.StatusTriagem;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public record TriagemResponseDTO(
-        Long id,
-        Long clienteId,
-        Long servicoId,
+        UUID id,
+        UUID clienteId,
+        UUID servicoId,
         String nomeClienteSnapshot,
         String nomeServicoSnapshot,
         StatusTriagem status,

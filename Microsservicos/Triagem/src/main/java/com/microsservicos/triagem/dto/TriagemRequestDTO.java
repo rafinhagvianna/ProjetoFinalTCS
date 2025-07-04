@@ -1,10 +1,11 @@
 package com.microsservicos.triagem.dto;
 
-import java.util.List;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import java.util.UUID; // Importe UUID
 
 public record TriagemRequestDTO(
-        Long clienteId,
-        Long servicoId,
-        Integer prioridade,
-        List<DocumentoPendenteRequestDTO> documentosPendentes
-) { }
+        @NotNull UUID clienteId, // ALTERADO: De Long para UUID
+        @NotNull UUID servicoId, // ALTERADO: De Long para UUID
+        @NotNull @Min(1) Integer prioridade
+) {}

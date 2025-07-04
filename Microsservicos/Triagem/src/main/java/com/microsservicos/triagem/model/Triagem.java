@@ -5,20 +5,20 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "triagens") // Nome da tabela no plural
 public class Triagem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id; // Alterado de UUID para UUID
 
     @Column(nullable = false)
-    private Long clienteId;
+    private UUID clienteId;
 
     @Column(nullable = false)
-    private Long servicoId;
+    private UUID servicoId;
 
     private LocalDateTime horarioSolicitacao;
     private LocalDateTime horarioEstimadoAtendimento;
@@ -42,9 +42,10 @@ public class Triagem {
     )
     private List<DocumentoPendente> documentosPendentes = new ArrayList<>();
 
-    // --- FIM DA NOVA PARTE ---
 
-    // Getters e Setters para todos os campos, incluindo a nova lista
+    public Triagem() {
+        this.id = UUID.randomUUID();
+    }
 
     public void addDocumentoPendente(DocumentoPendente documento) {
         this.documentosPendentes.add(documento);
@@ -56,29 +57,27 @@ public class Triagem {
         documento.setTriagem(null);
     }
 
-    // ... todos os outros getters e setters ...
-
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public Long getClienteId() {
+    public UUID getClienteId() {
         return clienteId;
     }
 
-    public void setClienteId(Long clienteId) {
+    public void setClienteId(UUID clienteId) {
         this.clienteId = clienteId;
     }
 
-    public Long getServicoId() {
+    public UUID getServicoId() {
         return servicoId;
     }
 
-    public void setServicoId(Long servicoId) {
+    public void setServicoId(UUID servicoId) {
         this.servicoId = servicoId;
     }
 

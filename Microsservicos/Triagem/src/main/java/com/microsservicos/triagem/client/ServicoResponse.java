@@ -1,3 +1,5 @@
 package com.microsservicos.triagem.client;
 
-public record ServicoResponse(Long id, String nome, String descricao) {} // Adicione campos relevantes
+import java.util.UUID;
+
+public record ServicoResponse(UUID id, String nome, Integer duracaoEstimadaMinutos) {} // Adicione campos relevantes

@@ -4,9 +4,10 @@ import com.microsservicos.triagem.enums.StatusDocumento;
 
 import java.util.UUID;
 
-public record DocumentoPendenteRequestDTO(
+public record DocumentoPendenteResponseDTO(
+        UUID id,
         UUID documentoCatalogoId,
         String nomeDocumentoSnapshot,
         StatusDocumento status,
-        String observacao
-) { }
+        String observacao,
+        String urlDocumento) { }

@@ -3,13 +3,14 @@ package com.microsservicos.triagem.model;
 import com.microsservicos.triagem.enums.StatusDocumento;
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "documentos_pendentes") // É uma boa prática nomear a tabela no plural
 public class DocumentoPendente {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     // Relacionamento de volta para a Triagem
     @ManyToOne(fetch = FetchType.LAZY) // LAZY para não carregar a triagem desnecessariamente
@@ -18,7 +19,7 @@ public class DocumentoPendente {
 
     // ID do tipo de documento no Catálogo-Service ou Documentacao-Service
     @Column(nullable = false)
-    private Long documentoCatalogoId;
+    private UUID documentoCatalogoId;
 
     // Snapshot do nome do documento para resiliência
     @Column(nullable = false)
@@ -33,12 +34,16 @@ public class DocumentoPendente {
 
     private String urlDocumento; // Ou String idDocumentoExterno;
 
+    public DocumentoPendente() {
+        this.id = UUID.randomUUID();
+    }
+
     // Getters e Setters
-    public Long getId() {
+    public UUID getId() { // Alterado o retorno para UUID
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) { // Alterado o parâmetro para UUID
         this.id = id;
     }
 
@@ -50,11 +55,11 @@ public class DocumentoPendente {
         this.triagem = triagem;
     }
 
-    public Long getDocumentoCatalogoId() {
+    public UUID getDocumentoCatalogoId() {
         return documentoCatalogoId;
     }
 
-    public void setDocumentoCatalogoId(Long documentoCatalogoId) {
+    public void setDocumentoCatalogoId(UUID documentoCatalogoId) {
         this.documentoCatalogoId = documentoCatalogoId;
     }
 

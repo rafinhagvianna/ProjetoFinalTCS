@@ -1,3 +1,5 @@
 package com.microsservicos.triagem.client;
 
-public record TipoDocumentoResponse(Long id, String nome) {}
+import java.util.UUID;
+
+public record TipoDocumentoResponse(UUID id, String nome) {}
