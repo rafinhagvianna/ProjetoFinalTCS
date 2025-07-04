@@ -1,0 +1,92 @@
+spring:
+
+    application:
+        name : Triagem
+
+#    datasource:
+#        url: jdbc:sqlserver://localhost:1433;encrypt=true;trustServerCertificate=true;databaseName=Triagem;
+#        username: rafael
+#        password: 123
+#        driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+eureka:
+    client:
+        # 2. Informe o endereço do seu Eureka Server.
+        # A URL 'defaultZone' é o padrão que os clientes usam para se registrar e buscar outros serviços.
+        service-url:
+            defaultZone: http://localhost:8761/eureka/
+
+#    jpa:
+#        hibernate:
+#            ddl-auto: update
+#
+#        show-sql: true
+#
+#        properties:
+#            hibernate:
+#                dialect: org.hibernate.dialect.SQLServerDialect
+
+    profiles:
+        active: dev
+
+#eureka:
+#    client:
+#        serviceUrl:
+#            defaultZone: http://localhost:8761/eureka # URL do seu Eureka Server (ajuste a porta se for diferente)
+#    instance:
+#        preferIpAddress: true
+
+clients:
+    catalogo-service:
+        url: http://localhost:9000/catalogo
+    cadastro-cliente-service:
+        url: http://localhost:9000/cliente
+
+server:
+    port: 8081
+
+resilience4j:
+    circuitbreaker:
+        instances:
+            # 1. Dê um nome para a instância do seu disjuntor.
+            # Usaremos este nome no código Java.
+            catalogo:
+                # 2. Registra o status no endpoint /actuator/health (essencial!)
+                register-health-indicator: true
+                # 3. Porcentagem de falhas para abrir o circuito (ex: 50%)
+                failure-rate-threshold: 50
+                # 4. Quantidade de chamadas observadas para calcular a taxa de falha
+                sliding-window-size: 10
+                # 5. Número mínimo de chamadas antes de começar a calcular a taxa de falha
+                minimum-number-of-calls: 5
+                # 6. Tempo que o circuito fica aberto antes de tentar fechar (HALF_OPEN)
+                wait-duration-in-open-state: 20s
+                permitted-number-of-calls-in-half-open-state: 3
+
+# É importante também expor os endpoints do Actuator
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*" # Exponha todos para facilitar o monitoramento
+    endpoint:
+        health:
+            show-details: always
+
+
+    # APAGAR DEPOIS #
+h2:
+    console:
+        enabled: true
+        path: /h2-console
+
+jpa:
+    hibernate:
+        ddl-auto: update # Isso fará o Hibernate criar as tabelas no H2
+    show-sql: true
+    properties:
+        hibernate:
+            # O Spring Boot detectará o dialeto do H2 automaticamente,
+            # mas você pode ser explícito se quiser.
+            dialect: org.hibernate.dialect.H2Dialect
+
