@@ -1,0 +1,98 @@
+[{
+  "_id": {
+    "$binary": {
+      "base64": "S0qbowbxnjpC8WQZmRdwhw==",
+      "subType": "03"
+    }
+  },
+  "nome": "Bloqueio/Desbloqueio de Cartão",
+  "descricao": "Cliente solicita o bloqueio por perda/roubo ou desbloqueio de um novo cartão.",
+  "isAtivo": true,
+  "prioridade": 1,
+  "tempoMedioMinutos": 5,
+  "_class": "com.microsservicos.Catalogo_Service.model.Setor"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "bkpLSihlGS1pwQx/HvgGvg==",
+      "subType": "03"
+    }
+  },
+  "nome": "Análise de Fraude",
+  "descricao": "Investigação de transações não reconhecidas pelo cliente.",
+  "isAtivo": true,
+  "prioridade": 1,
+  "tempoMedioMinutos": 30,
+  "_class": "com.microsservicos.Catalogo_Service.model.Setor"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "DUw9Pp99RpZH4ILYmKWssA==",
+      "subType": "03"
+    }
+  },
+  "nome": "Abertura de Conta",
+  "descricao": "Processo de cadastro e validação de documentos para novos clientes.",
+  "isAtivo": true,
+  "prioridade": 3,
+  "tempoMedioMinutos": 20,
+  "_class": "com.microsservicos.Catalogo_Service.model.Setor"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "lUQxf6vFEih9ekajltQwvA==",
+      "subType": "03"
+    }
+  },
+  "nome": "Encerramento de Conta",
+  "descricao": "Procedimentos para fechar a conta e transferir saldos remanescentes.",
+  "isAtivo": true,
+  "prioridade": 3,
+  "tempoMedioMinutos": 15,
+  "_class": "com.microsservicos.Catalogo_Service.model.Setor"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "gUwdE9YBipPT3g0BnDLSvQ==",
+      "subType": "03"
+    }
+  },
+  "nome": "Renegociação de Dívidas",
+  "descricao": "Clientes buscando negociar débitos, parcelamentos ou obter descontos.",
+  "isAtivo": true,
+  "prioridade": 2,
+  "tempoMedioMinutos": 25,
+  "_class": "com.microsservicos.Catalogo_Service.model.Setor"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "/UghCpa8jjoS1lRCooJ2ng==",
+      "subType": "03"
+    }
+  },
+  "nome": "Suporte ao App/Internet Banking",
+  "descricao": "Ajuda com problemas de acesso, funcionalidades ou erros no sistema digital.",
+  "isAtivo": true,
+  "prioridade": 2,
+  "tempoMedioMinutos": 10,
+  "_class": "com.microsservicos.Catalogo_Service.model.Setor"
+},
+{
+  "_id": {
+    "$binary": {
+      "base64": "eUbCryYTCivBUlhAYWZfhw==",
+      "subType": "03"
+    }
+  },
+  "nome": "Informações Gerais",
+  "descricao": "Dúvidas sobre produtos, taxas, horários de funcionamento, etc.",
+  "isAtivo": true,
+  "prioridade": 3,
+  "tempoMedioMinutos": 5,
+  "_class": "com.microsservicos.Catalogo_Service.model.Setor"
+}]
