@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
 public class OpenAPIConfig {
 
     @Bean
-    public OpenAPI setorServiceAPI(){
+    public OpenAPI triagemServiceAPI(){
         return new OpenAPI()
                 .info(new Info().title("Triagem Service API")
-                        .description("REST API de Setor Service")
+                        .description("REST API de Triagem Service")
                         .version("v0.0.1")
                         .license(new License().name("Apache 2.0")));
 //                .externalDocs(new ExternalDocumentation()
