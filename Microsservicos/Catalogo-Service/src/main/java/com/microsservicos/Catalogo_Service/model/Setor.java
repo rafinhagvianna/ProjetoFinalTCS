@@ -2,21 +2,23 @@ package com.microsservicos.Catalogo_Service.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.UUID;
 
 @Document(value = "setor")
 public class Setor {
 
     @Id
-    private String id;
+    private UUID id;
     private String nome;
     private String descricao;
     private boolean isAtivo;
     private int prioridade; // 1 -> alta;
+    private Integer tempoMedioMinutos;
 
     public Setor() {
     }
 
-    public Setor(String id, String nome, String descricao, boolean isAtivo, int prioridade) {
+    public Setor(UUID id, String nome, String descricao, boolean isAtivo, int prioridade) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -26,12 +28,15 @@ public class Setor {
 
     // Getters e Setters
 
-    public String getId() {
-        return id;
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public Integer getTempoMedioMinutos() {
+        return tempoMedioMinutos;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setTempoMedioMinutos(Integer tempoMedioMinutos) {
+        this.tempoMedioMinutos = tempoMedioMinutos;
     }
 
     public String getNome() {

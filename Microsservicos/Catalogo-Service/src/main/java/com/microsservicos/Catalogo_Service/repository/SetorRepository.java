@@ -5,8 +5,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface SetorRepository extends MongoRepository<Setor, String> {
+public interface SetorRepository extends MongoRepository<Setor, UUID> {
 
 
     // Spring Data gera a query: "SELECT * FROM setor WHERE is_ativo = ?"
