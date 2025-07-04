@@ -1,0 +1,35 @@
+server:
+    port: 8085
+
+
+spring:
+    application:
+      name: Documentacao Service
+    datasource:
+      url: jdbc:sqlserver://localhost:1433;encrypt=true;trustServerCertificate=true;databaseName=Documentos;
+      username: rafael
+      password: 123
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    jpa:
+      hibernate:
+        ddl-auto: update
+
+      show-sql: true
+
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.SQLServerDialect
+
+      profiles:
+        active: dev
+  
+
+document:
+    storage:
+      location: ./uploads-documentos
+
+
+triagem-service:
+  url: http://localhost:9000/triagem
+agendamento-service:
+  url: http://localhost:9000/triagem
