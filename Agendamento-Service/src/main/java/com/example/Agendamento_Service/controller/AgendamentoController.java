@@ -2,9 +2,12 @@ package com.example.Agendamento_Service.controller;
 
 import com.example.Agendamento_Service.model.Agendamento;
 import com.example.Agendamento_Service.service.AgendamentoService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +31,14 @@ public class AgendamentoController {
         return service.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/disponibilidade")
+    public ResponseEntity<List<LocalDateTime>> getHorariosDisponiveis(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+
+        List<LocalDateTime> horariosDisponiveis = service.getHorariosDisponiveisNoDia(data);
+        return ResponseEntity.ok(horariosDisponiveis);
     }
 
     @PostMapping
