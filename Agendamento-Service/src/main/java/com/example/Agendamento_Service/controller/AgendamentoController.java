@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/agendamentos")
+@RequestMapping("/api/agendamentos")
 public class AgendamentoController {
 
     private final AgendamentoService service;
@@ -67,7 +67,7 @@ public class AgendamentoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable UUID id) {
-        if (service.buscarPorId(id).isPresent()) { 
+        if (service.buscarPorId(id).isPresent()) {
             service.deletar(id);
             return ResponseEntity.noContent().build();
         }
