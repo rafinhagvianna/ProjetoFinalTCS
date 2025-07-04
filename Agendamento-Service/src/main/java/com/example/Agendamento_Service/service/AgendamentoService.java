@@ -1,12 +1,10 @@
 package com.example.Agendamento_Service.service;
 
-import com.example.Agendamento_Service.dto.ServicoResponseDTO;
+import com.example.Agendamento_Service.dto.AgendamentoRequestDTO;
 import com.example.Agendamento_Service.model.Agendamento;
 import com.example.Agendamento_Service.repository.AgendamentoRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -36,9 +34,24 @@ public class AgendamentoService {
         return repository.findById(id);
     }
 
-    public Agendamento salvar(Agendamento agendamento) {
+    public Agendamento salvar(AgendamentoRequestDTO agendamentoDTO) {
+        Agendamento agendamento = new Agendamento();
+
+        agendamento.setUsuarioId(agendamentoDTO.getUsuarioId());
+        agendamento.setAtendenteId(agendamentoDTO.getAtendenteId());
+        agendamento.setServicoId(agendamentoDTO.getServicoId());
+        agendamento.setDataHora(agendamentoDTO.getDataHora());
+        // agendamento.setCriadoEm() será populado automaticamente se você tiver @CreationTimestamp ou similar na entidade
+
         if (!isDataEHoraDeTrabalhoValido(agendamento.getDataHora())) {
             throw new IllegalArgumentException("A data e hora do agendamento devem ser de segunda a sexta, entre 10h00 e 16h00, e em horas cheias.");
+        }
+
+        if (repository.findByUsuarioIdAndServicoIdAndDataHora(
+                agendamento.getUsuarioId(),
+                agendamento.getServicoId(),
+                agendamento.getDataHora()).isPresent()) {
+            throw new IllegalArgumentException("Este usuário já possui um agendamento para o mesmo serviço neste horário.");
         }
 
         Integer tempoEstimadoServico = getTempoEstimadoServico(agendamento.getServicoId());
@@ -46,19 +59,95 @@ public class AgendamentoService {
             throw new IllegalArgumentException("Não foi possível obter o tempo estimado para o serviço com ID: " + agendamento.getServicoId());
         }
 
-        if (!isHorarioDisponivel(agendamento.getDataHora(), tempoEstimadoServico)) {
+        if (!isHorarioDisponivel(agendamento.getDataHora(), tempoEstimadoServico, null)) {
             throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço.");
         }
 
         return repository.save(agendamento);
     }
 
+    public Agendamento atualizarAgendamento(UUID id, AgendamentoRequestDTO agendamentoDTO) {
+        return repository.findById(id).map(agendamentoExistente -> {
+
+            agendamentoExistente.setUsuarioId(agendamentoDTO.getUsuarioId());
+            agendamentoExistente.setAtendenteId(agendamentoDTO.getAtendenteId());
+            agendamentoExistente.setServicoId(agendamentoDTO.getServicoId());
+            agendamentoExistente.setDataHora(agendamentoDTO.getDataHora());
+
+            if (!isDataEHoraDeTrabalhoValido(agendamentoExistente.getDataHora())) {
+                throw new IllegalArgumentException("A data e hora do agendamento atualizado devem ser de segunda a sexta, entre 10h00 e 16h00, e em horas cheias.");
+            }
+
+            Optional<Agendamento> duplicado = repository.findByUsuarioIdAndServicoIdAndDataHora(
+                    agendamentoExistente.getUsuarioId(),
+                    agendamentoExistente.getServicoId(),
+                    agendamentoExistente.getDataHora());
+
+            if (duplicado.isPresent() && !duplicado.get().getId().equals(agendamentoExistente.getId())) {
+                throw new IllegalArgumentException("Já existe outro agendamento com as mesmas credenciais (usuário, serviço, data/hora).");
+            }
+
+            Integer tempoEstimadoServico = getTempoEstimadoServico(agendamentoExistente.getServicoId());
+            if (tempoEstimadoServico == null) {
+                throw new IllegalArgumentException("Não foi possível obter o tempo estimado para o serviço com ID: " + agendamentoExistente.getServicoId());
+            }
+
+            if (!isHorarioDisponivel(agendamentoExistente.getDataHora(), tempoEstimadoServico, agendamentoExistente.getId())) {
+                throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço após a atualização.");
+            }
+
+            return repository.save(agendamentoExistente);
+        }).orElseThrow(() -> new RuntimeException("Agendamento não encontrado com o ID: " + id)); // Posteriormente, uma NotFoundException
+    }
+
+    public Agendamento atualizarParcialAgendamento(UUID id, AgendamentoRequestDTO agendamentoDTO) {
+        return repository.findById(id).map(agendamentoExistente -> {
+            boolean dataHoraChanged = false;
+
+            if (agendamentoDTO.getUsuarioId() != null) agendamentoExistente.setUsuarioId(agendamentoDTO.getUsuarioId());
+            if (agendamentoDTO.getAtendenteId() != null) agendamentoExistente.setAtendenteId(agendamentoDTO.getAtendenteId());
+            if (agendamentoDTO.getServicoId() != null) agendamentoExistente.setServicoId(agendamentoDTO.getServicoId());
+            if (agendamentoDTO.getDataHora() != null) {
+                agendamentoExistente.setDataHora(agendamentoDTO.getDataHora());
+                dataHoraChanged = true;
+            }
+            // campos que podem ser atualizados via PATCH (ex: atendidoEm, observacoes)
+            // if (agendamentoDTO.getAtendidoEm() != null) agendamentoExistente.setAtendidoEm(agendamentoDTO.getAtendidoEm());
+            // if (agendamentoDTO.getObservacoes() != null) agendamentoExistente.setObservacoes(agendamentoDTO.getObservacoes());
+
+
+            if (dataHoraChanged && !isDataEHoraDeTrabalhoValido(agendamentoExistente.getDataHora())) {
+                throw new IllegalArgumentException("A data e hora do agendamento atualizado (parcialmente) devem ser de segunda a sexta, entre 10h00 e 16h00, e em horas cheias.");
+            }
+
+            Optional<Agendamento> duplicado = repository.findByUsuarioIdAndServicoIdAndDataHora(
+                    agendamentoExistente.getUsuarioId(),
+                    agendamentoExistente.getServicoId(),
+                    agendamentoExistente.getDataHora());
+
+            if (duplicado.isPresent() && !duplicado.get().getId().equals(agendamentoExistente.getId())) {
+                throw new IllegalArgumentException("Já existe outro agendamento com as mesmas credenciais (usuário, serviço, data/hora).");
+            }
+
+            Integer tempoEstimadoServico = getTempoEstimadoServico(agendamentoExistente.getServicoId());
+            if (tempoEstimadoServico == null) {
+                throw new IllegalArgumentException("Não foi possível obter o tempo estimado para o serviço com ID: " + agendamentoExistente.getServicoId());
+            }
+
+            if (!isHorarioDisponivel(agendamentoExistente.getDataHora(), tempoEstimadoServico, agendamentoExistente.getId())) {
+                throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço após a atualização parcial.");
+            }
+
+            return repository.save(agendamentoExistente);
+        }).orElseThrow(() -> new RuntimeException("Agendamento não encontrado com o ID: " + id)); // Posteriormente, uma NotFoundException
+    }
+
     public void deletar(UUID id) {
         repository.deleteById(id);
     }
 
+    // getTempoEstimadoServico (continua mockado temporariamente)
     public Integer getTempoEstimadoServico(UUID servicoId) {
-//        comentado para teste
 //        return webClientServicos.get()
 //                .uri("/{id}", servicoId)
 //                .retrieve()
@@ -67,7 +156,8 @@ public class AgendamentoService {
 //                .bodyToMono(ServicoResponseDTO.class)
 //                .map(ServicoResponseDTO::getTempoEstimadoEmMinutos)
 //                .block();
-        return 30;
+        System.out.println("DEBUG: Retornando tempo estimado fixo de 15 minutos para servicoId: " + servicoId); // Mudei para 15min para facilitar testes de 60min com 4 serviços
+        return 15;
     }
 
     private boolean isDataEHoraDeTrabalhoValido(LocalDateTime dataHora) {
@@ -88,15 +178,18 @@ public class AgendamentoService {
         return true;
     }
 
-    private boolean isHorarioDisponivel(LocalDateTime dataHoraInicioSlot, Integer tempoEstimadoNovoServico) {
+    private boolean isHorarioDisponivel(LocalDateTime dataHoraInicioSlot, Integer tempoEstimadoNovoServico, UUID agendamentoIdParaIgnorar) {
         LocalDateTime dataHoraFimSlot = dataHoraInicioSlot.plusMinutes(60);
 
-        // Busca todos os agendamentos que começam dentro deste slot, independentemente do atendente
         List<Agendamento> agendamentosNoSlot = repository.findByDataHoraBetween(dataHoraInicioSlot, dataHoraFimSlot);
 
         int tempoTotalOcupadoNoSlot = 0;
 
         for (Agendamento agendamento : agendamentosNoSlot) {
+            if (agendamentoIdParaIgnorar != null && agendamento.getId().equals(agendamentoIdParaIgnorar)) {
+                continue;
+            }
+
             try {
                 Integer tempoServicoExistente = getTempoEstimadoServico(agendamento.getServicoId());
                 if (tempoServicoExistente != null) {
@@ -114,13 +207,13 @@ public class AgendamentoService {
 
         DayOfWeek diaDeSemana = data.getDayOfWeek();
         if (diaDeSemana == DayOfWeek.SATURDAY || diaDeSemana == DayOfWeek.SUNDAY) {
-            return horariosDisponiveis; // Retorna lista vazia se for fim de semana
+            return horariosDisponiveis;
         }
 
         for (int hour = 10; hour <= 15; hour++) {
             LocalDateTime slotInicio = LocalDateTime.of(data, LocalTime.of(hour, 0));
 
-            if (isHorarioDisponivel(slotInicio, 5)) {
+            if (isHorarioDisponivel(slotInicio, 5, null)) {
                 horariosDisponiveis.add(slotInicio);
             }
         }

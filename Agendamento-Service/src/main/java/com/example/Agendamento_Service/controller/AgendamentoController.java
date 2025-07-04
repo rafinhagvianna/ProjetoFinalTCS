@@ -2,9 +2,12 @@ package com.example.Agendamento_Service.controller;
 
 import com.example.Agendamento_Service.model.Agendamento;
 import com.example.Agendamento_Service.service.AgendamentoService;
+import com.example.Agendamento_Service.dto.AgendamentoRequestDTO;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,50 +45,29 @@ public class AgendamentoController {
     }
 
     @PostMapping
-    public Agendamento criar(@RequestBody Agendamento agendamento) {
-        return service.salvar(agendamento);
+    public ResponseEntity<Agendamento> criar(@Valid @RequestBody AgendamentoRequestDTO agendamentoDTO) {
+
+        Agendamento novoAgendamento = service.salvar(agendamentoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoAgendamento);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Agendamento> atualizar(@PathVariable UUID id, @RequestBody Agendamento atualizado) {
-        return service.buscarPorId(id)
-                .map(agendamento -> {
-                    atualizado.setId(id);
-                    return ResponseEntity.ok(service.salvar(atualizado));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Agendamento> atualizar(@PathVariable UUID id, @Valid @RequestBody AgendamentoRequestDTO agendamentoDTO) {
+
+        Agendamento agendamentoAtualizado = service.atualizarAgendamento(id, agendamentoDTO);
+        return ResponseEntity.ok(agendamentoAtualizado);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Agendamento> atualizarEspecifico(@PathVariable UUID id, @RequestBody Agendamento atualizado) {
-        return service.buscarPorId(id)
-                .map(agendamentoExistente -> {
-                    if (atualizado.getUsuarioId() != null)
-                        agendamentoExistente.setUsuarioId(atualizado.getUsuarioId());
+    public ResponseEntity<Agendamento> atualizarEspecifico(@PathVariable UUID id, @RequestBody AgendamentoRequestDTO agendamentoDTO) {
 
-                    if (atualizado.getAtendenteId() != null)
-                        agendamentoExistente.setAtendenteId(atualizado.getAtendenteId());
-
-                    if (atualizado.getServicoId() != null)
-                        agendamentoExistente.setServicoId(atualizado.getServicoId());
-
-                    if (atualizado.getDataHora() != null)
-                        agendamentoExistente.setDataHora(atualizado.getDataHora());
-
-                    if (atualizado.getAtendidoEm() != null)
-                        agendamentoExistente.setAtendidoEm(atualizado.getAtendidoEm());
-
-                    if (atualizado.getObservacoes() != null)
-                        agendamentoExistente.setObservacoes(atualizado.getObservacoes());
-
-                    return ResponseEntity.ok(service.salvar(agendamentoExistente));
-                })
-                .orElse(ResponseEntity.notFound().build());
+        Agendamento agendamentoAtualizado = service.atualizarParcialAgendamento(id, agendamentoDTO);
+        return ResponseEntity.ok(agendamentoAtualizado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable UUID id) {
-        if (service.buscarPorId(id).isPresent()) {
+        if (service.buscarPorId(id).isPresent()) { 
             service.deletar(id);
             return ResponseEntity.noContent().build();
         }
