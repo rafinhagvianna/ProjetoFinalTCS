@@ -2,14 +2,17 @@ package com.microsservicos.CadastroClienteService.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import jakarta.persistence.GenerationType;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "cliente")
 public class Cliente {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @NotBlank(message = "Nome não pode ficar em branco")
     private String nome;
@@ -50,7 +53,7 @@ public class Cliente {
         this.conta = conta;
     }
 
-    public Long getId() { return id; }
+    public UUID getId() { return id; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }

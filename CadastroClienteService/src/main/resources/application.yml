@@ -20,8 +20,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.SQLServerDialect
 
-
-
 server:
   port: 8086
 
@@ -30,6 +28,11 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /api-docs
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
 
 
 
