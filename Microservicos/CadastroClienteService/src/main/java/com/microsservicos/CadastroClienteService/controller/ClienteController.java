@@ -2,14 +2,12 @@ package com.microsservicos.CadastroClienteService.controller;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+import com.microsservicos.CadastroClienteService.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.microsservicos.CadastroClienteService.dto.ClienteRequest;
-import com.microsservicos.CadastroClienteService.dto.ClienteResponse;
 import com.microsservicos.CadastroClienteService.model.Cliente;
 import com.microsservicos.CadastroClienteService.service.ClienteService;
 
@@ -36,38 +34,57 @@ public class ClienteController {
         return service.listarClientes();
     }
 
+    @PostMapping("/esqueci-senha")
+    public ResponseEntity<String> esqueciSenha(@RequestBody EsqueciSenhaRequest req) {
+        service.solicitarRedefinicaoSenha(req.email());
+        // Sempre retorne uma mensagem genérica para não revelar se um e-mail está cadastrado ou não
+        return ResponseEntity.ok("Se um e-mail correspondente for encontrado, um link de redefinição será enviado.");
+    }
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest req) {
-        Optional<Cliente> opt = service.buscarPorEmail(req.email());
+        // 1. A lógica de verificação foi movida para o service.
+        boolean loginValido = service.verificarLogin(req);
 
-        if (opt.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body("Email incorreto");
+        if (loginValido) {
+            // 2. Se for válido, retorna sucesso.
+            return ResponseEntity.ok("Login bem-sucedido");
+        } else {
+            // 3. Se for inválido, retorna falha.
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("E-mail ou senha incorretos.");
         }
 
-        Cliente cliente = opt.get();
-        if (!cliente.getSenha().equals(req.senha())) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body("Senha incorreta");
-        }
-
-        return ResponseEntity
-                .ok("Login bem-sucedido");
     }
 
-    @GetMapping("{id}/nome")
-    public String getMethodName(@PathVariable UUID id) {
-        Optional<Cliente> cliente = service.buscarPorId(id);
+    @PostMapping("/redefinir-senha")
+    public ResponseEntity<String> redefinirSenha(@RequestBody RedefinirSenhaRequest req) {
+        boolean sucesso = service.redefinirSenha(req.token(), req.novaSenha());
 
-        if (cliente.isEmpty()) {
-            return "";
+        if (sucesso) {
+            return ResponseEntity.ok("Senha redefinida com sucesso!");
+        } else {
+            return ResponseEntity.badRequest().body("Token inválido ou expirado.");
         }
-
-        return cliente.get().getNome();
     }
-    
 
-    public static record LoginRequest(String email, String senha) {}
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody LoginRequest req) {
+//        Optional<Cliente> opt = service.buscarPorEmail(req.email());
+//
+//        if (opt.isEmpty()) {
+//            return ResponseEntity
+//                    .status(HttpStatus.UNAUTHORIZED)
+//                    .body("Email incorreto");
+//        }
+//
+//        Cliente cliente = opt.get();
+//        if (cliente.getSenha() == null || !cliente.getSenha().equals(req.senha())) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Senha incorreta");
+//        }
+//
+//        return ResponseEntity
+//                .ok("Login bem-sucedido");
+//    }
+
+//    public static record LoginRequest(String email, String senha) {}
 }

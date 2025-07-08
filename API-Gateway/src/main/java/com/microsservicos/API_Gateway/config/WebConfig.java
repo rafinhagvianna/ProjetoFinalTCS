@@ -9,8 +9,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // Aplica a todos os caminhos do Gateway
-                .allowedOrigins("http://localhost:4200") // URL do Angular
+        registry.addMapping("/**") // todos os caminhos do Gateway
+                .allowedOrigins("http://localhost:4200") // url do Angular
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
                 .allowCredentials(true);

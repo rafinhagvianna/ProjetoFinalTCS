@@ -130,7 +130,7 @@ import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouter
 @Configuration
 public class Rotas {
 
-    // Simplificado para usar wildcard e Service Discovery
+
     @Bean
     public RouterFunction<ServerResponse> setorServiceRota(){
         return route("setor_service")
@@ -140,7 +140,7 @@ public class Rotas {
                 .build();
     }
 
-    // Simplificado para usar wildcard e Service Discovery
+
     @Bean
     public RouterFunction<ServerResponse> triagemServiceRota(){
         return route("triagem_service")
@@ -148,39 +148,38 @@ public class Rotas {
                 .build();
     }
 
-    // Simplificado para usar wildcard e Service Discovery
+
     @Bean
     public RouterFunction<ServerResponse> agendamentoServiceRota(){
         return route("agendamento_service")
-                .route(RequestPredicates.path("/api/agendamento/**"), HandlerFunctions.http("lb://agendamento-service")) // <-- MUDANÇA
+                .route(RequestPredicates.path("/api/agendamento/**"), HandlerFunctions.http("lb://agendamento-service"))
                 .build();
     }
 
-    // Simplificado para usar wildcard e Service Discovery
+
     @Bean
     public RouterFunction<ServerResponse> atendimentoServiceRota(){
         return route("atendimento_service")
-                .route(RequestPredicates.path("/api/atendimento/**"), HandlerFunctions.http("lb://atendimento-service")) // <-- MUDANÇA
+                .route(RequestPredicates.path("/api/atendimento/**"), HandlerFunctions.http("lb://atendimento-service"))
                 .build();
     }
 
-    // Simplificado para usar wildcard e Service Discovery
+
     @Bean
     public RouterFunction<ServerResponse> documentacaoServiceRota(){
         return route("documentacao_service")
-                .route(RequestPredicates.path("/api/documentacao/**"), HandlerFunctions.http("lb://documentacao-service")) // <-- MUDANÇA
+                .route(RequestPredicates.path("/api/documentacao/**"), HandlerFunctions.http("lb://documentacao-service"))
                 .build();
     }
 
-    // *** A ROTA DO CLIENTE, CORRIGIDA E MELHORADA ***
+
     @Bean
     public RouterFunction<ServerResponse> clienteServiceRota(){
-        return route("cliente_service")
+        return route("cliente_service") //
                 .route(RequestPredicates.POST("/api/cliente"), HandlerFunctions.http("http://localhost:8086"))
-                // Usa wildcard para cobrir /api/cliente, /api/cliente/login, etc.
-                // E usa o nome do serviço no Eureka.
-//                .route(RequestPredicates.path("/api/cliente/**"), HandlerFunctions.http("lb://CLIENTE")) // <-- MUDANÇA PRINCIPAL
                 .route(RequestPredicates.POST("/api/cliente/login"), HandlerFunctions.http("http://localhost:8086"))
+                .route(RequestPredicates.POST("/api/cliente/esqueci-senha"), HandlerFunctions.http("http://localhost:8086"))
+                .route(RequestPredicates.POST("/api/cliente/redefinir-senha"), HandlerFunctions.http("http://localhost:8086"))
                 .build();
     }
 
