@@ -1,0 +1,56 @@
+spring:
+
+    application:
+        name : TriagemService
+
+    datasource:
+        url: jdbc:sqlserver://localhost:1433;encrypt=true;trustServerCertificate=true;databaseName=Triagem;
+        username: rafael
+        password: 123
+        driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+
+    jpa:
+        hibernate:
+            ddl-auto: update
+
+        show-sql: true
+
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.SQLServerDialect
+
+    profiles:
+        active: dev
+
+eureka:
+    client:
+        service-url:
+            defaultZone: http://localhost:8761/eureka/
+
+server:
+    port: 8081
+
+resilience4j:
+    circuitbreaker:
+        instances:
+            catalogo:
+                register-health-indicator: true
+
+                failure-rate-threshold: 50
+
+                sliding-window-size: 10
+
+                minimum-number-of-calls: 5
+
+                wait-duration-in-open-state: 20s
+                permitted-number-of-calls-in-half-open-state: 3
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+    endpoint:
+        health:
+            show-details: always
