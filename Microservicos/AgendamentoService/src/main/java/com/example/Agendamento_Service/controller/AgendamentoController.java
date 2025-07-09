@@ -78,9 +78,9 @@ public class AgendamentoController {
 
     @GetMapping("/disponibilidade")
     public ResponseEntity<List<LocalDateTime>> getHorariosDisponiveis(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
-        // log.info("Requisição para buscar horários disponíveis para a data: {}", data);
-        List<LocalDateTime> horariosDisponiveis = service.getHorariosDisponiveisNoDia(data);
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
+            @RequestParam UUID servicoId) {
+        List<LocalDateTime> horariosDisponiveis = service.getHorariosDisponiveisNoDia(data, servicoId); // Passa servicoId
         return ResponseEntity.ok(horariosDisponiveis);
     }
 

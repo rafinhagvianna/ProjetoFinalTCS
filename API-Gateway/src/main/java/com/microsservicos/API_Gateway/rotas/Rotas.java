@@ -134,9 +134,11 @@ public class Rotas {
     @Bean
     public RouterFunction<ServerResponse> setorServiceRota(){
         return route("setor_service")
-                .route(RequestPredicates.path("/api/setor/**"), HandlerFunctions.http("lb://setor-service")) // <-- MUDANÇA
-                .filter(CircuitBreakerFilterFunctions.circuitBreaker("setorServiceCircuitBreaker",
-                        URI.create("forward://fallbackRoute")))
+                // CORREÇÃO AQUI: Use "/**" para cobrir todos os endpoints que começam com /api/setor/
+                .route(RequestPredicates.path("/api/setor/**"), HandlerFunctions.http("http://localhost:8084"))
+                // Se você quiser aplicar o Circuit Breaker, descomente e ajuste:
+                // .filter(CircuitBreakerFilterFunctions.circuitBreaker("setorServiceCircuitBreaker",
+                //         URI.create("forward://fallbackRoute")))
                 .build();
     }
 
@@ -151,8 +153,8 @@ public class Rotas {
 
     @Bean
     public RouterFunction<ServerResponse> agendamentoServiceRota(){
-        return route("agendamento_service")
-                .route(RequestPredicates.path("/api/agendamento/**"), HandlerFunctions.http("lb://agendamento-service"))
+        return route("agendamento_service") // ID da rota principal
+                .route(RequestPredicates.path("/api/agendamentos/**"), HandlerFunctions.http("http://localhost:8082"))
                 .build();
     }
 
