@@ -1,0 +1,16 @@
+com\microsservicos\documentacao\client\TriagemServiceClient.class
+com\microsservicos\documentacao\dto\DocumentoResponseDTO.class
+com\microsservicos\documentacao\DocumentacaoServiceApplication.class
+com\microsservicos\documentacao\client\AgendamentoServiceClient.class
+com\microsservicos\documentacao\dto\ValidacaoDocumentoRequestDTO.class
+com\microsservicos\documentacao\model\Documento.class
+com\microsservicos\documentacao\enums\StatusDocumento.class
+com\microsservicos\documentacao\exception\GlobalExceptionHandler$ErrorResponse.class
+com\microsservicos\documentacao\dto\DocumentoStatusUpdateRequestDTO.class
+com\microsservicos\documentacao\controller\DocumentoController.class
+com\microsservicos\documentacao\dto\UploadDocumentoRequestDTO.class
+com\microsservicos\documentacao\service\DocumentoService.class
+com\microsservicos\documentacao\config\OpenAPIConfig.class
+com\microsservicos\documentacao\exception\GlobalExceptionHandler.class
+com\microsservicos\documentacao\exception\RecursoNaoEncontradoException.class
+com\microsservicos\documentacao\repository\DocumentoRepository.class
