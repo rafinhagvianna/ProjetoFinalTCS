@@ -4,7 +4,7 @@ spring:
 
   datasource:
     url: jdbc:sqlserver://localhost:1433;databaseName=AgendamentoServiceDB;encrypt=true;trustServerCertificate=true
-    username: agendamento_user
+    username: user
     password: admintcs
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 

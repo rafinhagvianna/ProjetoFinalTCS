@@ -6,8 +6,8 @@ spring:
   datasource:
     url: jdbc:sqlserver://localhost:1433;encrypt=true;trustServerCertificate=true;databaseName=Cliente;
 #    url: jdbc:sqlserver://CCHLDN27LABM34\Aluno;encrypt=true;trustServerCertificate=true;databaseName=Cliente;
-    username: rafael
-    password: 123
+    username: user
+    password: admintcs
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
 
