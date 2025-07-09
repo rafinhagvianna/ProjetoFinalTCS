@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: Notification-Service
+
+twilio:
+
+  account-sid: ACc7eeb3965dbb9571bd78b96a1ab7ed3e
+  auth-token: 2b415c9dac5ad8f2144ad9db3128537b
+  whatsapp-number: whatsapp:+14155238886
