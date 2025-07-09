@@ -1,0 +1,30 @@
+server:
+  port:
+    8084
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
+spring:
+  application:
+    name:
+      CatalogoService
+  doc:
+    swagger-ui:
+      path:
+        /swagger-ui.html
+    api:
+      api-docs:
+        path:
+          /api-docs
+
+data:
+  mongodb:
+    uri: mongodb://localhost:27017//catalogo-service
+
+
+
+
