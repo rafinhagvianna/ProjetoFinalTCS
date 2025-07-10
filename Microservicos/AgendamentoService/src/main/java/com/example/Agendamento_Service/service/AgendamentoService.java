@@ -4,51 +4,48 @@ import com.example.Agendamento_Service.dto.AgendamentoRequestDTO;
 import com.example.Agendamento_Service.dto.DocumentoPendenteResponseDTO;
 import com.example.Agendamento_Service.dto.DocumentoStatusUpdateRequestDTO;
 import com.example.Agendamento_Service.client.DocumentoCatalogoResponse;
-// import com.example.Agendamento_Service.dto.ServicoResponseDTO; // Não será mais usado diretamente
-import com.example.Agendamento_Service.client.ServicoResponse; // DTO do Catalogo-Service
-import com.example.Agendamento_Service.client.TipoDocumentoResponse;
+import com.example.Agendamento_Service.client.ServicoResponse;
 import com.example.Agendamento_Service.enums.StatusAgendamento;
-import com.example.Agendamento_Service.enums.StatusDocumento; // Supondo que este enum esteja aqui
+import com.example.Agendamento_Service.enums.StatusDocumento;
 import com.example.Agendamento_Service.exception.ComunicacaoServicoException;
 import com.example.Agendamento_Service.exception.RecursoNaoEncontradoException;
-import com.example.Agendamento_Service.service.CatalogoServiceFacade; // Importe o Facade
-import com.example.Agendamento_Service.service.UsuarioServiceFacade; // Importe o Facade
 import com.example.Agendamento_Service.model.Agendamento;
 import com.example.Agendamento_Service.model.DocumentoPendente;
 import com.example.Agendamento_Service.repository.AgendamentoRepository;
-import com.example.Agendamento_Service.repository.DocumentoPendenteRepository;
+import com.example.Agendamento_Service.repository.DocumentoPendenteRepository; // Mantido, caso seja usado indiretamente ou em futuras features
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient; // Manter se houver outras chamadas WebClient
+// import org.springframework.web.reactive.function.client.WebClient; // Removido, pois não está sendo usado diretamente
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
-import java.util.stream.Collectors; // Para coletar streams
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects; // Adicionado para Objects.equals no PATCH
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class AgendamentoService {
 
     private final AgendamentoRepository repository;
-    private final DocumentoPendenteRepository documentoPendenteRepository;
-    private final CatalogoServiceFacade catalogoServiceFacade; // Injetando o Facade
-    private final UsuarioServiceFacade usuarioServiceFacade;   // Injetando o Facade
+    private final DocumentoPendenteRepository documentoPendenteRepository; // Mantido, se não for usado, pode ser removido
+    private final CatalogoServiceFacade catalogoServiceFacade;
+    private final UsuarioServiceFacade usuarioServiceFacade;
 
-    // Remover WebClient se não for mais usado, ou manter se for para outros serviços não coberto pelos Facades
-    // private final WebClient webClientServicos;
-
+    // O WebClient foi removido do construtor, pois os Facades agora o encapsulam.
     public AgendamentoService(AgendamentoRepository repository,
                               DocumentoPendenteRepository documentoPendenteRepository,
-                              CatalogoServiceFacade catalogoServiceFacade, 
-                              UsuarioServiceFacade usuarioServiceFacade ){
-        this.repository =repository;
+                              CatalogoServiceFacade catalogoServiceFacade,
+                              UsuarioServiceFacade usuarioServiceFacade) {
+        this.repository = repository;
         this.documentoPendenteRepository = documentoPendenteRepository;
         this.catalogoServiceFacade = catalogoServiceFacade;
         this.usuarioServiceFacade = usuarioServiceFacade;
     }
-
 
     public List<Agendamento> listarTodos() {
         // log.info("Listando todos os agendamentos.");
@@ -79,43 +76,45 @@ public class AgendamentoService {
                 agendamentoDTO.servicoId(),
                 agendamentoDTO.dataHora()).isPresent()) {
             // log.warn("Agendamento duplicado detectado para usuário ID: {}, serviço ID: {}, data/hora: {}",
-                    // agendamentoDTO.usuarioId(), agendamentoDTO.servicoId(), agendamentoDTO.dataHora());
+            // agendamentoDTO.usuarioId(), agendamentoDTO.servicoId(), agendamentoDTO.dataHora());
             throw new IllegalArgumentException("Este usuário já possui um agendamento para o mesmo serviço neste horário.");
         }
 
         // 1. Obter informações do serviço/setor usando o Facade
         ServicoResponse setorInfo = catalogoServiceFacade.buscarSetorPorId(agendamentoDTO.servicoId());
-        if ("Serviço Indisponível".equals(setorInfo.nome())) {
-            // log.error("Falha ao obter detalhes do serviço de catálogo ID {}. Abortando agendamento.", agendamentoDTO.servicoId());
-            throw new ComunicacaoServicoException("Não foi possível obter detalhes do serviço de catálogo. Tente novamente mais tarde.", null);
+        // A verificação de "Serviço Indisponível" deve ser feita no Facade ou GlobalExceptionHandler
+        // Se o Facade já lança ComunicacaoServicoException, essa checagem pode ser redundante aqui.
+        // Por simplicidade, vou manter a checagem de nome para o caso do fallback do Facade retornar um objeto com nome padrão.
+        if (setorInfo == null || "Serviço Indisponível".equals(setorInfo.nome())) {
+            throw new ComunicacaoServicoException("Não foi possível obter detalhes do serviço de catálogo. Tente novamente mais tarde.");
         }
+
         Integer tempoEstimadoServico = Optional.ofNullable(setorInfo.tempoMedioMinutos()).orElse(0);
         if (tempoEstimadoServico <= 0) {
             // log.warn("Tempo estimado para o serviço ID {} é inválido ({} minutos).", agendamentoDTO.servicoId(), tempoEstimadoServico);
-            // Decide se quer lançar uma exceção ou usar um valor padrão aqui
-            tempoEstimadoServico = 15; // Usar um padrão para serviços com tempo não configurado
+            tempoEstimadoServico = 15; // Usar um padrão para serviços com tempo não configurado, ou lançar exceção
         }
 
-
         // 2. Verificar disponibilidade do horário
-        if (!isHorarioDisponivel(agendamentoDTO.dataHora(), tempoEstimadoServico, null)) {
+        // CORREÇÃO AQUI: Passar agendamentoDTO.servicoId() em vez de tempoEstimadoServico
+        if (!isHorarioDisponivel(agendamentoDTO.dataHora(), agendamentoDTO.servicoId(), null)) {
             // log.warn("Horário selecionado não tem capacidade suficiente para o serviço ID {}.", agendamentoDTO.servicoId());
             throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço.");
         }
 
         Agendamento agendamento = new Agendamento();
         agendamento.setUsuarioId(agendamentoDTO.usuarioId());
-        // agendamento.setAtendenteId(agendamentoDTO.atendenteId()); // atendenteId pode ser nulo agora
+        agendamento.setAtendenteId(agendamentoDTO.atendenteId()); // atendenteId pode ser nulo agora
         agendamento.setServicoId(agendamentoDTO.servicoId());
         agendamento.setDataHora(agendamentoDTO.dataHora());
         agendamento.setCriadoEm(LocalDateTime.now()); // Garantir que está sendo setado
 
         // 3. Obter nome do cliente/usuário usando o Facade
         String nomeClienteSnapshot = usuarioServiceFacade.buscarNomeCliente(agendamentoDTO.usuarioId());
-        agendamento.setNomeClienteSnapshot(nomeClienteSnapshot); // Adicionar no model Agendamento
+        agendamento.setNomeClienteSnapshot(nomeClienteSnapshot);
 
         // 4. Adicionar snapshot do nome do serviço
-        agendamento.setNomeServicoSnapshot(setorInfo.nome()); // Adicionar no model Agendamento
+        agendamento.setNomeServicoSnapshot(setorInfo.nome());
         agendamento.setStatus(StatusAgendamento.AGENDADO); // Definir um status inicial, se houver
 
         // 5. Lógica de documentos obrigatórios: Igual à triagem
@@ -127,9 +126,9 @@ public class AgendamentoService {
 
             detalhesDocumentos.forEach(tipoDoc -> {
                 DocumentoPendente doc = new DocumentoPendente(
-                    tipoDoc.id(),
-                    tipoDoc.nome(),
-                    StatusDocumento.PENDENTE // Status inicial para documentos de agendamento
+                        tipoDoc.id(), // Supondo que DocumentoPendente tem construtor com ID, Nome
+                        tipoDoc.nome(),
+                        StatusDocumento.PENDENTE // Status inicial para documentos de agendamento
                 );
                 agendamento.addDocumentoPendente(doc);
                 // log.debug("Documento '{}' (ID: {}) adicionado como pendente para o agendamento.", tipoDoc.nome(), tipoDoc.id());
@@ -164,7 +163,7 @@ public class AgendamentoService {
             }
 
             ServicoResponse setorInfo = catalogoServiceFacade.buscarSetorPorId(agendamentoDTO.servicoId());
-            if ("Serviço Indisponível".equals(setorInfo.nome())) {
+            if (setorInfo == null || "Serviço Indisponível".equals(setorInfo.nome())) {
                 // log.error("Falha ao obter detalhes do serviço de catálogo ID {} durante a atualização do agendamento {}.", agendamentoDTO.servicoId(), id);
                 throw new ComunicacaoServicoException("Não foi possível obter detalhes do serviço de catálogo para validação. Tente novamente mais tarde.");
             }
@@ -173,7 +172,8 @@ public class AgendamentoService {
                 tempoEstimadoServico = 15; // Usar um padrão
             }
 
-            if (!isHorarioDisponivel(agendamentoDTO.dataHora(), tempoEstimadoServico, agendamentoExistente.getId())) {
+            // CORREÇÃO AQUI: Passar agendamentoDTO.servicoId() em vez de tempoEstimadoServico
+            if (!isHorarioDisponivel(agendamentoDTO.dataHora(), agendamentoDTO.servicoId(), agendamentoExistente.getId())) {
                 // log.warn("Horário selecionado para atualização do agendamento ID {} não tem capacidade suficiente.", id);
                 throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço após a atualização.");
             }
@@ -233,13 +233,15 @@ public class AgendamentoService {
             }
 
             // Recalcular tempo estimado e verificar disponibilidade apenas se serviço ou data/hora mudaram
+            // O tempoEstimadoServico é usado para a validação de capacidade, não para ser passado ao isHorarioDisponivel
             Integer tempoEstimadoServico = Optional.ofNullable(catalogoServiceFacade.buscarSetorPorId(agendamentoExistente.getServicoId()).tempoMedioMinutos()).orElse(0);
             if (tempoEstimadoServico <= 0) {
                 tempoEstimadoServico = 15; // Usar um padrão
             }
 
             if (dataHoraChanged || servicoChanged) { // Só verifica disponibilidade se o tempo ou o slot mudaram
-                if (!isHorarioDisponivel(agendamentoExistente.getDataHora(), tempoEstimadoServico, agendamentoExistente.getId())) {
+                // CORREÇÃO AQUI: Passar agendamentoExistente.getServicoId() em vez de tempoEstimadoServico
+                if (!isHorarioDisponivel(agendamentoExistente.getDataHora(), agendamentoExistente.getServicoId(), agendamentoExistente.getId())) {
                     // log.warn("Horário selecionado para atualização parcial do agendamento ID {} não tem capacidade suficiente.", id);
                     throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço após a atualização parcial.");
                 }
@@ -250,7 +252,7 @@ public class AgendamentoService {
                 agendamentoExistente.setNomeClienteSnapshot(usuarioServiceFacade.buscarNomeCliente(agendamentoExistente.getUsuarioId()));
             }
             if (servicoChanged) {
-                 agendamentoExistente.setNomeServicoSnapshot(catalogoServiceFacade.buscarSetorPorId(agendamentoExistente.getServicoId()).nome());
+                agendamentoExistente.setNomeServicoSnapshot(catalogoServiceFacade.buscarSetorPorId(agendamentoExistente.getServicoId()).nome());
             }
 
             Agendamento atualizado = repository.save(agendamentoExistente);
@@ -275,16 +277,14 @@ public class AgendamentoService {
         ServicoResponse setorInfo = catalogoServiceFacade.buscarSetorPorId(servicoId);
         // Se o fallback for ativado, o nome será "Serviço Indisponível" e o tempo médio será 0.
         // A lógica de negócio deve decidir se 0 é aceitável ou se deve lançar uma exceção.
-        if ("Serviço Indisponível".equals(setorInfo.nome())) {
+        if (setorInfo == null || "Serviço Indisponível".equals(setorInfo.nome())) { // Adicionado checagem para setorInfo ser null
             throw new ComunicacaoServicoException("Não foi possível obter o tempo estimado do serviço de catálogo para ID: " + servicoId);
         }
         return Optional.ofNullable(setorInfo.tempoMedioMinutos()).orElseThrow(() ->
                 new IllegalStateException("Tempo médio para o serviço ID " + servicoId + " não configurado no catálogo."));
     }
 
-
     private boolean isDataEHoraDeTrabalhoValido(LocalDateTime dataHora) {
-        // ... (lógica existente, sem alterações significativas)
         DayOfWeek diaDeSemana = dataHora.getDayOfWeek();
         if (diaDeSemana == DayOfWeek.SATURDAY || diaDeSemana == DayOfWeek.SUNDAY) {
             return false;
@@ -301,55 +301,58 @@ public class AgendamentoService {
         return true;
     }
 
-    private boolean isHorarioDisponivel(LocalDateTime dataHoraInicioSlot, Integer tempoEstimadoNovoServico, UUID agendamentoIdParaIgnorar) {
-        LocalDateTime dataHoraFimSlot = dataHoraInicioSlot.plusMinutes(60); // Slot de 1 hora
+    private boolean isHorarioDisponivel(LocalDateTime dataHora, UUID servicoId, UUID agendamentoIdParaIgnorar) {
+        DayOfWeek diaDaSemana = dataHora.getDayOfWeek();
+        LocalTime hora = dataHora.toLocalTime();
 
-        List<Agendamento> agendamentosNoSlot = repository.findByDataHoraBetween(dataHoraInicioSlot, dataHoraFimSlot);
+        if (diaDaSemana == DayOfWeek.SATURDAY || diaDaSemana == DayOfWeek.SUNDAY ||
+                hora.isBefore(LocalTime.of(10, 0)) || hora.isAfter(LocalTime.of(15, 0)) || // Slots de 10h a 15h
+                dataHora.getMinute() != 0 || dataHora.getSecond() != 0 || dataHora.getNano() != 0) {
+            return false;
+        }
+
+        LocalDateTime inicioDoSlot = dataHora.withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime fimDoSlot = inicioDoSlot.plusMinutes(60);
+
+        List<Agendamento> agendamentosNoSlot = repository.findByDataHoraBetween(inicioDoSlot, fimDoSlot);
 
         int tempoTotalOcupadoNoSlot = 0;
-
         for (Agendamento agendamento : agendamentosNoSlot) {
             if (agendamentoIdParaIgnorar != null && agendamento.getId().equals(agendamentoIdParaIgnorar)) {
                 continue;
             }
-
-            try {
-                // Obter o tempo estimado do serviço para agendamentos existentes usando o Facade
-                Integer tempoServicoExistente = getTempoEstimadoServico(agendamento.getServicoId());
-                if (tempoServicoExistente != null) {
-                    tempoTotalOcupadoNoSlot += tempoServicoExistente;
-                }
-            } catch (ComunicacaoServicoException | IllegalStateException e) {
-                // log.warn("Aviso: Falha ao obter tempo estimado para serviço ID {} do agendamento {}. Ignorando este agendamento no cálculo de disponibilidade. Erro: {}",
-                        // agendamento.getServicoId(), agendamento.getId(), e.getMessage());
-                // Poderia também decidir falhar a validação se a informação de um serviço existente está indisponível
-            }
+            tempoTotalOcupadoNoSlot += getTempoEstimadoServico(agendamento.getServicoId());
         }
+
+        int tempoEstimadoNovoServico = getTempoEstimadoServico(servicoId);
         return (tempoTotalOcupadoNoSlot + tempoEstimadoNovoServico) <= 60;
     }
 
-    public List<LocalDateTime> getHorariosDisponiveisNoDia(LocalDate data) {
+    public List<LocalDateTime> getHorariosDisponiveisNoDia(LocalDate data, UUID servicoId) {
         // log.info("Buscando horários disponíveis para a data: {}", data);
         List<LocalDateTime> horariosDisponiveis = new ArrayList<>();
+        LocalDateTime agora = LocalDateTime.now();
 
-        DayOfWeek diaDeSemana = data.getDayOfWeek();
-        if (diaDeSemana == DayOfWeek.SATURDAY || diaDeSemana == DayOfWeek.SUNDAY) {
-            // log.info("Nenhum horário disponível para fins de semana.");
-            return horariosDisponiveis;
+        if (data.isBefore(agora.toLocalDate())) {
+            return new ArrayList<>();
         }
 
-        // Para cada hora cheia entre 10h e 15h
-        for (int hour = 10; hour <= 15; hour++) {
-            LocalDateTime slotInicio = LocalDateTime.of(data, LocalTime.of(hour, 0));
+        // Obter o tempo estimado do serviço ESCOLHIDO pelo usuário
+        // Este método getTempoEstimadoServico agora usará o Facade e não o mock fixo.
+        int tempoEstimadoServicoEscolhido = getTempoEstimadoServico(servicoId);
 
-            // Aqui, o '5' é um tempo estimado de serviço mínimo.
-            // Poderíamos torná-lo configurável ou permitir que o cliente especifique o serviço para verificar disponibilidade exata.
-            // Para "listar horários disponíveis", um valor pequeno é razoável para indicar que há algum espaço.
-            if (isHorarioDisponivel(slotInicio, 5, null)) {
-                horariosDisponiveis.add(slotInicio);
+        for (int hour = 10; hour <= 15; hour++) {
+            LocalDateTime slotStart = LocalDateTime.of(data, LocalTime.of(hour, 0));
+
+            if (data.isEqual(agora.toLocalDate()) && slotStart.isBefore(agora)) {
+                continue;
+            }
+
+            // isHorarioDisponivel agora usa o tempo estimado do SERVIÇO ESCOLHIDO
+            if (isHorarioDisponivel(slotStart, servicoId, null)) {
+                horariosDisponiveis.add(slotStart);
             }
         }
-        // log.info("Encontrados {} horários disponíveis para a data {}.", horariosDisponiveis.size(), data);
         return horariosDisponiveis;
     }
 
@@ -377,9 +380,9 @@ public class AgendamentoService {
             documento.setUrlDocumento(requestDTO.urlVisualizacao());
         }
 
-        repository.save(agendamento); // Persiste a mudança no documento através do relacionamento com Agendamento
+        repository.save(agendamento);
         // log.info("Documento '{}' (ID Catálogo: {}) do agendamento ID: {} atualizado para status: {}.",
-                // documento.getNomeDocumentoSnapshot(), documentoCatalogoId, agendamentoId, requestDTO.status());
+        // documento.getNomeDocumentoSnapshot(), documentoCatalogoId, agendamentoId, requestDTO.status());
 
         return toDocumentoPendenteResponseDTO(documento);
     }
@@ -394,10 +397,4 @@ public class AgendamentoService {
                 doc.getUrlDocumento()
         );
     }
-
-    // Este método foi consolidado com atualizarStatusDocumentoAgendamento
-    // @Transactional
-    // public void atualizarStatusDocumentoTriagem(UUID agendamentoId, UUID documentoCatalogoId, DocumentoStatusUpdateRequestDTO requestDTO) {
-    //     // ... (lógica anterior)
-    // }
 }

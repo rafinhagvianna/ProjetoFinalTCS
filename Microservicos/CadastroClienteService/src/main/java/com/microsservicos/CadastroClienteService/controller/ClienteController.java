@@ -44,18 +44,20 @@ public class ClienteController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest req) {
-        // 1. A lógica de verificação foi movida para o service.
+// Mude a assinatura para retornar um objeto LoginResponse
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
         boolean loginValido = service.verificarLogin(req);
 
         if (loginValido) {
-            // 2. Se for válido, retorna sucesso.
-            return ResponseEntity.ok("Login bem-sucedido");
+            // Crie e retorne um novo objeto LoginResponse.
+            // O Spring irá serializá-lo para JSON automaticamente.
+            LoginResponse response = new LoginResponse("Login bem-sucedido");
+            return ResponseEntity.ok(response);
         } else {
-            // 3. Se for inválido, retorna falha.
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("E-mail ou senha incorretos.");
+            // Faça o mesmo para a resposta de erro.
+            LoginResponse response = new LoginResponse("E-mail ou senha incorretos.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-
     }
 
     @PostMapping("/redefinir-senha")
