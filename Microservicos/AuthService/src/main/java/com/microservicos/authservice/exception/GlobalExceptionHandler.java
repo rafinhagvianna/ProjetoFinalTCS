@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex) {
         // Logar a exceção completa aqui
         // log.error("Ocorreu um erro interno: {}", ex.getMessage(), ex);
-        ErrorResponseDTO error = new ErrorResponseDTO("Ocorreu um erro inesperado no servidor.", HttpStatus.INTERNAL_SERVER_ERROR, "GENERIC-001");
+        ErrorResponseDTO error = new ErrorResponseDTO("Ocorreu um erro inesperado no servidor. Erro: "+ ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, "GENERIC-001");
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

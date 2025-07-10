@@ -62,7 +62,7 @@ public class JwtService {
     // Métodos para validação e extração de claims (necessários para o API Gateway ou outros serviços)
     public Claims extractAllClaims(String token) {
         return Jwts
-                .parserBuilder()
+                .parser()
                 .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)

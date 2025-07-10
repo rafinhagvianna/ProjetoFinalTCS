@@ -12,6 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "ClienteService")
 public interface CadastroClienteServiceClient {
 
-    @PostMapping("/clientes/auth/validate") // Exemplo de endpoint no CadastroClienteService
+    @PostMapping("/api/cliente/login") // Exemplo de endpoint no CadastroClienteService
     AuthValidationResponseDTO validateClientCredentials(@RequestBody LoginCredentialsDTO credentials);
 }

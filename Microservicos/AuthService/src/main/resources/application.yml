@@ -1,18 +1,21 @@
+server:
+  port: 8083
+
 spring:
   application:
     name: AuthService
 
 
-application:
-  security:
-    jwt:
-      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-      expiration: 86400000 # 24 horas
-
-server:
-  port: 8083
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  expiration: 86400 # 24 horas em SEGUNDOS (86400000 milissegundos / 1000 = 86400 segundos)
+  refresh:
+    expiration: 604800 # 7 dias em SEGUNDOS para o refresh token
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8761/eureka # URL do Eureka Server
+  instance:
+    hostname: localhost # Para ambiente de desenvolvimento.
+
