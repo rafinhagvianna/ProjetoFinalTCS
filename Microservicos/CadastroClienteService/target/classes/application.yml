@@ -1,7 +1,7 @@
 spring:
 
   application:
-    name : Cliente
+    name : ClienteService
 
   datasource:
     url: jdbc:sqlserver://localhost:1433;encrypt=true;trustServerCertificate=true;databaseName=Cliente;

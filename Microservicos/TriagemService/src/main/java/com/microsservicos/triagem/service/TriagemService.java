@@ -128,6 +128,21 @@ public class TriagemService {
 
         return triagemMapper.toResponseDTO(atualizada);
     }
+    
+    @Transactional
+    public TriagemResponseDTO buscarPorCliente(UUID id) {
+        Triagem triagem = triagemRepository.findByClienteIdAndStatus(id, StatusTriagem.AGUARDANDO);
+
+        return triagemMapper.toResponseDTO(triagem);
+    }
+
+    @Transactional
+    public TriagemResponseDTO buscarPorId(UUID id) {
+        Triagem triagem = triagemRepository.findById(id).orElseThrow();
+
+        return triagemMapper.toResponseDTO(triagem);
+    }
+
 
     @Transactional
     public TriagemResponseDTO atualizarStatus(UUID id, StatusTriagem novoStatus) {

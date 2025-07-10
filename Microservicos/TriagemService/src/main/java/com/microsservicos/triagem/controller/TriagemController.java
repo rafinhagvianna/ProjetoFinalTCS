@@ -9,13 +9,16 @@ import jakarta.validation.Valid; // Importante: Adicionar import para @Valid
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Controller REST para gerenciar operações relacionadas a triagens.
  */
 @RestController
 @RequestMapping("/api/triagens")
+@CrossOrigin(origins = "http://localhost:4200")
 public class TriagemController {
 
     private final TriagemService triagemService;
@@ -84,5 +87,16 @@ public class TriagemController {
         triagemService.atualizarStatusDocumentoTriagem(triagemId, documentoCatalogoId, requestDTO);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/cliente/{id}")
+    public ResponseEntity<TriagemResponseDTO> buscarPorCliente(@PathVariable UUID id) {
+        TriagemResponseDTO triagem = triagemService.buscarPorCliente(id);
+        return ResponseEntity.ok(triagem);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<TriagemResponseDTO> buscarPorId(@PathVariable UUID id) {
+        TriagemResponseDTO triagem = triagemService.buscarPorId(id);
+        return ResponseEntity.ok(triagem);
     }
 }

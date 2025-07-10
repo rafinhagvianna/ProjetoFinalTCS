@@ -5,6 +5,7 @@ import com.example.Agendamento_Service.client.CatalogoServiceClient;
 import com.example.Agendamento_Service.exception.ComunicacaoServicoException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

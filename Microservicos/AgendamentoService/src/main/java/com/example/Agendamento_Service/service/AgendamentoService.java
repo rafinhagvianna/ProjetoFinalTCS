@@ -61,6 +61,10 @@ public class AgendamentoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado com o ID: " + id));
     }
 
+    public List<Agendamento> buscarPorCliente(UUID id) {
+        return repository.findByUsuarioIdAndStatus(id, StatusAgendamento.AGENDADO);
+    }
+
     @Transactional
     public Agendamento salvar(AgendamentoRequestDTO agendamentoDTO) {
         // log.info("Iniciando criação de novo agendamento para usuário ID: {} e serviço ID: {}", agendamentoDTO.usuarioId(), agendamentoDTO.servicoId());

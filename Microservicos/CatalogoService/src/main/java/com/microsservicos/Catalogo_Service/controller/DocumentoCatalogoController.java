@@ -14,6 +14,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/documentos-catalogo") // Endpoint específico para documentos
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class DocumentoCatalogoController {
 
     private final DocumentoCatalogoService documentoCatalogoService;

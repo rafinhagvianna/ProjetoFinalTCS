@@ -2,6 +2,7 @@ package com.microsservicos.CadastroClienteService.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.microsservicos.CadastroClienteService.dto.*;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import com.microsservicos.CadastroClienteService.service.ClienteService;
 
 @RestController
 @RequestMapping("/api/cliente")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ClienteController {
 
     private final ClienteService service;
@@ -65,6 +67,17 @@ public class ClienteController {
         } else {
             return ResponseEntity.badRequest().body("Token inválido ou expirado.");
         }
+    }
+
+    @GetMapping("{id}/nome")
+    public String getMethodName(@PathVariable UUID id) {
+        Optional<Cliente> cliente = service.buscarPorId(id);
+
+        if (cliente.isEmpty()) {
+            return "";
+        }
+
+        return cliente.get().getNome();
     }
 
 //    @PostMapping("/login")

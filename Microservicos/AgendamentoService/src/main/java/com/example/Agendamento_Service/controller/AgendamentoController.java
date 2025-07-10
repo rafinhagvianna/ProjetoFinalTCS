@@ -19,9 +19,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
 @RestController
 @RequestMapping("/api/agendamentos")
-
+@CrossOrigin(origins = "http://localhost:4200")
 public class AgendamentoController {
 
     private final AgendamentoService service;
@@ -123,4 +124,13 @@ public class AgendamentoController {
         DocumentoPendenteResponseDTO documentoAtualizado = service.atualizarStatusDocumentoAgendamento(agendamentoId, documentoCatalogoId, requestDTO);
         return ResponseEntity.ok(documentoAtualizado); // Retorna o DTO do documento atualizado
     }
+
+    @GetMapping("/cliente/{id}")
+    public ResponseEntity<List<AgendamentoResponseDTO>> buscarPorCliente(@PathVariable UUID id) {
+        List<AgendamentoResponseDTO> agendamento = service.buscarPorCliente(id).stream()
+                                                    .map(this::toResponseDTO)
+                                                    .collect(Collectors.toList());;
+        return ResponseEntity.ok(agendamento);
+    }
+    
 }

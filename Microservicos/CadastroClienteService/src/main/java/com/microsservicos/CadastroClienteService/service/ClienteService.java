@@ -76,6 +76,10 @@ public class ClienteService {
         return repository.findByEmail(email);
     }
 
+    public Optional<Cliente> buscarPorId(UUID id) {
+        return repository.findById(id);
+    }
+
     private ClienteResponse toResponse(Cliente c) {
         // IMPORTANTE: Evite retornar a senha (mesmo hashada) em respostas de API.
         // Por simplicidade, mantive aqui, mas o ideal seria ter um DTO sem o campo senha.
