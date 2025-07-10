@@ -12,6 +12,7 @@ public record SetorResponse(
         boolean isAtivo,
         int prioridade,
         Integer tempoMedioMinutos,
-        List<UUID> documentosObrigatoriosIds // NOVO: IDs dos documentos obrigatórios
+        List<UUID> documentosObrigatoriosIds, // NOVO: IDs dos documentos obrigatórios
+        String icone
 ) {
 }
