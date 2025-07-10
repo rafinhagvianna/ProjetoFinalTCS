@@ -15,7 +15,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/setor")
 @RequiredArgsConstructor // Usando Lombok para injeção de dependência via construtor
-@CrossOrigin(origins = "http://localhost:4200")
 public class SetorController {
 
     private final SetorService setorService;

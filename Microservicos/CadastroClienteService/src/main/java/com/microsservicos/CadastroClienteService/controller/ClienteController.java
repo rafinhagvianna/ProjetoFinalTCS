@@ -15,7 +15,6 @@ import com.microsservicos.CadastroClienteService.service.ClienteService;
 
 @RestController
 @RequestMapping("/api/cliente")
-@CrossOrigin(origins = "http://localhost:4200")
 public class ClienteController {
 
     private final ClienteService service;

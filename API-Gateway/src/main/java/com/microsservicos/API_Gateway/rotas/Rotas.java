@@ -142,11 +142,18 @@ public class Rotas {
                 .build();
     }
 
+    @Bean
+    public RouterFunction<ServerResponse> setorDocumetoServiceRota(){
+        return route("documentos_service")
+                .route(RequestPredicates.path("/api/documentos/**"), HandlerFunctions.http("http://localhost:8084"))
+                .build();
+    }
+
 
     @Bean
     public RouterFunction<ServerResponse> triagemServiceRota(){
         return route("triagem_service")
-                .route(RequestPredicates.path("/api/triagem/**"), HandlerFunctions.http("lb://triagem-service")) // <-- MUDANÇA
+                .route(RequestPredicates.path("/api/triagens/**"), HandlerFunctions.http("http://localhost:8081")) // <-- MUDANÇA
                 .build();
     }
 
@@ -162,7 +169,7 @@ public class Rotas {
     @Bean
     public RouterFunction<ServerResponse> atendimentoServiceRota(){
         return route("atendimento_service")
-                .route(RequestPredicates.path("/api/atendimento/**"), HandlerFunctions.http("lb://atendimento-service"))
+                .route(RequestPredicates.path("/api/atendimento/**"), HandlerFunctions.http("http://localhost:8083"))
                 .build();
     }
 
@@ -170,7 +177,7 @@ public class Rotas {
     @Bean
     public RouterFunction<ServerResponse> documentacaoServiceRota(){
         return route("documentacao_service")
-                .route(RequestPredicates.path("/api/documentacao/**"), HandlerFunctions.http("lb://documentacao-service"))
+                .route(RequestPredicates.path("/api/documentacao/**"), HandlerFunctions.http("http://localhost:8085"))
                 .build();
     }
 

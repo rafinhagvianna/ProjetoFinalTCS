@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/agendamentos")
-@CrossOrigin(origins = "http://localhost:4200")
 public class AgendamentoController {
 
     private final AgendamentoService service;
