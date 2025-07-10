@@ -1,0 +1,17 @@
+<app-navbar></app-navbar>
+
+<section class="menu-bg">
+  <div class="menu-container">
+    <div class="menu-grid">
+      <div *ngFor="let setor of setores" class="card-menu" (click)="selecionarSetor(setor)">
+        <div class="card-icon">
+          <i [ngClass]="setor.iconClass"></i>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ setor.nome }}</h3>
+          <p class="card-desc">{{ setor.descricao }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

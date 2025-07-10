@@ -1,0 +1,27 @@
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+table thead tr th:first-child {
+    border-top-left-radius: 8px;
+}
+
+table thead tr th:last-child {
+    border-top-right-radius: 8px;
+}
+
+table thead tr th {
+    background-color: #f0bebe;
+}
+
+body {
+    background: no-repeat center url(../../../assets/Background/background.png);
+    background-size: cover;
+}
+
+tbody tr {
+    cursor: pointer;
+}

@@ -1,0 +1,55 @@
+/* ativa smooth scroll via CSS */
+html {
+  scroll-behavior: smooth;
+}
+
+/* cores customizadas */
+$primary:       #dc3545;
+$primary-hover: #c82333;
+
+/* override utilitários bootstrap para usar vermelho */
+.text-primary {
+  color: $primary !important;
+}
+
+.text-bg-primary,
+.bg-primary {
+  background-color: $primary !important;
+  color: #fff !important;
+}
+
+.btn-primary {
+  background-color: $primary !important;
+  border-color: $primary !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: $primary-hover !important;
+  border-color: $primary-hover !important;
+}
+
+.btn-outline-primary {
+  color: $primary !important;
+  border-color: $primary !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  color: #fff !important;
+  background-color: $primary-hover !important;
+  border-color: $primary-hover !important;
+}
+
+.feature-icon-small.text-bg-primary {
+  background-color: $primary !important;
+}
+
+.botao-barra{
+  cursor: pointer;
+}
+
+/* fixa margem para scroll com header sticky */
+section[id] {
+  scroll-margin-top: 80px;
+}

@@ -1,0 +1,215 @@
+:host {
+
+    display: block;
+
+    height: 100vh; 
+
+}
+
+
+.login-container {
+
+    height: 100%;
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: url('/assets/Background/background.png') no-repeat center center;
+
+    background-size: cover;
+
+}
+
+.error-message {
+    color: #c62828; 
+    font-size: 0.8rem;
+    font-weight: 500; 
+    text-align: left;
+    margin-top: 5px;
+  }
+
+  .options-container {
+    text-align: right;
+    margin-bottom: 20px;
+  }
+  
+  .forgot-password-link {
+    font-size: 0.9rem;
+    color: #555;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+.login-box {
+
+    background: rgba(255, 255, 255, 0.95); 
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+input.ng-invalid.ng-touched {
+    border-bottom-color: red;
+  }
+
+.logo {
+
+    margin-bottom: 30px;
+}
+
+
+
+.form-group {
+    position: relative;
+    margin-bottom: 25px;
+
+}
+
+
+input {
+    width: 100%;
+    padding: 8px 7px 0px 5px; 
+
+
+
+
+    border: none; 
+    border-bottom: 2px solid #ddd; 
+    border-radius: 0; 
+    background-color: transparent; 
+    
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    &:focus {
+        outline: none;
+        border-bottom-color: #e53935;
+
+    }
+
+}
+
+
+.input-icon {
+
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    color: #999;
+
+}
+
+.input-icon.clickable {
+    cursor: pointer;
+    transition: color 0.3s;
+    &:hover {
+        color: #333;
+
+    }
+}
+
+
+.login-button {
+    width: 100%;
+    padding: 15px;
+    border-radius: 30px;
+    border: none;
+    background: linear-gradient(45deg, #e53935, #c62828);
+    color: rgb(255, 255, 255);
+
+    font-size: 1rem;
+
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+
+
+    &:hover {
+
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(229, 57, 53, 0.4);
+    }
+}
+
+
+.register-button {
+    width: 100%;
+    padding: 13px; 
+    border-radius: 30px;
+
+    border: 2px solid #e53935;
+    background-color: transparent;
+    color: #e53935; 
+
+    font-size: 1rem;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease; 
+    margin-top: 15px; 
+
+    &:hover {
+        background-color: #ffffff;
+        color: rgb(255, 0, 0);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(229, 57, 53, 0.4);
+    }
+}
+
+.logo img {
+
+    display: block; 
+    margin: 0 auto; 
+    width: 180px; 
+    height: auto; 
+}
+
+.voltar-button{
+
+     width: 100%;
+    padding: 13px; 
+    border-radius: 30px;
+
+    border: 2px solid #e53935;
+    background-color: transparent; 
+    color: #e53935; 
+
+    font-size: 1rem;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease; 
+    margin-top: 15px;
+
+    &:hover {
+        background-color: #ffffff;
+        color: rgb(255, 0, 0);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(229, 57, 53, 0.4);
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+      
+      input.ng-invalid.ng-touched {
+        border-bottom-color: red;
+        animation: shake 0.3s; 
+      }
+}

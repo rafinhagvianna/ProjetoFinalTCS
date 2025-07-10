@@ -1,0 +1,126 @@
+<main class="login-container">
+  <section class="login-box">
+    <div class="logo">
+      <img src="assets/BankFlow.png" alt="Logo BankFlow">
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+<div class="form-group">
+  <input
+    type="text"
+    placeholder="Nome Completo"
+    formControlName="nome">
+  
+  <div *ngIf="registerForm.get('nome')?.touched && registerForm.get('nome')?.errors"
+       class="error-message">
+    <div *ngIf="registerForm.get('nome')?.errors?.['required']">
+      O nome é obrigatório.
+    </div>
+  </div>
+</div>
+
+      <div class="form-group">
+        <input
+          type="text"
+          mask="000.000.000-00"
+          [showMaskTyped]="true"
+          placeholder="___.___.___-__"
+          formControlName="cpf">
+        <div *ngIf="registerForm.get('cpf')?.touched && registerForm.get('cpf')?.errors"
+             class="error-message">
+          <div *ngIf="registerForm.get('cpf')?.errors?.['cpfInvalido']">
+            O CPF deve conter exatamente 11 números.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input
+          type="tel"
+          mask="(00) 00000-0000"
+          [showMaskTyped]="true"
+          placeholder="(__) _____-____"
+          formControlName="telefone">
+        <div *ngIf="registerForm.get('telefone')?.touched && registerForm.get('telefone')?.errors"
+             class="error-message">
+          Telefone deve ter ter 11 dígitos.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input
+          type="text"
+          mask="0000"
+          [showMaskTyped]="true"
+          placeholder="____"
+          formControlName="agencia">
+        <div *ngIf="registerForm.get('agencia')?.touched && registerForm.get('agencia')?.errors"
+             class="error-message">
+          <div *ngIf="registerForm.get('agencia')?.errors?.['agenciaInvalida']">
+            A agência deve conter  4 dígitos.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input
+          type="text"
+          mask="00000000-0"
+          [showMaskTyped]="true"
+          placeholder="________-_"
+          formControlName="conta">
+        <div *ngIf="registerForm.get('conta')?.touched && registerForm.get('conta')?.errors"
+             class="error-message">
+          <div *ngIf="registerForm.get('conta')?.errors?.['contaInvalida']">
+            A conta deve conter exatamente 9 dígitos.
+          </div>
+        </div>
+      </div>
+
+<div class="form-group">
+  <input
+    type="email"
+    placeholder="E-mail"
+    formControlName="email">
+  
+  <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors"
+       class="error-message">
+    <div *ngIf="registerForm.get('email')?.errors?.['required']">
+      E-mail no formato inválido.
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <input
+    [type]="hideRegisterPassword ? 'password' : 'text'"
+    placeholder="Crie sua Senha"
+    formControlName="senha">
+  
+  <div *ngIf="registerForm.get('senha')?.touched && registerForm.get('senha')?.errors"
+       class="error-message">
+    <div *ngIf="registerForm.get('senha')?.errors?.['required']">
+      Senha é obrigatória.
+    </div>
+  </div>
+</div>
+      <div class="form-group">
+        <input
+          [type]="hideRegisterPassword ? 'password' : 'text'"
+          placeholder="Confirme sua Senha"
+          formControlName="confirmarSenha">
+      </div>
+
+      <div *ngIf="registerForm.hasError('senhasNaoCorrespondem') &&
+                  registerForm.get('confirmarSenha')?.touched"
+           class="error-message">
+        As senhas não correspondem.
+      </div>
+
+      <button type="submit" class="login-button">Cadastrar</button>
+      <button type="reset" class="voltar-button">Limpar</button>
+      <button type="button" class="voltar-button" routerLink="/login">Voltar</button>
+    </form>
+  </section>
+</main>
