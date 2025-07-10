@@ -1,4 +1,11 @@
 package com.microservicos.authservice.dto;
 
-public class LoginResponseDTO {
-}
+
+public record LoginResponseDTO(
+        String accessToken,
+        String refreshToken,
+        String tokenType,
+        Long expiresIn,
+        String userId,
+        String role
+) {}
