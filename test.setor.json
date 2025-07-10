@@ -5,6 +5,7 @@
       "subType": "03"
     }
   },
+  "id": "38147608-1c1d-4d87-9360-7d2aa9516035",
   "nome": "Bloqueio/Desbloqueio de Cartão",
   "descricao": "Cliente solicita o bloqueio por perda/roubo ou desbloqueio de um novo cartão.",
   "isAtivo": true,
@@ -19,6 +20,7 @@
       "subType": "03"
     }
   },
+  "id": "16ad5e5f-1061-4e09-b290-00bb1cbe3d99",
   "nome": "Análise de Fraude",
   "descricao": "Investigação de transações não reconhecidas pelo cliente.",
   "isAtivo": true,
@@ -33,6 +35,7 @@
       "subType": "03"
     }
   },
+  "id": "c40e4730-68ca-46aa-bbb9-8cb90800ed6a",
   "nome": "Abertura de Conta",
   "descricao": "Processo de cadastro e validação de documentos para novos clientes.",
   "isAtivo": true,
@@ -47,6 +50,7 @@
       "subType": "03"
     }
   },
+  "id": "b96c17fe-b3dc-4e0b-baac-a0a7b0335c1e",
   "nome": "Encerramento de Conta",
   "descricao": "Procedimentos para fechar a conta e transferir saldos remanescentes.",
   "isAtivo": true,
@@ -61,6 +65,7 @@
       "subType": "03"
     }
   },
+  "id": "1c371b01-4f4d-49af-998a-aae9aeb388a1",
   "nome": "Renegociação de Dívidas",
   "descricao": "Clientes buscando negociar débitos, parcelamentos ou obter descontos.",
   "isAtivo": true,
@@ -75,6 +80,7 @@
       "subType": "03"
     }
   },
+  "id": "dd56dcf6-9db8-454b-a919-410d6ca653c4",
   "nome": "Suporte ao App/Internet Banking",
   "descricao": "Ajuda com problemas de acesso, funcionalidades ou erros no sistema digital.",
   "isAtivo": true,
@@ -89,6 +95,7 @@
       "subType": "03"
     }
   },
+  "id": "0ddad861-48c2-40c2-9df5-5e656cbc0938",
   "nome": "Informações Gerais",
   "descricao": "Dúvidas sobre produtos, taxas, horários de funcionamento, etc.",
   "isAtivo": true,
