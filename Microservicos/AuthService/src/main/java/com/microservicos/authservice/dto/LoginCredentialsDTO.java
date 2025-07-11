@@ -1,3 +1,3 @@
 package com.microservicos.authservice.dto;
 
-public record LoginCredentialsDTO(String usernameOrEmail, String password) {}
+public record LoginCredentialsDTO(String email, String senha) {}

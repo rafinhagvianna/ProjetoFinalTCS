@@ -1,6 +1,7 @@
 package com.microservicos.authservice.jwt;
 
 import com.microservicos.authservice.service.JwtService;
+import com.microservicos.authservice.security.CustomUserDetails; // Importe seu CustomUserDetails
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,19 +9,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetails; // Ainda usado
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component; // Importe esta anotação
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.UUID; // Para converter o subject
 
-@Component // Esta anotação é crucial para o Spring reconhecer o filtro como um Bean
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService; // Para carregar detalhes do usuário
+    private final UserDetailsService userDetailsService; // Ainda injetado, mas usado de forma diferente
 
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
@@ -35,45 +37,48 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String userSubject; // ID ou nome de usuário do token
+        final String userSubject; // Este será o userId.toString()
+        final String userEmail;
+        final String userFullName;
+        final String userRole;
 
-        // 1. Verifica se o cabeçalho Authorization está presente e no formato "Bearer token"
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response); // Continua a cadeia de filtros
+            filterChain.doFilter(request, response);
             return;
         }
 
-        // 2. Extrai o token JWT (removendo "Bearer ")
         jwt = authHeader.substring(7);
+        userSubject = jwtService.extractSubject(jwt); // userId.toString()
+        userEmail = jwtService.extractClaim(jwt, claims -> claims.get("email", String.class));
+        userFullName = jwtService.extractClaim(jwt, claims -> claims.get("fullName", String.class));
+        userRole = jwtService.extractClaim(jwt, claims -> claims.get("role", String.class));
 
-        // 3. Extrai o "subject" (geralmente o ID ou username do usuário) do token
-        userSubject = jwtService.extractSubject(jwt);
 
-        // 4. Se o subject foi extraído e não há autenticação no contexto de segurança atual
         if (userSubject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // 5. Carrega os detalhes do usuário usando o UserDetailsService
-            // No auth-service, o UserDetailsService pode precisar de uma implementação que
-            // constrói um UserDetails com base no 'userSubject' do token,
-            // já que você não deve ter um banco de dados de usuários local.
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userSubject);
-
-            // 6. Valida o token
+            // Valida o token e cria um CustomUserDetails com os claims
             if (jwtService.isTokenValid(jwt, userSubject)) {
-                // Se o token é válido, cria um objeto de autenticação
+                // Converta userSubject para UUID
+                UUID userId = UUID.fromString(userSubject);
+
+                // Crie o CustomUserDetails com os dados extraídos do token
+                CustomUserDetails customUserDetails = new CustomUserDetails(userId, userEmail, userFullName, userRole);
+
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null, // Credenciais nulas, pois já autenticamos via token
-                        userDetails.getAuthorities() // Permissões do usuário
+                        customUserDetails, // Agora o principal é o nosso CustomUserDetails
+                        null,
+                        customUserDetails.getAuthorities() // As autoridades vêm do CustomUserDetails
                 );
-                // Define detalhes da autenticação a partir da requisição
                 authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
-                // Define o objeto de autenticação no contexto de segurança do Spring
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-        // 7. Continua a cadeia de filtros (para o próximo filtro ou para o DispatcherServlet)
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return request.getServletPath().equals("/api/auth/login");
     }
 }

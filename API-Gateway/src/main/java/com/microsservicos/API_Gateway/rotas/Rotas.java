@@ -148,7 +148,13 @@ public class Rotas {
                 .route(RequestPredicates.path("/api/documentos/**"), HandlerFunctions.http("http://localhost:8084"))
                 .build();
     }
-
+    
+    @Bean
+    public RouterFunction<ServerResponse> setorAuthServiceRota(){
+        return route("auth_service")
+                .route(RequestPredicates.path("/api/auth/**"), HandlerFunctions.http("http://localhost:8083"))
+                .build();
+    }
 
     @Bean
     public RouterFunction<ServerResponse> triagemServiceRota(){
@@ -185,7 +191,7 @@ public class Rotas {
     @Bean
     public RouterFunction<ServerResponse> clienteServiceRota(){
         return route("cliente_service") //
-                .route(RequestPredicates.POST("/api/cliente"), HandlerFunctions.http("http://localhost:8086"))
+                .route(RequestPredicates.path("/api/cliente"), HandlerFunctions.http("http://localhost:8086"))
                 .route(RequestPredicates.POST("/api/cliente/login"), HandlerFunctions.http("http://localhost:8086"))
                 .route(RequestPredicates.POST("/api/cliente/esqueci-senha"), HandlerFunctions.http("http://localhost:8086"))
                 .route(RequestPredicates.POST("/api/cliente/redefinir-senha"), HandlerFunctions.http("http://localhost:8086"))

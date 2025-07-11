@@ -19,3 +19,9 @@ eureka:
   instance:
     hostname: localhost # Para ambiente de desenvolvimento.
 
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG # Para ver mais detalhes das requisições web
+    com.microservicos.authservice: DEBUG
+

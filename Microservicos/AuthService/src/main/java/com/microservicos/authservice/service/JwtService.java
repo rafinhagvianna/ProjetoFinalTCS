@@ -28,11 +28,11 @@ public class JwtService {
     private Long refreshExpiration; // Tempo de expiração do refresh token em segundos
 
     // Método para gerar o Access Token
-    public String generateToken(UUID userId, String role, String username, String email, String fullName) {
+    public String generateToken(UUID userId, String role, String email, String fullName) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
         claims.put("email", email);
-        claims.put("fullName", fullName); // Adicionar o nome completo como claim
+        claims.put("fullName", fullName); // Adicionar o name completo como claim
         return buildToken(claims, userId.toString(), jwtExpiration);
     }
 

@@ -1,11 +1,14 @@
 package com.microservicos.authservice.dto;
 
 
+import java.util.UUID;
+
 public record LoginResponseDTO(
-        String accessToken,
+        String message,
+        String accessToken1,
         String refreshToken,
-        String tokenType,
-        Long expiresIn,
-        String userId,
-        String role
-) {}
+        String nome,
+        String email
+) {
+
+}

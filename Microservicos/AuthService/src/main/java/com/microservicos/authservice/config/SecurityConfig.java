@@ -3,7 +3,7 @@ package com.microservicos.authservice.config;
 import com.microservicos.authservice.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationProvider; // Mantenha o import
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,27 +16,30 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
+    // Remova a injeção direta do AuthenticationProvider aqui se ele não for usado diretamente no http.authenticationProvider()
+    // ou se você confiar que o filtro JWT o usará implicitamente.
+    // Para simplificar, vamos injetar apenas o filtro JWT e deixar o AuthenticationManager
+    // ser configurado separadamente via ApplicationConfig.
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, AuthenticationProvider authenticationProvider) {
+    // Remova o construtor gerado pelo Lombok e use um construtor manual
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
-        this.authenticationProvider = authenticationProvider;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Desabilita CSRF para APIs REST
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Permite acesso público aos endpoints de autenticação
-                        .requestMatchers("/api/auth/**").permitAll() // Seus endpoints de login/registro
-                        // Todos os outros endpoints requerem autenticação
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/login").permitAll() // Apenas o endpoint de login é totalmente público
+                        .anyRequest().authenticated() // Qualquer outra requisição requer autenticação (via JWT)
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Sessões sem estado (para JWT)
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .authenticationProvider(authenticationProvider)
+                // Remova .authenticationProvider(authenticationProvider) daqui,
+                // pois o JwtAuthenticationFilter e o AuthenticationManager (via ApplicationConfig)
+                // já cuidarão da autenticação quando um token estiver presente.
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

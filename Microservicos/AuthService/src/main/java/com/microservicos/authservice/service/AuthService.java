@@ -1,82 +1,91 @@
 package com.microservicos.authservice.service;
 
-import com.microservicos.authservice.dto.AuthValidationResponseDTO;
+import com.microservicos.authservice.dto.*;
 import com.microservicos.authservice.client.CadastroClienteServiceClient;
 import com.microservicos.authservice.client.CadastroFuncionarioServiceClient;
-import com.microservicos.authservice.dto.LoginCredentialsDTO; // Novo DTO para enviar credenciais aos serviços de cadastro
-import com.microservicos.authservice.dto.LoginRequestDTO;
-import com.microservicos.authservice.dto.LoginResponseDTO;
 import com.microservicos.authservice.exception.InvalidCredentialsException; // Exceção personalizada
 
 import feign.FeignException; // Para tratar erros de comunicação Feign
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import feign.FeignException; // Importe FeignException
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class AuthService {
 
     private final JwtService jwtService;
-    private final CadastroClienteServiceClient cadastroClienteServiceClient;
-    private final CadastroFuncionarioServiceClient cadastroFuncionarioServiceClient;
+    private final CadastroClienteServiceClient clienteClient;
+    private final CadastroFuncionarioServiceClient funcionarioClient;
 
-    public AuthService(JwtService jwtService,
-                       CadastroClienteServiceClient cadastroClienteServiceClient,
-                       CadastroFuncionarioServiceClient cadastroFuncionarioServiceClient) {
+    public AuthService(JwtService jwtService, CadastroClienteServiceClient clienteClient, CadastroFuncionarioServiceClient funcionarioClient) {
         this.jwtService = jwtService;
-        this.cadastroClienteServiceClient = cadastroClienteServiceClient;
-        this.cadastroFuncionarioServiceClient = cadastroFuncionarioServiceClient;
+        this.clienteClient = clienteClient;
+        this.funcionarioClient = funcionarioClient;
     }
 
-    public LoginResponseDTO authenticateAndGenerateToken(LoginRequestDTO loginRequest) {
-        AuthValidationResponseDTO authDetails = null;
+    public LoginResponseDTO login(LoginRequestDTO request) {
+        UserValidationResponseDTO userData = null;
+        String role = null;
 
-        // Tenta autenticar como Cliente primeiro
+        // 1. Tenta autenticar como Cliente
         try {
-            authDetails = cadastroClienteServiceClient.validateClientCredentials(
-                    new LoginCredentialsDTO(loginRequest.usernameOrEmail(), loginRequest.password())
-            );
-        } catch (FeignException.NotFound e) { // Usuário não encontrado no cliente
-            // Não faz nada, continua para tentar como funcionário
-        } catch (FeignException.BadRequest e) { // Credenciais inválidas para cliente
-            throw new InvalidCredentialsException("Credenciais inválidas para cliente.");
+            ResponseEntity<UserValidationResponseDTO> clienteResponse = clienteClient.validarLoginCliente(request);
+
+            if (clienteResponse.getStatusCode() == HttpStatus.OK && clienteResponse.getBody() != null) {
+                userData = clienteResponse.getBody();
+                role = "CLIENTE";
+            }
+        } catch (FeignException.Unauthorized e) {
+            // Se o cliente service retornar 401, isso significa credenciais inválidas para cliente
+            System.out.println("Login de cliente falhou (401): " + e.getMessage());
         } catch (Exception e) {
-            // Logar o erro: erro de comunicação inesperado
-            throw new RuntimeException("Erro de comunicação com o serviço de cadastro de clientes.", e);
+            System.out.println("Erro na chamada ao cliente service: " + e.getMessage());
+            // Outros erros da chamada ao Feign
         }
 
-        // Se não autenticou como cliente, tenta como Funcionário
-        if (authDetails == null) {
+        // 2. Se não foi cliente, tenta autenticar como Funcionário
+        if (userData == null) {
             try {
-                authDetails = cadastroFuncionarioServiceClient.validateEmployeeCredentials(
-                        new LoginCredentialsDTO(loginRequest.usernameOrEmail(), loginRequest.password())
-                );
-            } catch (FeignException.NotFound e) { // Usuário não encontrado no funcionário
-                // Não faz nada, a exceção final será lançada
-            } catch (FeignException.BadRequest e) { // Credenciais inválidas para funcionário
-                throw new InvalidCredentialsException("Credenciais inválidas para funcionário.");
+                ResponseEntity<UserValidationResponseDTO> funcionarioResponse = funcionarioClient.validarLoginFuncionario(request);
+
+                if (funcionarioResponse.getStatusCode() == HttpStatus.OK && funcionarioResponse.getBody() != null) {
+                    userData = funcionarioResponse.getBody();
+                    role = "FUNCIONARIO";
+                }
+            } catch (FeignException.Unauthorized e) {
+                // Se o funcionario service retornar 401, credenciais inválidas para funcionário
+                System.out.println("Login de funcionário falhou (401): " + e.getMessage());
             } catch (Exception e) {
-                // Logar o erro: erro de comunicação inesperado
-                throw new RuntimeException("Erro de comunicação com o serviço de cadastro de funcionários.", e);
+                System.out.println("Erro na chamada ao funcionário service: " + e.getMessage());
             }
         }
 
-        // Se após ambas as tentativas, não houver detalhes de autenticação, as credenciais são inválidas
-        if (authDetails == null) {
-            throw new InvalidCredentialsException("Nome de usuário/email ou senha inválidos.");
+        // 3. Se as credenciais forem válidas para um dos tipos de usuário, gera o JWT
+        if (userData != null && role != null) {
+            String accessToken = jwtService.generateToken(
+                    userData.getId(),
+                    role,
+                    userData.getEmail(),
+                    userData.getName()
+            );
+            String refreshToken = jwtService.generateRefreshToken(userData.getId(), role); // Gerar refresh token
+
+            return new LoginResponseDTO(
+                    "Login bem-sucedido",
+                    accessToken,
+                    refreshToken,
+                    userData.getName(),
+                    userData.getEmail()
+            );
+        } else {
+            // Se chegou aqui, nenhuma autenticação foi bem-sucedida
+            throw new InvalidCredentialsException("E-mail ou senha incorretos.");
         }
-
-        // Se chegou aqui, a autenticação foi bem-sucedida em um dos serviços de cadastro
-        // Gera o JWT usando os detalhes obtidos
-        String accessToken = jwtService.generateToken(authDetails.userId(), authDetails.role(), authDetails.username(), authDetails.email(), authDetails.fullName());
-        String refreshToken = jwtService.generateRefreshToken(authDetails.userId(), authDetails.role()); // Opcional, se estiver usando refresh tokens
-
-        return new LoginResponseDTO(
-                accessToken,
-                refreshToken,
-                "Bearer",
-                jwtService.getExpirationTime(), // Método em JwtService para obter tempo de expiração
-                authDetails.userId().toString(),
-                authDetails.role()
-        );
     }
 }

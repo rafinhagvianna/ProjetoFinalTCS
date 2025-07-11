@@ -1,4 +1,6 @@
 package com.microsservicos.CadastroClienteService.dto;
 
-public record LoginResponse(String message) {
+import java.util.UUID;
+
+public record LoginResponse(String message, String name, String email, UUID id) {
 }

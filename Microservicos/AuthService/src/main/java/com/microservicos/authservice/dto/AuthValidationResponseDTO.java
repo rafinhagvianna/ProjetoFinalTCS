@@ -9,6 +9,6 @@ public record AuthValidationResponseDTO(
         String email,
         String role,     // A role do usuário (ex: "CLIENTE", "FUNCIONARIO")
         // Você pode adicionar outros "claims" que queira incluir no JWT aqui
-        // Ex: String nomeCompleto, List<String> permissoesAdicionais
+        // Ex: String nameCompleto, List<String> permissoesAdicionais
         String fullName
 ) {}
