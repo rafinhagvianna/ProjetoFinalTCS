@@ -44,16 +44,16 @@ public class ClienteController {
     @PostMapping("/login")
 // Mude a assinatura para retornar um objeto LoginResponse
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
-        boolean loginValido = service.verificarLogin(req);
+        Cliente loginValido = service.verificarLogin(req);
 
-        if (loginValido) {
+        if (loginValido != null) {
             // Crie e retorne um novo objeto LoginResponse.
             // O Spring irá serializá-lo para JSON automaticamente.
-            LoginResponse response = new LoginResponse("Login bem-sucedido");
+            LoginResponse response = new LoginResponse("Login bem-sucedido", loginValido.getNome(), loginValido.getEmail(), loginValido.getId());
             return ResponseEntity.ok(response);
         } else {
             // Faça o mesmo para a resposta de erro.
-            LoginResponse response = new LoginResponse("E-mail ou senha incorretos.");
+            LoginResponse response = new LoginResponse("E-mail ou senha incorretos.", "","", null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }

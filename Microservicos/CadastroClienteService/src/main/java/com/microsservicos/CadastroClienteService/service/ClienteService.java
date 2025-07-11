@@ -47,12 +47,12 @@ public class ClienteService {
         return toResponse(salvo);
     }
 
-    public boolean verificarLogin(LoginRequest req) {
+    public Cliente verificarLogin(LoginRequest req) {
         Optional<Cliente> optCliente = repository.findByEmail(req.email());
 
         // Se o email não for encontrado, o login falha.
         if (optCliente.isEmpty()) {
-            return false;
+            return null;
         }
 
         Cliente cliente = optCliente.get();
@@ -60,7 +60,11 @@ public class ClienteService {
         String hashDoBanco = cliente.getSenha(); // O hash que está salvo
 
         // O 'matches' compara a senha pura com o hash do banco de forma segura.
-        return passwordEncoder.matches(senhaPura, hashDoBanco);
+        if (passwordEncoder.matches(senhaPura, hashDoBanco)){
+            return cliente;
+        }else {
+            return null;
+        }
     }
 
     public List<ClienteResponse> listarClientes() {
