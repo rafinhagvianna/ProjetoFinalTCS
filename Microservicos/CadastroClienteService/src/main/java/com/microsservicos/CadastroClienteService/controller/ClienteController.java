@@ -54,7 +54,7 @@ public class ClienteController {
             return ResponseEntity.ok(response);
         } else {
             // Faça o mesmo para a resposta de erro.
-            LoginResponse response = new LoginResponse("E-mail ou senha incorretos.", "", "", null);
+            LoginResponse response = new LoginResponse("E-mail ou senha incorretos.", "","", null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }

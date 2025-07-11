@@ -49,6 +49,7 @@ public class SetorService {
         setor.setTempoMedioMinutos(setorRequest.tempoMedioMinutos());
         // NEW: Set the list of required document IDs
         setor.setDocumentosObrigatoriosIds(setorRequest.documentosObrigatoriosIds()); // Use the new DTO field
+        setor.setIcone(setorRequest.icone());
 
         setorRepository.save(setor);
         log.info("Setor '{}' (ID: {}) criado com sucesso!", setor.getNome(), setor.getId());
@@ -129,7 +130,8 @@ public class SetorService {
                 setor.isAtivo(),
                 setor.getPrioridade(),
                 setor.getTempoMedioMinutos(),
-                setor.getDocumentosObrigatoriosIds() // NEW: Include the list of document IDs
+                setor.getDocumentosObrigatoriosIds(),// NEW: Include the list of document IDs
+                setor.getIcone()
         );
     }
 

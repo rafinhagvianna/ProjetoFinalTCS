@@ -62,7 +62,7 @@ public class ClienteService {
         // O 'matches' compara a senha pura com o hash do banco de forma segura.
         if (passwordEncoder.matches(senhaPura, hashDoBanco)){
             return cliente;
-        }else{
+        }else {
             return null;
         }
     }

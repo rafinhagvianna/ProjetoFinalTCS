@@ -17,26 +17,29 @@ public class Setor {
     private boolean isAtivo;
     private int prioridade; // 1 -> alta;
     private Integer tempoMedioMinutos;
-    private List<UUID> documentosObrigatoriosIds = new ArrayList<>(); // Initialize to avoid NullPointerException
+    private List<UUID> documentosObrigatoriosIds = new ArrayList<>();
+    private String icone;// Initialize to avoid NullPointerException
 
 
     public Setor() {
     }
 
-    public Setor(UUID id, String nome, String descricao, boolean isAtivo, int prioridade, List<UUID> documentosObrigatoriosIds) {
+    public Setor(UUID id, String nome, String descricao, boolean isAtivo, int prioridade, List<UUID> documentosObrigatoriosIds, String icone) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
         this.isAtivo = isAtivo;
         this.prioridade = prioridade;
         this.documentosObrigatoriosIds = documentosObrigatoriosIds;
+        this.icone = icone;
     }
-    public Setor(UUID id, String nome, String descricao, boolean isAtivo, int prioridade) {
+    public Setor(UUID id, String nome, String descricao, boolean isAtivo, int prioridade, String icone) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
         this.isAtivo = isAtivo;
         this.prioridade = prioridade;
+        this.icone = icone;
     }
 
     // Getters e Setters
@@ -90,5 +93,13 @@ public class Setor {
 
     public void setDocumentosObrigatoriosIds(List<UUID> documentosObrigatoriosIds) {
         this.documentosObrigatoriosIds = documentosObrigatoriosIds != null ? new ArrayList<>(documentosObrigatoriosIds) : new ArrayList<>();
+    }
+
+    public String getIcone() {
+        return icone;
+    }
+
+    public void setIcone(String icone) {
+        this.icone = icone;
     }
 }
