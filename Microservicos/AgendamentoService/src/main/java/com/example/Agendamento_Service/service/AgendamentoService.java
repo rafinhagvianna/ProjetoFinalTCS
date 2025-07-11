@@ -3,11 +3,15 @@ package com.example.Agendamento_Service.service;
 import com.example.Agendamento_Service.dto.AgendamentoRequestDTO;
 import com.example.Agendamento_Service.dto.DocumentoPendenteResponseDTO;
 import com.example.Agendamento_Service.dto.DocumentoStatusUpdateRequestDTO;
+import com.example.Agendamento_Service.dto.TokenValidationDTO;
+import com.example.Agendamento_Service.client.AuthServiceClient;
 import com.example.Agendamento_Service.client.DocumentoCatalogoResponse;
 import com.example.Agendamento_Service.client.ServicoResponse;
 import com.example.Agendamento_Service.enums.StatusAgendamento;
 import com.example.Agendamento_Service.enums.StatusDocumento;
+import com.example.Agendamento_Service.exception.AuthServiceException;
 import com.example.Agendamento_Service.exception.ComunicacaoServicoException;
+import com.example.Agendamento_Service.exception.InvalidTokenException;
 import com.example.Agendamento_Service.exception.RecursoNaoEncontradoException;
 import com.example.Agendamento_Service.model.Agendamento;
 import com.example.Agendamento_Service.model.DocumentoPendente;
@@ -35,16 +39,19 @@ public class AgendamentoService {
     private final DocumentoPendenteRepository documentoPendenteRepository; // Mantido, se não for usado, pode ser removido
     private final CatalogoServiceFacade catalogoServiceFacade;
     private final UsuarioServiceFacade usuarioServiceFacade;
+    private final AuthServiceClient authServiceClient;
 
     // O WebClient foi removido do construtor, pois os Facades agora o encapsulam.
     public AgendamentoService(AgendamentoRepository repository,
                               DocumentoPendenteRepository documentoPendenteRepository,
                               CatalogoServiceFacade catalogoServiceFacade,
-                              UsuarioServiceFacade usuarioServiceFacade) {
+                              UsuarioServiceFacade usuarioServiceFacade,
+                              AuthServiceClient authServiceClient) {
         this.repository = repository;
         this.documentoPendenteRepository = documentoPendenteRepository;
         this.catalogoServiceFacade = catalogoServiceFacade;
         this.usuarioServiceFacade = usuarioServiceFacade;
+        this.authServiceClient = authServiceClient;
     }
 
     public List<Agendamento> listarTodos() {
@@ -63,7 +70,7 @@ public class AgendamentoService {
     }
 
     @Transactional
-    public Agendamento salvar(AgendamentoRequestDTO agendamentoDTO) {
+    public Agendamento salvar(AgendamentoRequestDTO agendamentoDTO, UUID idCliente) {
         // log.info("Iniciando criação de novo agendamento para usuário ID: {} e serviço ID: {}", agendamentoDTO.usuarioId(), agendamentoDTO.servicoId());
 
         if (!isDataEHoraDeTrabalhoValido(agendamentoDTO.dataHora())) {
@@ -72,7 +79,7 @@ public class AgendamentoService {
         }
 
         if (repository.findByUsuarioIdAndServicoIdAndDataHora(
-                agendamentoDTO.usuarioId(),
+                idCliente,
                 agendamentoDTO.servicoId(),
                 agendamentoDTO.dataHora()).isPresent()) {
             // log.warn("Agendamento duplicado detectado para usuário ID: {}, serviço ID: {}, data/hora: {}",
@@ -103,14 +110,14 @@ public class AgendamentoService {
         }
 
         Agendamento agendamento = new Agendamento();
-        agendamento.setUsuarioId(agendamentoDTO.usuarioId());
+        agendamento.setUsuarioId(idCliente);
         agendamento.setAtendenteId(agendamentoDTO.atendenteId()); // atendenteId pode ser nulo agora
         agendamento.setServicoId(agendamentoDTO.servicoId());
         agendamento.setDataHora(agendamentoDTO.dataHora());
         agendamento.setCriadoEm(LocalDateTime.now()); // Garantir que está sendo setado
 
         // 3. Obter nome do cliente/usuário usando o Facade
-        String nomeClienteSnapshot = usuarioServiceFacade.buscarNomeCliente(agendamentoDTO.usuarioId());
+        String nomeClienteSnapshot = usuarioServiceFacade.buscarNomeCliente(idCliente);
         agendamento.setNomeClienteSnapshot(nomeClienteSnapshot);
 
         // 4. Adicionar snapshot do nome do serviço
@@ -143,7 +150,7 @@ public class AgendamentoService {
     }
 
     @Transactional
-    public Agendamento atualizarAgendamento(UUID id, AgendamentoRequestDTO agendamentoDTO) {
+    public Agendamento atualizarAgendamento(UUID id, AgendamentoRequestDTO agendamentoDTO, UUID idCliente) {
         // log.info("Atualizando agendamento ID: {}", id);
         return repository.findById(id).map(agendamentoExistente -> {
 
@@ -153,7 +160,7 @@ public class AgendamentoService {
             }
 
             Optional<Agendamento> duplicado = repository.findByUsuarioIdAndServicoIdAndDataHora(
-                    agendamentoDTO.usuarioId(),
+                    idCliente,
                     agendamentoDTO.servicoId(),
                     agendamentoDTO.dataHora());
 
@@ -178,12 +185,12 @@ public class AgendamentoService {
                 throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço após a atualização.");
             }
 
-            agendamentoExistente.setUsuarioId(agendamentoDTO.usuarioId());
+            agendamentoExistente.setUsuarioId(idCliente);
             agendamentoExistente.setAtendenteId(agendamentoDTO.atendenteId());
             agendamentoExistente.setServicoId(agendamentoDTO.servicoId());
             agendamentoExistente.setDataHora(agendamentoDTO.dataHora());
             // Se necessário, atualizar snapshots de nome de cliente/serviço
-            agendamentoExistente.setNomeClienteSnapshot(usuarioServiceFacade.buscarNomeCliente(agendamentoDTO.usuarioId()));
+            agendamentoExistente.setNomeClienteSnapshot(usuarioServiceFacade.buscarNomeCliente(idCliente));
             agendamentoExistente.setNomeServicoSnapshot(setorInfo.nome());
 
 
@@ -194,15 +201,15 @@ public class AgendamentoService {
     }
 
     @Transactional
-    public Agendamento atualizarParcialAgendamento(UUID id, AgendamentoRequestDTO agendamentoDTO) {
+    public Agendamento atualizarParcialAgendamento(UUID id, AgendamentoRequestDTO agendamentoDTO, UUID idCliente) {
         // log.info("Atualizando parcialmente agendamento ID: {}", id);
         return repository.findById(id).map(agendamentoExistente -> {
             boolean dataHoraChanged = false;
             boolean servicoChanged = false;
             boolean usuarioChanged = false;
 
-            if (agendamentoDTO.usuarioId() != null && !agendamentoDTO.usuarioId().equals(agendamentoExistente.getUsuarioId())) {
-                agendamentoExistente.setUsuarioId(agendamentoDTO.usuarioId());
+            if (idCliente != null && !idCliente.equals(agendamentoExistente.getUsuarioId())) {
+                agendamentoExistente.setUsuarioId(idCliente);
                 usuarioChanged = true;
             }
             if (agendamentoDTO.atendenteId() != null && !Objects.equals(agendamentoDTO.atendenteId(), agendamentoExistente.getAtendenteId())) {
@@ -396,5 +403,31 @@ public class AgendamentoService {
                 doc.getObservacao(),
                 doc.getUrlDocumento()
         );
+    }
+
+    public UUID validateTokenAndGetUserId(String authorizationHeader) throws InvalidTokenException, AuthServiceException {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new InvalidTokenException("Cabeçalho Authorization Bearer ausente ou inválido.");
+        }
+
+        TokenValidationDTO validationResponse;
+        try {
+            validationResponse = authServiceClient.validateToken(authorizationHeader);
+        } catch (Exception e) {
+            // Logar o erro completo para depuração
+            System.err.println("Erro ao comunicar com AuthServer via Feign: " + e.getMessage());
+            throw new AuthServiceException("Falha na comunicação com o servidor de autenticação.", e);
+        }
+
+        boolean isValid = (validationResponse.getMessage() != null && validationResponse.getMessage().contains("válido"));
+
+        UUID idCliente = validationResponse.getUserId();
+
+        if (!isValid || idCliente == null) {
+            String message = validationResponse.getMessage() != null ? validationResponse.getMessage() : "Token inválido ou sessão expirada.";
+            throw new InvalidTokenException(message);
+        }
+
+        return idCliente;
     }
 }

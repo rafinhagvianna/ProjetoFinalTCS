@@ -4,8 +4,12 @@ import com.microsservicos.triagem.dto.AtualizarStatusTriagemDTO;
 import com.microsservicos.triagem.dto.DocumentoStatusUpdateRequestDTO;
 import com.microsservicos.triagem.dto.TriagemRequestDTO;
 import com.microsservicos.triagem.dto.TriagemResponseDTO;
+import com.microsservicos.triagem.exception.AuthServiceException;
+import com.microsservicos.triagem.exception.InvalidTokenException;
 import com.microsservicos.triagem.service.TriagemService;
 import jakarta.validation.Valid; // Importante: Adicionar import para @Valid
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,13 +42,23 @@ public class TriagemController {
      * @return ResponseEntity com o DTO da triagem criada e status 201 (Created).
      */
     @PostMapping
-    public ResponseEntity<TriagemResponseDTO> criarTriagem(@Valid @RequestBody TriagemRequestDTO dto) {
-        // O @Valid garante que o DTO será validado antes de chegar aqui.
-        // Se a validação falhar, uma MethodArgumentNotValidException será lançada,
-        // que pode ser capturada por um @ControllerAdvice global.
+    public ResponseEntity<?> criarTriagem(@Valid @RequestBody TriagemRequestDTO dto,
+                @RequestHeader("Authorization") String authorizationHeader) {
+
+        UUID idCliente;
+        try {
+            idCliente = triagemService.validateTokenAndGetUserId(authorizationHeader);
+        } catch (InvalidTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (AuthServiceException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao buscar agendamentos: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro interno ao processar a requisição.");
+        }
         return ResponseEntity
                 .status(201) // HTTP 201 Created para recursos recém-criados
-                .body(triagemService.criarTriagem(dto));
+                .body(triagemService.criarTriagem(dto, idCliente));
     }
 
     /**

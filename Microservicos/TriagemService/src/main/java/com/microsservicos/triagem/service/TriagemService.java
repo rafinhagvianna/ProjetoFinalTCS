@@ -1,15 +1,19 @@
 package com.microsservicos.triagem.service;
 
+import com.microsservicos.triagem.client.AuthServiceClient;
 import com.microsservicos.triagem.client.CadastroClienteServiceClient;
 import com.microsservicos.triagem.client.CatalogoServiceClient;
 import com.microsservicos.triagem.client.SetorResponse;
 import com.microsservicos.triagem.client.DocumentoCatalogoResponse;
 import com.microsservicos.triagem.dto.DocumentoStatusUpdateRequestDTO;
+import com.microsservicos.triagem.dto.TokenValidationDTO;
 import com.microsservicos.triagem.dto.TriagemRequestDTO;
 import com.microsservicos.triagem.dto.TriagemResponseDTO;
 import com.microsservicos.triagem.enums.StatusDocumento;
 import com.microsservicos.triagem.enums.StatusTriagem;
+import com.microsservicos.triagem.exception.AuthServiceException;
 import com.microsservicos.triagem.exception.ComunicacaoServicoException;
+import com.microsservicos.triagem.exception.InvalidTokenException;
 import com.microsservicos.triagem.exception.RecursoNaoEncontradoException;
 import com.microsservicos.triagem.mapper.TriagemMapper;
 import com.microsservicos.triagem.model.DocumentoPendente;
@@ -37,30 +41,33 @@ public class TriagemService {
     private final CatalogoServiceFacade catalogoServiceClient;
     private final CadastroClienteServiceClient cadastroClienteServiceClient;
     private final TriagemMapper triagemMapper;
+    private final AuthServiceClient authServiceClient;
 
     public TriagemService(TriagemRepository triagemRepository,
                           DocumentoPendenteRepository documentoPendenteRepository,
                           CatalogoServiceFacade catalogoServiceClient,
                           CadastroClienteServiceClient cadastroClienteServiceClient,
-                          TriagemMapper triagemMapper) {
+                          TriagemMapper triagemMapper,
+                          AuthServiceClient authServiceClient) {
         this.triagemRepository = triagemRepository;
         this.documentoPendenteRepository = documentoPendenteRepository;
         this.catalogoServiceClient = catalogoServiceClient;
         this.cadastroClienteServiceClient = cadastroClienteServiceClient;
         this.triagemMapper = triagemMapper;
+        this.authServiceClient = authServiceClient;
     }
 
     @Transactional
-    public TriagemResponseDTO criarTriagem(TriagemRequestDTO dto) {
+    public TriagemResponseDTO criarTriagem(TriagemRequestDTO dto, UUID clienteId) {
         Triagem triagem = new Triagem();
-        triagem.setClienteId(dto.clienteId());
+        triagem.setClienteId(clienteId);
         triagem.setServicoId(dto.servicoId());
         triagem.setStatus(StatusTriagem.AGUARDANDO);
         triagem.setPrioridade(dto.prioridade());
         triagem.setHorarioSolicitacao(LocalDateTime.now());
 
         SetorResponse servicoInfo = catalogoServiceClient.buscarSetorPorId(dto.servicoId());
-        triagem.setNomeClienteSnapshot(cadastroClienteServiceClient.getNomeCliente(dto.clienteId()));
+        triagem.setNomeClienteSnapshot(cadastroClienteServiceClient.getNomeCliente(clienteId));
         triagem.setNomeServicoSnapshot(servicoInfo.nome());
 
         triagem.setTempoEstimadoMinutos(servicoInfo.tempoMedioMinutos());
@@ -249,6 +256,32 @@ public class TriagemService {
         }
 
         return LocalDateTime.now(); // Fallback
+    }
+
+    public UUID validateTokenAndGetUserId(String authorizationHeader) throws InvalidTokenException, AuthServiceException {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new InvalidTokenException("Cabeçalho Authorization Bearer ausente ou inválido.");
+        }
+
+        TokenValidationDTO validationResponse;
+        try {
+            validationResponse = authServiceClient.validateToken(authorizationHeader);
+        } catch (Exception e) {
+            // Logar o erro completo para depuração
+            System.err.println("Erro ao comunicar com AuthServer via Feign: " + e.getMessage());
+            throw new AuthServiceException("Falha na comunicação com o servidor de autenticação.", e);
+        }
+
+        boolean isValid = (validationResponse.getMessage() != null && validationResponse.getMessage().contains("válido"));
+
+        UUID idCliente = validationResponse.getUserId();
+
+        if (!isValid || idCliente == null) {
+            String message = validationResponse.getMessage() != null ? validationResponse.getMessage() : "Token inválido ou sessão expirada.";
+            throw new InvalidTokenException(message);
+        }
+
+        return idCliente;
     }
 
     @Async // Executa em um thread separado

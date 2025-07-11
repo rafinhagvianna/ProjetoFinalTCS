@@ -7,11 +7,7 @@ import java.util.UUID;
 
 // Using Java Record for conciseness and immutability
 public record AgendamentoRequestDTO(
-    @NotNull(message = "O ID do usuário é obrigatório.")
-    UUID usuarioId,
 
-    // Remove @NotNull if 'atendenteId' can be null initially, aligning with the model
-    // @NotNull(message = "O ID do atendente é obrigatório.")
     UUID atendenteId,
 
     @NotNull(message = "O ID do serviço é obrigatório.")

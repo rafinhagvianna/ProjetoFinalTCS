@@ -17,10 +17,10 @@ public interface CatalogoServiceClient {
     @GetMapping("/api/setor/{id}/nome") 
     String getNomeSetor(@PathVariable("id") UUID id); 
 
-    @GetMapping("/api/documentos-catalogo/{id}")
+    @GetMapping("/api/documentos/{id}")
     DocumentoCatalogoResponse getDocumentoCatalogoById(@PathVariable("id") UUID id);
 
-    @GetMapping("/api/documentos-catalogo")
+    @GetMapping("/api/documentos")
     List<DocumentoCatalogoResponse> getAllDocumentosCatalogo();
 
 }

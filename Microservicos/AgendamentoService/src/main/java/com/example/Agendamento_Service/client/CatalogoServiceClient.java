@@ -10,7 +10,7 @@ import java.util.UUID;
 @FeignClient(name = "CatalogoService")
 public interface CatalogoServiceClient {
 
-    @GetMapping("/api/documentos-catalogo/{id}")
+    @GetMapping("/api/documentos/{id}")
     DocumentoCatalogoResponse getDocumentoCatalogoById(@PathVariable("id") UUID id);
 
     @GetMapping("/api/setor/{id}/nome") 
@@ -19,6 +19,6 @@ public interface CatalogoServiceClient {
     @GetMapping("/api/setor/{id}")
     ServicoResponse getServicoById(@PathVariable("id") UUID id);
     
-    @GetMapping("/api/documentos-catalogo")
+    @GetMapping("/api/documentos")
     List<DocumentoCatalogoResponse> getAllDocumentosCatalogo();
 }
