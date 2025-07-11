@@ -31,7 +31,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login").permitAll() // Apenas o endpoint de login é totalmente público
+                        .requestMatchers("/api/auth/login").permitAll() 
+                        .requestMatchers("/api/cliente").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll() 
                         .anyRequest().authenticated() // Qualquer outra requisição requer autenticação (via JWT)
                 )
                 .sessionManagement(session -> session

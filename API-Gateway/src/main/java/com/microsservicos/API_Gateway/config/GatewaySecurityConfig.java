@@ -2,6 +2,9 @@
 package com.microsservicos.API_Gateway.config;
 
 import com.microsservicos.API_Gateway.jwt.JwtAuthenticationFilter;
+
+import org.springframework.http.HttpMethod; 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider; // Importe
@@ -31,6 +34,9 @@ public class GatewaySecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Permite acesso público ao endpoint de login do Auth Service
                         .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/cliente").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Todos os outros endpoints requerem autenticação (via JWT)
                         .anyRequest().authenticated()
                 )
