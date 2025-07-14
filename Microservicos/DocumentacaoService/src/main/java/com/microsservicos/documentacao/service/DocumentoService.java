@@ -131,7 +131,7 @@ public class DocumentoService {
 
         // --- ATUALIZAR urlVisualizacao COM O ID REAL DO DOCUMENTO ---
         String finalFileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/documentos/")
+                .path("/api/documentacao/")
                 .path(salvo.getId().toString())
                 .path("/download")
                 .toUriString();

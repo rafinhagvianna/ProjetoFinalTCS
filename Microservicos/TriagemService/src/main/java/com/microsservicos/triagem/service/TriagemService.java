@@ -71,21 +71,9 @@ public class TriagemService {
         triagem.setNomeServicoSnapshot(servicoInfo.nome());
 
         triagem.setTempoEstimadoMinutos(servicoInfo.tempoMedioMinutos());
-
-        // PASSE A PRÓPRIA TRIAGEM QUE ESTÁ SENDO CRIADA PARA A SIMULAÇÃO
-        LocalDateTime horarioInicioEstimado = calcularHorarioInicioEstimadoParaNovaTriagemSimulada(triagem);
+        
+        LocalDateTime horarioInicioEstimado = calcularHorarioInicioEstimado(triagem);
         triagem.setHorarioEstimadoAtendimento(horarioInicioEstimado.plusMinutes(servicoInfo.tempoMedioMinutos())); // O horário estimado é o início + duração
-
-        // List<DocumentoCatalogoResponse> tiposDocumento = catalogoServiceClient.getAllDocumentosCatalogo(dto.servicoId());
-        // if (tiposDocumento != null && !tiposDocumento.isEmpty()) {
-        //     tiposDocumento.forEach(tipoDoc -> {
-        //         DocumentoPendente doc = new DocumentoPendente();
-        //         doc.setDocumentoCatalogoId(tipoDoc.id());
-        //         doc.setNomeDocumentoSnapshot(tipoDoc.nome());
-        //         doc.setStatus(StatusDocumento.PENDENTE);
-        //         triagem.addDocumentoPendente(doc);
-        //     });
-        // }
 
         List<UUID> documentosObrigatoriosIds = Optional.ofNullable(servicoInfo.documentosObrigatoriosIds()).orElse(new ArrayList<>());
 
@@ -130,7 +118,6 @@ public class TriagemService {
         triagem.setStatus(StatusTriagem.EM_ATENDIMENTO);
         Triagem atualizada = triagemRepository.save(triagem);
 
-        // DISPARAR O RECÁLCULO GLOBAL ASSÍNCRONO APÓS UMA TRIAGEM SAIR DA FILA DE AGUARDANDO
         recalcularHorariosEstimadosDaFila();
 
         return triagemMapper.toResponseDTO(atualizada);
@@ -198,15 +185,7 @@ public class TriagemService {
         return triagemMapper.toResponseDTO(atualizada);
     }
 
-    /**
-     * Calcula o horário estimado em que a NOVA triagem poderá começar,
-     * considerando sua posição em uma fila priorizada simulada.
-     * Este é para dar um retorno imediato mais preciso no momento da criação.
-     *
-     * @param newTriagem A nova triagem que está sendo criada (temporária, sem ID ainda).
-     * @return O LocalDateTime que representa o horário estimado de início da nova triagem.
-     */
-    private LocalDateTime calcularHorarioInicioEstimadoParaNovaTriagemSimulada(Triagem newTriagem) {
+    public LocalDateTime calcularHorarioInicioEstimado(Triagem newTriagem) {
         List<Triagem> aguardandoTriagens = triagemRepository.findByStatus(StatusTriagem.AGUARDANDO);
         List<Triagem> filaSimulada = new ArrayList<>(aguardandoTriagens);
         filaSimulada.add(newTriagem); // Adiciona a triagem real que está sendo criada
@@ -365,4 +344,5 @@ public class TriagemService {
         documentoPendente.setObservacao(requestDTO.observacaoValidacao());
         documentoPendenteRepository.save(documentoPendente);
     }
+
 }

@@ -6,6 +6,7 @@ import com.microsservicos.triagem.dto.TriagemRequestDTO;
 import com.microsservicos.triagem.dto.TriagemResponseDTO;
 import com.microsservicos.triagem.exception.AuthServiceException;
 import com.microsservicos.triagem.exception.InvalidTokenException;
+import com.microsservicos.triagem.model.Triagem;
 import com.microsservicos.triagem.service.TriagemService;
 import jakarta.validation.Valid; // Importante: Adicionar import para @Valid
 
@@ -13,9 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 
 /**
  * Controller REST para gerenciar operações relacionadas a triagens.
@@ -112,4 +117,13 @@ public class TriagemController {
         TriagemResponseDTO triagem = triagemService.buscarPorId(id);
         return ResponseEntity.ok(triagem);
     }
+
+    @GetMapping("/disponibilidade")
+    public Map<String, LocalDateTime> horarioDisponivel() {
+        Triagem triagem = new Triagem();
+        Map<String, LocalDateTime> horarioDisponivel = new HashMap<>();
+        horarioDisponivel.put("Disponivel", triagemService.calcularHorarioInicioEstimado(triagem));
+        return horarioDisponivel;
+    }
+    
 }
