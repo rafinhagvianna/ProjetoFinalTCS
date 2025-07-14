@@ -1,0 +1,14 @@
+[
+  {
+    "nome": "Controle de Agendamentos",
+    "descricao": "Adicionar, visualizar e gerenciar os horários de atendimento."
+  },
+  {
+    "nome": "Cadastrar Novo Funcionário",
+    "descricao": "Adicionar novos usuários do tipo funcionário ao sistema."
+  },
+  {
+    "nome": "Acompanhamento de Triagens",
+    "descricao": "Visualizar filas e status das triagens em andamento."
+  }
+]
