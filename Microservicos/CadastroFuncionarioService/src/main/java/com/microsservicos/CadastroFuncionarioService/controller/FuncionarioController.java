@@ -34,26 +34,50 @@ public class FuncionarioController {
         return service.listarFuncionarios();
     }
 
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody LoginRequest req) {
+//        Optional<Funcionario> opt = service.buscarPorNome(req.nome());
+//
+//        if (opt.isEmpty()) {
+//            return ResponseEntity
+//                    .status(HttpStatus.UNAUTHORIZED)
+//                    .body("Nome incorreto");
+//        }
+//
+//        Funcionario f = opt.get();
+//        if (!f.getSenha().equals(req.senha())) {
+//            return ResponseEntity
+//                    .status(HttpStatus.UNAUTHORIZED)
+//                    .body("Senha incorreta");
+//        }
+//
+//        return ResponseEntity
+//                .ok("Login bem-sucedido");
+//    }
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest req) {
-        Optional<Funcionario> opt = service.buscarPorNome(req.nome());
+        // ALTERE AQUI para usar a busca por e-mail
+        Optional<Funcionario> opt = service.buscarPorEmail(req.email());
 
         if (opt.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body("Nome incorreto");
+                    .body("E-mail ou senha incorretos."); // Mensagem genérica é mais segura
         }
 
         Funcionario f = opt.get();
+        // ATENÇÃO: Em produção, use um comparador de senhas criptografadas (BCrypt)
         if (!f.getSenha().equals(req.senha())) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body("Senha incorreta");
+                    .body("E-mail ou senha incorretos.");
         }
 
-        return ResponseEntity
-                .ok("Login bem-sucedido");
+        return ResponseEntity.ok("Login de funcionário bem-sucedido");
     }
 
-    public static record LoginRequest(String nome, String senha) {}
+//    public static record LoginRequest(String nome, String senha) {}
+
+    public static record LoginRequest(String email, String senha) {}
 }
