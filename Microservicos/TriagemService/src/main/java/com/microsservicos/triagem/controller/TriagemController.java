@@ -122,7 +122,7 @@ public class TriagemController {
     public Map<String, LocalDateTime> horarioDisponivel() {
         Triagem triagem = new Triagem();
         Map<String, LocalDateTime> horarioDisponivel = new HashMap<>();
-        horarioDisponivel.put("Disponivel", triagemService.calcularHorarioInicioEstimado(triagem));
+        horarioDisponivel.put("disponibilidade", triagemService.calcularHorarioInicioEstimado(triagem));
         return horarioDisponivel;
     }
     
