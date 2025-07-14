@@ -187,6 +187,20 @@ public class Rotas {
                 .build();
     }
 
+    @Bean
+    public RouterFunction<ServerResponse> funcionarioServiceRota(){
+        return route("funcionario_service")
+                .route(RequestPredicates.path("/api/funcionario/**"), HandlerFunctions.http("http://localhost:8087"))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> tarefaServiceRota(){
+        return route("tarefa_service")
+                .route(RequestPredicates.path("/api/tarefa/**"), HandlerFunctions.http("http://localhost:8088"))
+                .build();
+    }
+
 
     @Bean
     public RouterFunction<ServerResponse> clienteServiceRota(){
@@ -197,6 +211,8 @@ public class Rotas {
                 .route(RequestPredicates.POST("/api/cliente/redefinir-senha"), HandlerFunctions.http("http://localhost:8086"))
                 .build();
     }
+
+
 
 
     // --- Rotas do Swagger (Não precisam mudar, mas podem) ---

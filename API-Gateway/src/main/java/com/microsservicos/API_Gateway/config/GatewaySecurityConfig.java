@@ -1,9 +1,9 @@
-// api-gateway/src/main/java/com/microsservicos/API_Gateway/config/GatewaySecurityConfig.java
+//// api-gateway/src/main/java/com/microsservicos/API_Gateway/config/GatewaySecurityConfig.java
 package com.microsservicos.API_Gateway.config;
 
 import com.microsservicos.API_Gateway.jwt.JwtAuthenticationFilter;
 
-import org.springframework.http.HttpMethod; 
+import org.springframework.http.HttpMethod;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,18 +35,21 @@ public class GatewaySecurityConfig {
                         // Permite acesso público ao endpoint de login do Auth Service
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/cliente").permitAll()
+                        .requestMatchers("/api/funcionario/**").permitAll()
+                        .requestMatchers("/api/tarefa/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Todos os outros endpoints requerem autenticação (via JWT)
-                        .anyRequest().authenticated()
+                        //.anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Sessões sem estado (para JWT)
                 )
-                .authenticationProvider(authenticationProvider) // Define o provedor de autenticação
+                .authenticationProvider(authenticationProvider); // Define o provedor de autenticação
                 // Adiciona o filtro JWT ANTES do filtro de autenticação de usuário/senha padrão
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+               // .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 }
+
