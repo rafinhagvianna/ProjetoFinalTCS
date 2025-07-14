@@ -12,4 +12,5 @@ import com.microsservicos.CadastroFuncionarioService.model.Funcionario;
 public interface FuncionarioRepository extends JpaRepository<Funcionario, UUID> {
     Optional<Funcionario> findByNome(String nome);
     boolean existsByCpf(String cpf);
+    Optional<Funcionario> findByEmail(String email);
 }

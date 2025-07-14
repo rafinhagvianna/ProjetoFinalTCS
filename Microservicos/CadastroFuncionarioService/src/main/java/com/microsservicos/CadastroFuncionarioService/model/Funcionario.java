@@ -21,6 +21,11 @@ public class Funcionario {
     @NotBlank(message = "Nome não pode ficar em branco")
     private String nome;
 
+    @Column(unique = true)
+    @NotBlank(message = "Email não pode ficar em branco")
+    @Email(message = "Formato de email inválido")
+    private String email;
+
     @NotBlank(message = "CPF não pode ficar em branco")
     @Pattern(regexp = "\\d{11}", message = "CPF deve ter exatamente 11 dígitos")
     private String cpf;
@@ -31,10 +36,11 @@ public class Funcionario {
 
     public Funcionario() {}
 
-    public Funcionario(String nome, String cpf, String senha) {
+    public Funcionario(String nome, String cpf, String senha, String email) {
         this.nome = nome;
         this.cpf = cpf;
         this.senha = senha;
+        this.email = email;
     }
 
     public UUID getId() { return id; }
@@ -47,4 +53,7 @@ public class Funcionario {
 
     public String getSenha() { return senha; }
     public void setSenha(String senha) { this.senha = senha; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 }

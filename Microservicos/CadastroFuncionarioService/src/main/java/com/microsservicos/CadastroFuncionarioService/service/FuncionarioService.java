@@ -30,7 +30,8 @@ public class FuncionarioService {
         Funcionario entidade = new Funcionario(
                 req.nome(),
                 req.cpf(),
-                req.senha()
+                req.senha(),
+                req.email()
         );
         Funcionario salvo = repository.save(entidade);
         return toResponse(salvo);
@@ -47,11 +48,17 @@ public class FuncionarioService {
         return repository.findByNome(nome);
     }
 
+    public Optional<Funcionario> buscarPorEmail (String email){
+        return repository.findByEmail(email);
+    }
+
+
     private FuncionarioResponse toResponse(Funcionario f) {
         return new FuncionarioResponse(
                 f.getNome(),
                 f.getCpf(),
-                f.getSenha()
+                f.getSenha(),
+                f.getEmail()
         );
     }
 }

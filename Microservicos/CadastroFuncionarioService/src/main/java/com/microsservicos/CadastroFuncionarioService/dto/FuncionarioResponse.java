@@ -4,5 +4,6 @@ public record
 FuncionarioResponse(
         String nome,
         String cpf,
-        String senha
+        String senha,
+        String email
 ) {}
