@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class UserValidationResponseDTO {
     private String message;
-    private String name;
+    private String nome;
     private String email;
     private UUID id;
     private String role; // Role do usuário (ex: "CLIENTE", "FUNCIONARIO") - Opcional
@@ -15,9 +15,9 @@ public class UserValidationResponseDTO {
     }
 
     // Construtor com todos os argumentos
-    public UserValidationResponseDTO(String message, String name, String email, UUID id, String role) {
+    public UserValidationResponseDTO(String message, String nome, String email, UUID id, String role) {
         this.message = message;
-        this.name = name;
+        this.nome = nome;
         this.email = email;
         this.id = id;
         this.role = role;
@@ -28,8 +28,8 @@ public class UserValidationResponseDTO {
         return message;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
     public String getEmail() {
@@ -49,8 +49,8 @@ public class UserValidationResponseDTO {
         this.message = message;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public void setEmail(String email) {
@@ -72,7 +72,7 @@ public class UserValidationResponseDTO {
     public String toString() {
         return "UserValidationResponseDTO{" +
                 "message='" + message + '\'' +
-                ", name='" + name + '\'' +
+                ", nome='" + nome + '\'' +
                 ", email='" + email + '\'' +
                 ", id=" + id +
                 ", role='" + role + '\'' +
@@ -85,7 +85,7 @@ public class UserValidationResponseDTO {
         if (o == null || getClass() != o.getClass()) return false;
         UserValidationResponseDTO that = (UserValidationResponseDTO) o;
         return Objects.equals(message, that.message) &&
-                Objects.equals(name, that.name) &&
+                Objects.equals(nome, that.nome) &&
                 Objects.equals(email, that.email) &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(role, that.role);
@@ -93,6 +93,6 @@ public class UserValidationResponseDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(message, name, email, id, role);
+        return Objects.hash(message, nome, email, id, role);
     }
 }

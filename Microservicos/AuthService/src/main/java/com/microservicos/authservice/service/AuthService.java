@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.Console;
 import java.util.UUID;
 
 @Service
@@ -40,6 +41,7 @@ public class AuthService {
             if (clienteResponse.getStatusCode() == HttpStatus.OK && clienteResponse.getBody() != null) {
                 userData = clienteResponse.getBody();
                 role = "CLIENTE";
+                // System.out.println(userData.getNome());
             }
         } catch (FeignException.Unauthorized e) {
             // Se o cliente service retornar 401, isso significa credenciais inválidas para cliente
@@ -72,15 +74,16 @@ public class AuthService {
                     userData.getId(),
                     role,
                     userData.getEmail(),
-                    userData.getName()
+                    userData.getNome()
             );
             String refreshToken = jwtService.generateRefreshToken(userData.getId(), role); // Gerar refresh token
 
+            
             return new LoginResponseDTO(
                     "Login bem-sucedido",
                     accessToken,
                     refreshToken,
-                    userData.getName(),
+                    userData.getNome(),
                     userData.getEmail()
             );
         } else {
