@@ -40,14 +40,14 @@ public class GatewaySecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Todos os outros endpoints requerem autenticação (via JWT)
-                        //.anyRequest().authenticated()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Sessões sem estado (para JWT)
                 )
-                .authenticationProvider(authenticationProvider); // Define o provedor de autenticação
+                .authenticationProvider(authenticationProvider) // Define o provedor de autenticação
                 // Adiciona o filtro JWT ANTES do filtro de autenticação de usuário/senha padrão
-               // .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+               .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
