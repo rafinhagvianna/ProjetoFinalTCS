@@ -65,6 +65,13 @@ public class AgendamentoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado com o ID: " + id));
     }
 
+    public List<Agendamento> getAgendamentosPorData(LocalDate data) {
+        LocalDateTime inicioDoDia = data.atStartOfDay(); // 00:00:00 do dia
+        LocalDateTime fimDoDia = data.atTime(LocalTime.MAX); // 23:59:59.999... do dia
+
+        return repository.findByDataHoraBetween(inicioDoDia, fimDoDia);
+    }
+
     public List<Agendamento> buscarPorCliente(UUID id) {
         return repository.findByUsuarioIdAndStatus(id, StatusAgendamento.AGENDADO);
     }
@@ -150,28 +157,28 @@ public class AgendamentoService {
     }
 
     @Transactional
-    public Agendamento atualizarAgendamento(UUID id, AgendamentoRequestDTO agendamentoDTO, UUID idCliente) {
-        // log.info("Atualizando agendamento ID: {}", id);
+    public Agendamento atualizarAgendamento(UUID id, AgendamentoRequestDTO dto, UUID idCliente) {
+        // log.info("Requisição para atualizar agendamento ID: {}", id);
         return repository.findById(id).map(agendamentoExistente -> {
 
-            if (!isDataEHoraDeTrabalhoValido(agendamentoDTO.dataHora())) {
-                // log.warn("Tentativa de atualização de agendamento ID {} para horário inválido: {}", id, agendamentoDTO.dataHora());
+            if (!isDataEHoraDeTrabalhoValido(dto.dataHora())) {
+                // log.warn("Tentativa de atualização de agendamento ID {} para horário inválido: {}", id, dto.dataHora());
                 throw new IllegalArgumentException("A data e hora do agendamento atualizado devem ser de segunda a sexta, entre 10h00 e 16h00, e em horas cheias.");
             }
 
             Optional<Agendamento> duplicado = repository.findByUsuarioIdAndServicoIdAndDataHora(
                     idCliente,
-                    agendamentoDTO.servicoId(),
-                    agendamentoDTO.dataHora());
+                    dto.servicoId(),
+                    dto.dataHora());
 
             if (duplicado.isPresent() && !duplicado.get().getId().equals(agendamentoExistente.getId())) {
                 // log.warn("Conflito na atualização do agendamento ID {}: Outro agendamento já existe com as mesmas credenciais.", id);
                 throw new IllegalArgumentException("Já existe outro agendamento com as mesmas credenciais (usuário, serviço, data/hora).");
             }
 
-            ServicoResponse setorInfo = catalogoServiceFacade.buscarSetorPorId(agendamentoDTO.servicoId());
+            ServicoResponse setorInfo = catalogoServiceFacade.buscarSetorPorId(dto.servicoId());
             if (setorInfo == null || "Serviço Indisponível".equals(setorInfo.nome())) {
-                // log.error("Falha ao obter detalhes do serviço de catálogo ID {} durante a atualização do agendamento {}.", agendamentoDTO.servicoId(), id);
+                // log.error("Falha ao obter detalhes do serviço de catálogo ID {} durante a atualização do agendamento {}.", dto.servicoId(), id);
                 throw new ComunicacaoServicoException("Não foi possível obter detalhes do serviço de catálogo para validação. Tente novamente mais tarde.");
             }
             Integer tempoEstimadoServico = Optional.ofNullable(setorInfo.tempoMedioMinutos()).orElse(0);
@@ -180,15 +187,17 @@ public class AgendamentoService {
             }
 
             // CORREÇÃO AQUI: Passar agendamentoDTO.servicoId() em vez de tempoEstimadoServico
-            if (!isHorarioDisponivel(agendamentoDTO.dataHora(), agendamentoDTO.servicoId(), agendamentoExistente.getId())) {
+            if (!isHorarioDisponivel(dto.dataHora(), dto.servicoId(), agendamentoExistente.getId())) {
                 // log.warn("Horário selecionado para atualização do agendamento ID {} não tem capacidade suficiente.", id);
                 throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço após a atualização.");
             }
 
             agendamentoExistente.setUsuarioId(idCliente);
-            agendamentoExistente.setAtendenteId(agendamentoDTO.atendenteId());
-            agendamentoExistente.setServicoId(agendamentoDTO.servicoId());
-            agendamentoExistente.setDataHora(agendamentoDTO.dataHora());
+            agendamentoExistente.setAtendenteId(dto.atendenteId());
+            agendamentoExistente.setServicoId(dto.servicoId());
+            agendamentoExistente.setDataHora(dto.dataHora());
+            agendamentoExistente.setObservacoes(dto.observacoes()); // <-- ADICIONE ESTA LINHA AQUI!
+
             // Se necessário, atualizar snapshots de nome de cliente/serviço
             agendamentoExistente.setNomeClienteSnapshot(usuarioServiceFacade.buscarNomeCliente(idCliente));
             agendamentoExistente.setNomeServicoSnapshot(setorInfo.nome());
@@ -201,7 +210,7 @@ public class AgendamentoService {
     }
 
     @Transactional
-    public Agendamento atualizarParcialAgendamento(UUID id, AgendamentoRequestDTO agendamentoDTO, UUID idCliente) {
+    public Agendamento atualizarParcialAgendamento(UUID id, AgendamentoRequestDTO dto, UUID idCliente) {
         // log.info("Atualizando parcialmente agendamento ID: {}", id);
         return repository.findById(id).map(agendamentoExistente -> {
             boolean dataHoraChanged = false;
@@ -212,17 +221,22 @@ public class AgendamentoService {
                 agendamentoExistente.setUsuarioId(idCliente);
                 usuarioChanged = true;
             }
-            if (agendamentoDTO.atendenteId() != null && !Objects.equals(agendamentoDTO.atendenteId(), agendamentoExistente.getAtendenteId())) {
-                agendamentoExistente.setAtendenteId(agendamentoDTO.atendenteId());
+            if (dto.atendenteId() != null && !Objects.equals(dto.atendenteId(), agendamentoExistente.getAtendenteId())) {
+                agendamentoExistente.setAtendenteId(dto.atendenteId());
             }
-            if (agendamentoDTO.servicoId() != null && !agendamentoDTO.servicoId().equals(agendamentoExistente.getServicoId())) {
-                agendamentoExistente.setServicoId(agendamentoDTO.servicoId());
+            if (dto.servicoId() != null && !dto.servicoId().equals(agendamentoExistente.getServicoId())) {
+                agendamentoExistente.setServicoId(dto.servicoId());
                 servicoChanged = true;
             }
-            if (agendamentoDTO.dataHora() != null && !agendamentoDTO.dataHora().equals(agendamentoExistente.getDataHora())) {
-                agendamentoExistente.setDataHora(agendamentoDTO.dataHora());
+            if (dto.dataHora() != null && !dto.dataHora().equals(agendamentoExistente.getDataHora())) {
+                agendamentoExistente.setDataHora(dto.dataHora());
                 dataHoraChanged = true;
             }
+            // ADICIONE ESTA LÓGICA PARA ATUALIZAÇÃO PARCIAL DE OBSERVAÇÕES
+            if (dto.observacoes() != null && !Objects.equals(dto.observacoes(), agendamentoExistente.getObservacoes())) {
+                agendamentoExistente.setObservacoes(dto.observacoes());
+            }
+
 
             if (dataHoraChanged && !isDataEHoraDeTrabalhoValido(agendamentoExistente.getDataHora())) {
                 // log.warn("Tentativa de atualização parcial do agendamento ID {} para horário inválido: {}", id, agendamentoExistente.getDataHora());

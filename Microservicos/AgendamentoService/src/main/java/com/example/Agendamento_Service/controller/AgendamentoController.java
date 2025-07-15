@@ -72,6 +72,15 @@ public class AgendamentoController {
         return ResponseEntity.ok(agendamentos);
     }
 
+    @GetMapping("/data") // Endpoint para GET /api/agendamentos/data?data=YYYY-MM-DD
+    public ResponseEntity<List<AgendamentoResponseDTO>> getAgendamentosPorData(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+        List<AgendamentoResponseDTO> agendamentos = service.getAgendamentosPorData(data).stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(agendamentos);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<AgendamentoResponseDTO> buscarPorId(@PathVariable UUID id) {
         // log.info("Requisição para buscar agendamento por ID: {}", id);

@@ -2,26 +2,29 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="API-Gateway" />
         <module name="Agendamento-Service" />
+        <module name="auth-service" />
         <module name="Naming-Server" />
+        <module name="Catalogo-Service" />
         <module name="CadastroClienteService" />
         <module name="triagem" />
         <module name="CadastroFuncionarioService" />
         <module name="documentacao" />
       </profile>
-      <profile name="Annotation profile for Catalogo-Service" enabled="true">
+      <profile name="Annotation profile for TarefasFuncionario-Service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
-        <module name="Catalogo-Service" />
+        <module name="TarefasFuncionario-Service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -33,6 +36,8 @@
       <module name="CadastroFuncionarioService" options="-parameters" />
       <module name="Catalogo-Service" options="-parameters" />
       <module name="Naming-Server" options="-parameters" />
+      <module name="TarefasFuncionario-Service" options="-parameters" />
+      <module name="auth-service" options="-parameters" />
       <module name="documentacao" options="-parameters" />
       <module name="triagem" options="-parameters" />
     </option>

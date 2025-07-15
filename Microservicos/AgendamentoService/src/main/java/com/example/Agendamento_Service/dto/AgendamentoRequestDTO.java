@@ -8,14 +8,15 @@ import java.util.UUID;
 // Using Java Record for conciseness and immutability
 public record AgendamentoRequestDTO(
 
-    UUID atendenteId,
-
-    @NotNull(message = "O ID do serviço é obrigatório.")
-    UUID servicoId,
-
-    @NotNull(message = "A data e hora do agendamento são obrigatórias.")
-    @FutureOrPresent(message = "A data e hora do agendamento devem ser de hoje para frente")
-    LocalDateTime dataHora
+        @NotNull(message = "O ID do usuário é obrigatório.")
+        UUID usuarioId,
+        @NotNull(message = "O ID do serviço é obrigatório.")
+        UUID servicoId,
+        UUID atendenteId, // Pode ser nulo
+        @NotNull(message = "A data e hora do agendamento são obrigatórias.")
+        @FutureOrPresent(message = "A data e hora do agendamento devem ser de hoje para frente")
+        LocalDateTime dataHora,
+        String observacoes
 ) {
     // Records automatically provide constructor, getters, equals, hashCode, toString.
     // No need for manual getters/setters or default constructor.

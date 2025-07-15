@@ -3,10 +3,12 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/API-Gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Microservicos/AgendamentoService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicos/AuthService/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Microservicos/CadastroClienteService/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Microservicos/CadastroFuncionarioService/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Microservicos/CatalogoService/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Microservicos/DocumentacaoService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicos/TarefasFuncionario-Service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Microservicos/TriagemService/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Naming-Server/src/main/java" charset="UTF-8" />
   </component>
