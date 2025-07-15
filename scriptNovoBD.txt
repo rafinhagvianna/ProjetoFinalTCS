@@ -22,5 +22,10 @@ url: localhost:9000/api/tarefa
   {
     "nome": "Acompanhamento de Triagens",
     "descricao": "Visualizar filas e status das triagens em andamento."
+  },
+
+{
+    "nome": "Validação de Documentação",
+    "descricao": "Visualizar e validar os documentos dos clientes ."
   }
 ]
