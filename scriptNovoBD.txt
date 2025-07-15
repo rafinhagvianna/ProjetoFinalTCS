@@ -1,4 +1,16 @@
 [
+url: localhost:9000/api/funcionario
+
+ {
+        "nome": "funcionario",
+        "cpf": "12345678912",
+        "senha": "123456",
+        "email": "funcionario@bankflow.com"
+    }
+]
+[
+url: localhost:9000/api/tarefa
+
   {
     "nome": "Controle de Agendamentos",
     "descricao": "Adicionar, visualizar e gerenciar os horários de atendimento."
@@ -10,5 +22,10 @@
   {
     "nome": "Acompanhamento de Triagens",
     "descricao": "Visualizar filas e status das triagens em andamento."
+  },
+
+{
+    "nome": "Validação de Documentação",
+    "descricao": "Visualizar e validar os documentos dos clientes ."
   }
 ]
