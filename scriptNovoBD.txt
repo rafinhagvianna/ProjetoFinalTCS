@@ -1,5 +1,14 @@
 [
+url: localhost:9000/api/funcionario
 
+ {
+        "nome": "funcionario",
+        "cpf": "12345678912",
+        "senha": "123456",
+        "email": "funcionario@bankflow.com"
+    }
+]
+[
 url: localhost:9000/api/tarefa
 
   {
