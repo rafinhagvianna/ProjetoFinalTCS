@@ -11,7 +11,6 @@
         <module name="Agendamento-Service" />
         <module name="auth-service" />
         <module name="Naming-Server" />
-        <module name="Catalogo-Service" />
         <module name="CadastroClienteService" />
         <module name="triagem" />
         <module name="CadastroFuncionarioService" />
@@ -25,6 +24,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
         <module name="TarefasFuncionario-Service" />
+        <module name="Catalogo-Service" />
       </profile>
     </annotationProcessing>
   </component>

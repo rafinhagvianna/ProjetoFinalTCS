@@ -13,10 +13,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/documentos") // Endpoint específico para documentos
-@RequiredArgsConstructor
 public class DocumentoCatalogoController {
 
     private final DocumentoCatalogoService documentoCatalogoService;
+
+    public DocumentoCatalogoController(DocumentoCatalogoService documentoCatalogoService, DocumentoCatalogoService documentoCatalogoService1){
+        this.documentoCatalogoService = documentoCatalogoService1;
+
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

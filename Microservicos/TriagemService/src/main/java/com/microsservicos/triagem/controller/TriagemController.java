@@ -125,5 +125,11 @@ public class TriagemController {
         horarioDisponivel.put("disponibilidade", triagemService.calcularHorarioInicioEstimado(triagem));
         return horarioDisponivel;
     }
+
+    @GetMapping
+    public ResponseEntity<List<TriagemResponseDTO>> listarTodas() {
+        List<TriagemResponseDTO> triagens = triagemService.listarTodasTriagens();
+        return ResponseEntity.ok(triagens);
+    }
     
 }

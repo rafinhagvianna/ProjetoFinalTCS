@@ -5,10 +5,7 @@ import com.microsservicos.triagem.client.CadastroClienteServiceClient;
 import com.microsservicos.triagem.client.CatalogoServiceClient;
 import com.microsservicos.triagem.client.SetorResponse;
 import com.microsservicos.triagem.client.DocumentoCatalogoResponse;
-import com.microsservicos.triagem.dto.DocumentoStatusUpdateRequestDTO;
-import com.microsservicos.triagem.dto.TokenValidationDTO;
-import com.microsservicos.triagem.dto.TriagemRequestDTO;
-import com.microsservicos.triagem.dto.TriagemResponseDTO;
+import com.microsservicos.triagem.dto.*;
 import com.microsservicos.triagem.enums.StatusDocumento;
 import com.microsservicos.triagem.enums.StatusTriagem;
 import com.microsservicos.triagem.exception.AuthServiceException;
@@ -32,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional; // Certifique-se de que Optional está importado
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TriagemService {
@@ -345,4 +343,38 @@ public class TriagemService {
         documentoPendenteRepository.save(documentoPendente);
     }
 
+    public List<TriagemResponseDTO> listarTodasTriagens() {
+        return triagemRepository.findAll()
+                .stream()
+                .map(this::converteParaDTO)
+                .collect(Collectors.toList());
+    }
+
+    private TriagemResponseDTO converteParaDTO(Triagem triagem) {
+        List<DocumentoPendenteResponseDTO> documentos = triagem.getDocumentosPendentes()
+                .stream()
+                .map(doc -> new DocumentoPendenteResponseDTO(
+                        doc.getId(),
+                        doc.getDocumentoCatalogoId(),
+                        doc.getNomeDocumentoSnapshot(),
+                        doc.getStatus(),
+                        doc.getObservacao(),
+                        doc.getUrlDocumento()
+                        ))
+                .collect(Collectors.toList());
+
+        return new TriagemResponseDTO(
+                triagem.getId(),
+                triagem.getClienteId(),
+                triagem.getServicoId(),
+                triagem.getNomeClienteSnapshot(),
+                triagem.getNomeServicoSnapshot(),
+                triagem.getStatus(),
+                triagem.getHorarioSolicitacao(),
+                triagem.getHorarioEstimadoAtendimento(),
+                triagem.getTempoEstimadoMinutos(),
+                triagem.getPrioridade(),
+                documentos
+        );
+    }
 }
