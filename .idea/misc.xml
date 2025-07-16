@@ -12,6 +12,8 @@
         <option value="$PROJECT_DIR$/Microservicos/CadastroClienteService/pom.xml" />
         <option value="$PROJECT_DIR$/Microservicos/CadastroFuncionarioService/pom.xml" />
         <option value="$PROJECT_DIR$/Naming-Server/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicos/AuthService/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicos/TarefasFuncionario-Service/pom.xml" />
       </list>
     </option>
   </component>

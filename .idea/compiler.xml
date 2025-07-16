@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="API-Gateway" />
         <module name="Agendamento-Service" />
+        <module name="auth-service" />
         <module name="Naming-Server" />
         <module name="CadastroClienteService" />
         <module name="triagem" />
@@ -23,6 +24,15 @@
         </processorPath>
         <module name="Catalogo-Service" />
       </profile>
+      <profile name="Annotation profile for TarefasFuncionario-Service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
+        <module name="TarefasFuncionario-Service" />
+      </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
@@ -33,6 +43,8 @@
       <module name="CadastroFuncionarioService" options="-parameters" />
       <module name="Catalogo-Service" options="-parameters" />
       <module name="Naming-Server" options="-parameters" />
+      <module name="TarefasFuncionario-Service" options="-parameters" />
+      <module name="auth-service" options="-parameters" />
       <module name="documentacao" options="-parameters" />
       <module name="triagem" options="-parameters" />
     </option>
