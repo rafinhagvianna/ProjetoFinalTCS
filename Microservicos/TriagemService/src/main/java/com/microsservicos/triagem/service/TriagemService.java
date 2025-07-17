@@ -344,7 +344,7 @@ public class TriagemService {
     }
 
     public List<TriagemResponseDTO> listarTodasTriagens() {
-        return triagemRepository.findAll()
+        return triagemRepository.findByStatusOrStatusOrderByPrioridadeAscHorarioSolicitacaoAsc(StatusTriagem.AGUARDANDO, StatusTriagem.EM_ATENDIMENTO)
                 .stream()
                 .map(this::converteParaDTO)
                 .collect(Collectors.toList());

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.microsservicos.CadastroFuncionarioService.controller.FuncionarioController.LoginRequest;
 import com.microsservicos.CadastroFuncionarioService.dto.FuncionarioRequest;
 import com.microsservicos.CadastroFuncionarioService.dto.FuncionarioResponse;
 import com.microsservicos.CadastroFuncionarioService.model.Funcionario;
@@ -60,5 +61,27 @@ public class FuncionarioService {
                 f.getSenha(),
                 f.getEmail()
         );
+    }
+
+    public Funcionario verificarLogin(LoginRequest req) {
+        Optional<Funcionario> optFuncionario = repository.findByEmail(req.email());
+
+        // Se o email não for encontrado, o login falha.
+        if (optFuncionario.isEmpty()) {
+            return null;
+        }
+
+        Funcionario funcionario = optFuncionario.get();
+        String senhaPura = req.senha(); // A senha que o usuário digitou
+        String hashDoBanco = funcionario.getSenha(); // O hash que está salvo
+        
+
+        // O 'matches' compara a senha pura com o hash do banco de forma segura.
+        // if (passwordEncoder.matches(senhaPura, hashDoBanco)){
+        if (hashDoBanco.equals(senhaPura)){
+            return funcionario;
+        }else {
+            return null;
+        }
     }
 }

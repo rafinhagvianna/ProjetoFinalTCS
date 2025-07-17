@@ -35,9 +35,6 @@ public class GatewaySecurityConfig {
                         // Permite acesso público ao endpoint de login do Auth Service
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/cliente").permitAll()
-                        .requestMatchers("/api/funcionario/**").permitAll()
-                        .requestMatchers("/api/tarefa/**").permitAll()
-                        .requestMatchers("/api/agendamentos/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Todos os outros endpoints requerem autenticação (via JWT)

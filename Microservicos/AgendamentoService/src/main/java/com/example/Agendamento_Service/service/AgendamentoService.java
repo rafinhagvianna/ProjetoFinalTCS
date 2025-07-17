@@ -157,7 +157,7 @@ public class AgendamentoService {
     }
 
     @Transactional
-    public Agendamento atualizarAgendamento(UUID id, AgendamentoRequestDTO dto, UUID idCliente) {
+    public Agendamento atualizarAgendamento(UUID id, AgendamentoRequestDTO dto) {
         // log.info("Requisição para atualizar agendamento ID: {}", id);
         return repository.findById(id).map(agendamentoExistente -> {
 
@@ -167,7 +167,7 @@ public class AgendamentoService {
             }
 
             Optional<Agendamento> duplicado = repository.findByUsuarioIdAndServicoIdAndDataHora(
-                    idCliente,
+                    agendamentoExistente.getUsuarioId(),
                     dto.servicoId(),
                     dto.dataHora());
 
@@ -192,14 +192,13 @@ public class AgendamentoService {
                 throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço após a atualização.");
             }
 
-            agendamentoExistente.setUsuarioId(idCliente);
             agendamentoExistente.setAtendenteId(dto.atendenteId());
             agendamentoExistente.setServicoId(dto.servicoId());
             agendamentoExistente.setDataHora(dto.dataHora());
             agendamentoExistente.setObservacoes(dto.observacoes()); // <-- ADICIONE ESTA LINHA AQUI!
 
             // Se necessário, atualizar snapshots de nome de cliente/serviço
-            agendamentoExistente.setNomeClienteSnapshot(usuarioServiceFacade.buscarNomeCliente(idCliente));
+            agendamentoExistente.setNomeClienteSnapshot(usuarioServiceFacade.buscarNomeCliente(agendamentoExistente.getUsuarioId()));
             agendamentoExistente.setNomeServicoSnapshot(setorInfo.nome());
 
 
@@ -210,17 +209,12 @@ public class AgendamentoService {
     }
 
     @Transactional
-    public Agendamento atualizarParcialAgendamento(UUID id, AgendamentoRequestDTO dto, UUID idCliente) {
+    public Agendamento atualizarParcialAgendamento(UUID id, AgendamentoRequestDTO dto) {
         // log.info("Atualizando parcialmente agendamento ID: {}", id);
         return repository.findById(id).map(agendamentoExistente -> {
             boolean dataHoraChanged = false;
             boolean servicoChanged = false;
             boolean usuarioChanged = false;
-
-            if (idCliente != null && !idCliente.equals(agendamentoExistente.getUsuarioId())) {
-                agendamentoExistente.setUsuarioId(idCliente);
-                usuarioChanged = true;
-            }
             if (dto.atendenteId() != null && !Objects.equals(dto.atendenteId(), agendamentoExistente.getAtendenteId())) {
                 agendamentoExistente.setAtendenteId(dto.atendenteId());
             }

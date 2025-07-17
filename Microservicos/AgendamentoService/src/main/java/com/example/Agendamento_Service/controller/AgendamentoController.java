@@ -118,42 +118,16 @@ public class AgendamentoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable UUID id, @Valid @RequestBody AgendamentoRequestDTO agendamentoDTO,
-                @RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<AgendamentoResponseDTO> atualizar(@PathVariable UUID id, @Valid @RequestBody AgendamentoRequestDTO agendamentoDTO) {
 
-        UUID idCliente;
-        try {
-            idCliente = service.validateTokenAndGetUserId(authorizationHeader);
-        } catch (InvalidTokenException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        } catch (AuthServiceException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Erro inesperado ao buscar agendamentos: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro interno ao processar a requisição.");
-        }
         // log.info("Requisição para atualizar agendamento ID: {}", id);
-        Agendamento agendamentoAtualizado = service.atualizarAgendamento(id, agendamentoDTO, idCliente);
+        Agendamento agendamentoAtualizado = service.atualizarAgendamento(id, agendamentoDTO);
         return ResponseEntity.ok(toResponseDTO(agendamentoAtualizado));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> atualizarParcial(@PathVariable UUID id, @RequestBody AgendamentoRequestDTO agendamentoDTO,
-                @RequestHeader("Authorization") String authorizationHeader) {
-
-        UUID idCliente;
-        try {
-            idCliente = service.validateTokenAndGetUserId(authorizationHeader);
-        } catch (InvalidTokenException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        } catch (AuthServiceException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Erro inesperado ao buscar agendamentos: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro interno ao processar a requisição.");
-        }
-        // log.info("Requisição para atualização parcial do agendamento ID: {}", id);
-        Agendamento agendamentoAtualizado = service.atualizarParcialAgendamento(id, agendamentoDTO, idCliente);
+    public ResponseEntity<AgendamentoResponseDTO> atualizarParcial(@PathVariable UUID id, @RequestBody AgendamentoRequestDTO agendamentoDTO) {
+        Agendamento agendamentoAtualizado = service.atualizarParcialAgendamento(id, agendamentoDTO);
         return ResponseEntity.ok(toResponseDTO(agendamentoAtualizado));
     }
 
@@ -193,6 +167,15 @@ public class AgendamentoController {
         }
 
         List<AgendamentoResponseDTO> agendamentos = service.buscarPorCliente(idCliente).stream()
+                                                            .map(this::toResponseDTO)
+                                                            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(agendamentos);
+    }
+    
+    @GetMapping("/cliente/{id}")
+    public ResponseEntity<List<AgendamentoResponseDTO>>  buscarPorClienteId(@PathVariable UUID id) {
+        List<AgendamentoResponseDTO> agendamentos = service.buscarPorCliente(id).stream()
                                                             .map(this::toResponseDTO)
                                                             .collect(Collectors.toList());
 

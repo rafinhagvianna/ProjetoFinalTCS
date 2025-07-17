@@ -107,11 +107,29 @@ public class TriagemController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/cliente")
+    public ResponseEntity<?> buscarPorCliente(@RequestHeader("Authorization") String authorizationHeader) {
+        UUID idCliente;
+        try {
+            idCliente = triagemService.validateTokenAndGetUserId(authorizationHeader);
+        } catch (InvalidTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (AuthServiceException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Erro inesperado ao buscar agendamentos: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro interno ao processar a requisição.");
+        }
+        TriagemResponseDTO triagem = triagemService.buscarPorCliente(idCliente);
+        return ResponseEntity.ok(triagem);
+    }
+    
     @GetMapping("/cliente/{id}")
-    public ResponseEntity<TriagemResponseDTO> buscarPorCliente(@PathVariable UUID id) {
+    public ResponseEntity<TriagemResponseDTO> buscarPorClienteId(@PathVariable UUID id) {
         TriagemResponseDTO triagem = triagemService.buscarPorCliente(id);
         return ResponseEntity.ok(triagem);
     }
+    
     @GetMapping("/{id}")
     public ResponseEntity<TriagemResponseDTO> buscarPorId(@PathVariable UUID id) {
         TriagemResponseDTO triagem = triagemService.buscarPorId(id);

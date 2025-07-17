@@ -12,6 +12,8 @@ import java.util.UUID;
 public interface TriagemRepository extends JpaRepository<Triagem, UUID> {
 
     List<Triagem> findByStatus(StatusTriagem status);
+    
+    List<Triagem> findByStatusOrStatusOrderByPrioridadeAscHorarioSolicitacaoAsc(StatusTriagem status1, StatusTriagem status2);
 
     Optional<Triagem> findFirstByStatusOrderByPrioridadeAscHorarioSolicitacaoAsc(StatusTriagem status);
 

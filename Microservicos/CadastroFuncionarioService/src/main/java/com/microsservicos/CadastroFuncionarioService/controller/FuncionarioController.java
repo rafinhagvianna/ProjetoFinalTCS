@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.microsservicos.CadastroFuncionarioService.dto.FuncionarioRequest;
 import com.microsservicos.CadastroFuncionarioService.dto.FuncionarioResponse;
+import com.microsservicos.CadastroFuncionarioService.dto.LoginResponse;
 import com.microsservicos.CadastroFuncionarioService.model.Funcionario;
 import com.microsservicos.CadastroFuncionarioService.service.FuncionarioService;
 
@@ -55,26 +56,43 @@ public class FuncionarioController {
 //                .ok("Login bem-sucedido");
 //    }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest req) {
-        // ALTERE AQUI para usar a busca por e-mail
-        Optional<Funcionario> opt = service.buscarPorEmail(req.email());
+    // @PostMapping("/login")
+    // public ResponseEntity<String> login(@RequestBody LoginRequest req) {
+    //     // ALTERE AQUI para usar a busca por e-mail
+    //     Optional<Funcionario> opt = service.buscarPorEmail(req.email());
 
-        if (opt.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body("E-mail ou senha incorretos."); // Mensagem genérica é mais segura
+    //     if (opt.isEmpty()) {
+    //         return ResponseEntity
+    //                 .status(HttpStatus.UNAUTHORIZED)
+    //                 .body("E-mail ou senha incorretos."); // Mensagem genérica é mais segura
+    //     }
+
+    //     Funcionario f = opt.get();
+    //     // ATENÇÃO: Em produção, use um comparador de senhas criptografadas (BCrypt)
+    //     if (!f.getSenha().equals(req.senha())) {
+    //         return ResponseEntity
+    //                 .status(HttpStatus.UNAUTHORIZED)
+    //                 .body("E-mail ou senha incorretos.");
+    //     }
+
+    //     return ResponseEntity.ok("Login de funcionário bem-sucedido");
+    // }
+
+        @PostMapping("/login")
+// Mude a assinatura para retornar um objeto LoginResponse
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
+        Funcionario loginValido = service.verificarLogin(req);
+
+        if (loginValido != null) {
+            // Crie e retorne um novo objeto LoginResponse.
+            // O Spring irá serializá-lo para JSON automaticamente.
+            LoginResponse response = new LoginResponse("Login bem-sucedido", loginValido.getNome(), loginValido.getEmail(), loginValido.getId());
+            return ResponseEntity.ok(response);
+        } else {
+            // Faça o mesmo para a resposta de erro.
+            LoginResponse response = new LoginResponse("E-mail ou senha incorretos.", "","", null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-
-        Funcionario f = opt.get();
-        // ATENÇÃO: Em produção, use um comparador de senhas criptografadas (BCrypt)
-        if (!f.getSenha().equals(req.senha())) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body("E-mail ou senha incorretos.");
-        }
-
-        return ResponseEntity.ok("Login de funcionário bem-sucedido");
     }
 
 //    public static record LoginRequest(String nome, String senha) {}
