@@ -1,96 +1,60 @@
-# Projeto BankFlow
+# 🏦 BankFlow
 
-![image](https://github.com/user-attachments/assets/98027553-1670-4938-975d-a7cab2da6986)
+**BankFlow** é uma aplicação web inovadora desenvolvida com o objetivo de reduzir o tempo de espera em filas bancárias, oferecendo um sistema inteligente de triagem e agendamento para clientes. A plataforma pode ser acessada tanto pelo computador quanto pelo celular, promovendo agilidade e organização no atendimento presencial.
 
----
+## 📌 Funcionalidades
 
-### 🌐 Visão Geral do Sistema
+- **Triagem inteligente**: O cliente seleciona o serviço desejado e, com base no tipo e no tempo estimado de espera, é direcionado para uma fila com temporizador (até 10 minutos) ou para o setor de agendamento.
+- **Setor de agendamento**: Serviços mais simples ou não urgentes são agendados pelo cliente, com data e horário definidos, evitando filas e esperas prolongadas.
+- **Atendimento prioritário**: Serviços de emergência como bloqueio/desbloqueio de cartão têm tempo de espera reduzido.
+- **Gestão por funcionários**: Os funcionários do banco visualizam os dados dos clientes em espera e podem chamar o próximo disponível mesmo antes do fim do tempo estimado.
 
-**Componentes principais:**
-- **Portal do Cliente**: Agendamento de serviços, preenchimento de informações prévias e acompanhamento do atendimento.
-- **Sistema de Triagem**: Avalia prioridade e direciona o atendimento com base no tipo de serviço.
-- **Painel do Funcionário (Backoffice)**: Acesso à agenda, triagens, histórico e atendimento personalizado.
+## 👨‍💻 Tecnologias Utilizadas
 
----
+| Camada        | Tecnologias                      |
+|---------------|----------------------------------|
+| **Backend**   | Spring Boot (Java 21)            |
+| **Frontend**  | Angular (versão 20), Bootstrap 5.3 |
+| **Banco de Dados** | SQL Server, MongoDB         |
+| **Segurança** | JWT (JSON Web Tokens)            |
+| **Testes**    | Postman, Swagger                 |
+| **Modelação** | Figma                            |
+| **Infraestrutura** | Oracle Cloud, Nginx         |
+| **Versionamento** | Git, GitHub                  |
+| **Metodologia Ágil** | Kanban                   |
 
-### 📐 Arquitetura Geral
+## 👥 Equipe de Desenvolvimento
 
-**Camadas do sistema:**
-- **Frontend (Angular)**  
-- **API REST (Spring Boot)**  
-- **Banco de Dados (MongoDB e SQL Server)**  
-- **Autenticação** via JWT  
-- **Hospedagem** em ambiente cloud (ex: Azure ou AWS)
-- **Documentação das Requisições**  (Swagger)
-- **Metodologia Ágil** (Kanban)
+- Gabriel Bachega  
+- Gabriel Oliveira  
+- Luiz Fernando Moreira Domenico  
+- Rafael de Godoy Vianna  
+- Rafael de Palma Francisco  
 
----
+## 🚀 Como acessar
 
-### 📋 Funcionalidades
+A aplicação é hospedada na Oracle Cloud e conta com Nginx como servidor de aplicação. O acesso pode ser feito diretamente pelo navegador, tanto em dispositivos móveis quanto desktop.
 
-#### 1. Cliente (Agendamento e Triagem)
-- Login / Cadastro
-- Escolha do serviço bancário (ex: abertura de conta, crédito, atendimento com gerente)
-- Sugestão de horário disponível
-- Preenchimento de dados pré-triagem (documentos, necessidades, perfil)
-- Confirmação e lembrete por e-mail/SMS
-- Acompanhamento em tempo real do atendimento
+## 📖 Documentação e Testes
 
-#### 2. Triagem Inteligente
-- Classificação do atendimento (complexidade, prioridade)
-- Agrupamento por setor/responsável
-- Encaminhamento para a fila correta
-- Estatísticas de tempo médio por serviço
+- Documentação interativa disponível via **Swagger**
+- Testes de API utilizando **Postman**
+- Modelos e protótipos desenvolvidos com **Figma**
 
-#### 3. Funcionário do Banco
-- Login com perfil autorizado
-- Visualização da agenda de atendimentos e fila de espera
-- Acesso à ficha do cliente e respostas da triagem
-- Início e encerramento de atendimentos
-- Histórico e relatórios de produtividade
+## 📌 Status do Projeto
 
----
+✅ Projeto em desenvolvimento com foco na melhoria contínua e validação de funcionalidades.  
+📋 Gerenciado com metodologia Kanban para melhor organização e produtividade.
 
-### ⚙️ Stack Tecnológica
+## 🎨 Arquitetura
 
-#### Backend: Spring Boot
-- Spring Web (REST API)
-- Spring Security (JWT)
-- Spring Data JPA
-- SQL Server Driver
-- Lombok
+<img width="2781" height="1201" alt="arquitetura drawio" src="https://github.com/user-attachments/assets/82b5c39e-468b-4339-a043-0c3fd3536df8" />
 
-#### Frontend: Angular
-- Angular CLI 17+
-- Angular Material
-- NgRx (opcional para estados complexos)
-- Integração com API via HttpClient
-
-#### Banco de Dados: SQL Server
-- Tabelas: `users`, `appointments`, `services`, `triage_answers`, `employees`, `roles`, `sessions`, `notifications`
 
 ---
 
-### 🔄 Integrações
-
-- API de envio de notificações (Twilio, SendGrid)
-- Login com autenticação multifator (opcional)
-- Painel administrativo com dashboards (ex: PrimeNG ou ngx-charts)
+> _“BankFlow veio para transformar o atendimento bancário presencial. Sem fila, sem dor de cabeça.”_
 
 ---
 
-**Planilhas do Projeto**
-
-- [Planilha de microsserviços](https://docs.google.com/spreadsheets/d/1jcfHNCjiN7VcZw7rTpQ5dDsCOEcvBZwlGwqWPyVROG8/edit?usp=sharing)
-
-### 🛠️ Etapas de Implementação
-
-| Fase | Entregas principais |
-|------|---------------------|
-| 1. Levantamento | Mapeamento dos serviços, perfis e jornadas |
-| 2. Design | Prototipação do frontend, estrutura da API |
-| 3. Backend | Desenvolvimento da API REST com validações e segurança |
-| 4. Frontend | Interface responsiva com Angular |
-| 5. Integração | Comunicação entre front, API e banco |
-| 6. Testes | Unitários, integração, performance |
 
