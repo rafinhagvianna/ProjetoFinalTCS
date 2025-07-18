@@ -2,6 +2,9 @@
 
 **BankFlow** é uma aplicação web inovadora desenvolvida com o objetivo de reduzir o tempo de espera em filas bancárias, oferecendo um sistema inteligente de triagem e agendamento para clientes. A plataforma pode ser acessada tanto pelo computador quanto pelo celular, promovendo agilidade e organização no atendimento presencial.
 
+
+Slides: [clique aqui](https://www.canva.com/design/DAGtbrEnMdM/63F3ElAnO-EUj-Qb3vlKXQ/edit?utm_content=DAGtbrEnMdM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
 Acesse nosso site pelo link : http://bankflow.ddns-ip.net/
 ## 📌 Funcionalidades
 
