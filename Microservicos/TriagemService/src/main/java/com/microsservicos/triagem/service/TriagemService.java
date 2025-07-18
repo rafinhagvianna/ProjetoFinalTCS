@@ -69,7 +69,7 @@ public class TriagemService {
         triagem.setNomeServicoSnapshot(servicoInfo.nome());
 
         triagem.setTempoEstimadoMinutos(servicoInfo.tempoMedioMinutos());
-        
+
         LocalDateTime horarioInicioEstimado = calcularHorarioInicioEstimado(triagem);
         triagem.setHorarioEstimadoAtendimento(horarioInicioEstimado.plusMinutes(servicoInfo.tempoMedioMinutos())); // O horário estimado é o início + duração
 
@@ -120,7 +120,7 @@ public class TriagemService {
 
         return triagemMapper.toResponseDTO(atualizada);
     }
-    
+
     @Transactional
     public TriagemResponseDTO buscarPorCliente(UUID id) {
         Triagem triagem = triagemRepository.findByClienteIdAndStatus(id, StatusTriagem.AGUARDANDO);
@@ -333,8 +333,8 @@ public class TriagemService {
     public void atualizarStatusDocumentoTriagem(UUID triagemId, UUID documentoCatalogoId, DocumentoStatusUpdateRequestDTO requestDTO) {
         // 1. Encontrar o DocumentoPendente específico para esta triagem e tipo de documento
         DocumentoPendente documentoPendente = documentoPendenteRepository
-            .findByTriagem_IdAndDocumentoCatalogoId(triagemId, documentoCatalogoId) // Usando findByTriagem_IdAndDocumentoCatalogoId
-            .orElseThrow(() -> new RuntimeException("Documento pendente não encontrado para Triagem ID: " + triagemId + " e Documento Catalogo ID: " + documentoCatalogoId));
+                .findByTriagem_IdAndDocumentoCatalogoId(triagemId, documentoCatalogoId) // Usando findByTriagem_IdAndDocumentoCatalogoId
+                .orElseThrow(() -> new RuntimeException("Documento pendente não encontrado para Triagem ID: " + triagemId + " e Documento Catalogo ID: " + documentoCatalogoId));
 
         // 2. Atualizar os campos do DocumentoPendente
         documentoPendente.setStatus(requestDTO.status());
@@ -350,6 +350,14 @@ public class TriagemService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<TriagemResponseDTO> listarTriagensPorStatus(StatusTriagem status) {
+        return triagemRepository.findByStatusOrderByHorarioSolicitacaoDesc(status)
+                .stream()
+                .map(this::converteParaDTO)
+                .collect(Collectors.toList());
+    }
+
     private TriagemResponseDTO converteParaDTO(Triagem triagem) {
         List<DocumentoPendenteResponseDTO> documentos = triagem.getDocumentosPendentes()
                 .stream()
@@ -360,7 +368,7 @@ public class TriagemService {
                         doc.getStatus(),
                         doc.getObservacao(),
                         doc.getUrlDocumento()
-                        ))
+                ))
                 .collect(Collectors.toList());
 
         return new TriagemResponseDTO(

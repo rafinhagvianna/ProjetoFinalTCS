@@ -4,6 +4,7 @@ import com.microsservicos.triagem.dto.AtualizarStatusTriagemDTO;
 import com.microsservicos.triagem.dto.DocumentoStatusUpdateRequestDTO;
 import com.microsservicos.triagem.dto.TriagemRequestDTO;
 import com.microsservicos.triagem.dto.TriagemResponseDTO;
+import com.microsservicos.triagem.enums.StatusTriagem;
 import com.microsservicos.triagem.exception.AuthServiceException;
 import com.microsservicos.triagem.exception.InvalidTokenException;
 import com.microsservicos.triagem.model.Triagem;
@@ -147,6 +148,12 @@ public class TriagemController {
     @GetMapping
     public ResponseEntity<List<TriagemResponseDTO>> listarTodas() {
         List<TriagemResponseDTO> triagens = triagemService.listarTodasTriagens();
+        return ResponseEntity.ok(triagens);
+    }
+
+    @GetMapping("/historico")
+    public ResponseEntity<List<TriagemResponseDTO>> listarHistorico() {
+        List<TriagemResponseDTO> triagens = triagemService.listarTriagensPorStatus(StatusTriagem.FINALIZADO);
         return ResponseEntity.ok(triagens);
     }
     
