@@ -12,10 +12,14 @@ import java.util.UUID;
 public interface TriagemRepository extends JpaRepository<Triagem, UUID> {
 
     List<Triagem> findByStatus(StatusTriagem status);
+    
+    List<Triagem> findByStatusOrStatusOrderByPrioridadeAscHorarioSolicitacaoAsc(StatusTriagem status1, StatusTriagem status2);
 
     Optional<Triagem> findFirstByStatusOrderByPrioridadeAscHorarioSolicitacaoAsc(StatusTriagem status);
 
     Optional<Triagem> findTopByOrderByHorarioEstimadoAtendimentoDesc();
 
     Triagem findByClienteIdAndStatus(UUID clienteId, StatusTriagem statusTriagem);
+
+    List<Triagem> findByStatusOrderByHorarioSolicitacaoDesc(StatusTriagem status);
 }

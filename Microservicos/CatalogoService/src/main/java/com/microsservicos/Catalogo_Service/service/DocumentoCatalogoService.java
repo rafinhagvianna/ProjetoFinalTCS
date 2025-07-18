@@ -17,12 +17,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+
 public class DocumentoCatalogoService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentoCatalogoService.class);
 
     private final DocumentoCatalogoRepository documentoCatalogoRepository;
+
+    public DocumentoCatalogoService(DocumentoCatalogoRepository documentoCatalogoRepository){
+        this.documentoCatalogoRepository = documentoCatalogoRepository;
+    }
+
 
     // Método auxiliar para mapear DocumentoCatalogo para DocumentoCatalogoResponse
     private DocumentoCatalogoResponse mapToDocumentoCatalogoResponse(DocumentoCatalogo documento) {
