@@ -22,4 +22,6 @@ public interface TriagemRepository extends JpaRepository<Triagem, UUID> {
     Triagem findByClienteIdAndStatus(UUID clienteId, StatusTriagem statusTriagem);
 
     List<Triagem> findByStatusOrderByHorarioSolicitacaoDesc(StatusTriagem status);
+
+    Optional<Triagem> findFirstByClienteIdAndStatusOrderByHorarioSolicitacaoAsc(UUID clienteId, StatusTriagem status);
 }

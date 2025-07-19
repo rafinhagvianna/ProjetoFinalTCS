@@ -8,10 +8,7 @@ import com.microsservicos.triagem.client.DocumentoCatalogoResponse;
 import com.microsservicos.triagem.dto.*;
 import com.microsservicos.triagem.enums.StatusDocumento;
 import com.microsservicos.triagem.enums.StatusTriagem;
-import com.microsservicos.triagem.exception.AuthServiceException;
-import com.microsservicos.triagem.exception.ComunicacaoServicoException;
-import com.microsservicos.triagem.exception.InvalidTokenException;
-import com.microsservicos.triagem.exception.RecursoNaoEncontradoException;
+import com.microsservicos.triagem.exception.*;
 import com.microsservicos.triagem.mapper.TriagemMapper;
 import com.microsservicos.triagem.model.DocumentoPendente;
 import com.microsservicos.triagem.model.Triagem;
@@ -57,6 +54,18 @@ public class TriagemService {
 
     @Transactional
     public TriagemResponseDTO criarTriagem(TriagemRequestDTO dto, UUID clienteId) {
+
+        // verificação se já possui uma triagem com o status de AGUARDANDO
+        Optional<Triagem> triagemExistente = triagemRepository
+                .findFirstByClienteIdAndStatusOrderByHorarioSolicitacaoAsc(clienteId, StatusTriagem.AGUARDANDO);
+
+        if (triagemExistente.isPresent()) {
+            // Lançamos uma exceção. O Controller irá capturá-la e retornar um erro 409 (Conflict).
+            throw new RegraDeNegocioException("Este cliente já possui uma triagem ativa e não pode entrar em uma nova fila.");
+        }
+
+
+
         Triagem triagem = new Triagem();
         triagem.setClienteId(clienteId);
         triagem.setServicoId(dto.servicoId());
@@ -69,7 +78,7 @@ public class TriagemService {
         triagem.setNomeServicoSnapshot(servicoInfo.nome());
 
         triagem.setTempoEstimadoMinutos(servicoInfo.tempoMedioMinutos());
-
+        
         LocalDateTime horarioInicioEstimado = calcularHorarioInicioEstimado(triagem);
         triagem.setHorarioEstimadoAtendimento(horarioInicioEstimado.plusMinutes(servicoInfo.tempoMedioMinutos())); // O horário estimado é o início + duração
 
@@ -114,13 +123,14 @@ public class TriagemService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Nenhuma triagem aguardando na fila."));
 
         triagem.setStatus(StatusTriagem.EM_ATENDIMENTO);
+        triagem.setHorarioEstimadoAtendimento(LocalDateTime.now());
         Triagem atualizada = triagemRepository.save(triagem);
 
         recalcularHorariosEstimadosDaFila();
 
         return triagemMapper.toResponseDTO(atualizada);
     }
-
+    
     @Transactional
     public TriagemResponseDTO buscarPorCliente(UUID id) {
         Triagem triagem = triagemRepository.findByClienteIdAndStatus(id, StatusTriagem.AGUARDANDO);
@@ -333,8 +343,8 @@ public class TriagemService {
     public void atualizarStatusDocumentoTriagem(UUID triagemId, UUID documentoCatalogoId, DocumentoStatusUpdateRequestDTO requestDTO) {
         // 1. Encontrar o DocumentoPendente específico para esta triagem e tipo de documento
         DocumentoPendente documentoPendente = documentoPendenteRepository
-                .findByTriagem_IdAndDocumentoCatalogoId(triagemId, documentoCatalogoId) // Usando findByTriagem_IdAndDocumentoCatalogoId
-                .orElseThrow(() -> new RuntimeException("Documento pendente não encontrado para Triagem ID: " + triagemId + " e Documento Catalogo ID: " + documentoCatalogoId));
+            .findByTriagem_IdAndDocumentoCatalogoId(triagemId, documentoCatalogoId) // Usando findByTriagem_IdAndDocumentoCatalogoId
+            .orElseThrow(() -> new RuntimeException("Documento pendente não encontrado para Triagem ID: " + triagemId + " e Documento Catalogo ID: " + documentoCatalogoId));
 
         // 2. Atualizar os campos do DocumentoPendente
         documentoPendente.setStatus(requestDTO.status());
@@ -358,6 +368,23 @@ public class TriagemService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void cancelarTriagem(UUID id) {
+        // Simplesmente chama o método de atualização de status com o status CANCELADO
+        this.atualizarStatus(id, StatusTriagem.CANCELADO);
+    }
+
+    @Transactional(readOnly = true)
+    public TriagemResponseDTO buscarTriagemAtivaPorCliente(UUID clienteId) {
+        // Usamos o novo método do repositório para buscar a triagem
+        Triagem triagem = triagemRepository
+                .findFirstByClienteIdAndStatusOrderByHorarioSolicitacaoAsc(clienteId, StatusTriagem.AGUARDANDO)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Nenhuma triagem ativa encontrada para este cliente."));
+
+        // Se encontrarmos, convertemos para DTO e retornamos
+        return converteParaDTO(triagem); // Reutilizando seu método privado de conversão
+    }
+
     private TriagemResponseDTO converteParaDTO(Triagem triagem) {
         List<DocumentoPendenteResponseDTO> documentos = triagem.getDocumentosPendentes()
                 .stream()
@@ -368,7 +395,7 @@ public class TriagemService {
                         doc.getStatus(),
                         doc.getObservacao(),
                         doc.getUrlDocumento()
-                ))
+                        ))
                 .collect(Collectors.toList());
 
         return new TriagemResponseDTO(

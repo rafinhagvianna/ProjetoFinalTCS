@@ -6,7 +6,7 @@ import java.util.List; // Importar List
 import java.util.UUID;
 
 public record SetorRequest(
-        UUID id, // For updates, though often ID is not sent in request body
+       // UUID id, // For updates, though often ID is not sent in request body
         String nome,
         String descricao,
         boolean isAtivo,

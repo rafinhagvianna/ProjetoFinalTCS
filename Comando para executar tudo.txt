@@ -1,0 +1,37 @@
+chmod +x start-all.sh
+./start-all.sh
+
+
+
+#!/bin/bash
+
+# Função para iniciar um serviço e rodar em segundo plano
+start_service() {
+    SERVICE_PATH=$1
+    SERVICE_NAME=$2
+    echo "Iniciando $SERVICE_NAME..."
+    (cd "$SERVICE_PATH" && mvn spring-boot:run) &
+    sleep 5
+}
+
+# Iniciar Eureka Server (Naming-Server)
+start_service "Naming-Server" "Eureka Server"
+
+# Aguardar Eureka estar totalmente ativo (delay básico)
+echo "Aguardando Eureka iniciar completamente..."
+sleep 20
+
+# Iniciar API Gateway
+start_service "API-Gateway" "API Gateway"
+
+# Iniciar os demais microsserviços
+start_service "Microservicos/AgendamentoService" "AgendamentoService"
+start_service "Microservicos/AuthService" "AuthService"
+start_service "Microservicos/CadastroClienteService" "CadastroClienteService"
+start_service "Microservicos/CadastroFuncionarioService" "CadastroFuncionarioService"
+start_service "Microservicos/CatalogoService" "CatalogoService"
+start_service "Microservicos/DocumentacaoService" "DocumentacaoService"
+start_service "Microservicos/TarefasFuncionario-Service" "TarefasFuncionario-Service"
+start_service "Microservicos/TriagemService" "TriagemService"
+
+echo "Todos os serviços foram iniciados."
