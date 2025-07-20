@@ -84,7 +84,9 @@ public class AuthService {
                     accessToken,
                     refreshToken,
                     userData.getNome(),
-                    userData.getEmail()
+                    userData.getEmail(),
+                    userData.getId(), // <-- Passe o ID
+                    role
             );
         } else {
             // Se chegou aqui, nenhuma autenticação foi bem-sucedida

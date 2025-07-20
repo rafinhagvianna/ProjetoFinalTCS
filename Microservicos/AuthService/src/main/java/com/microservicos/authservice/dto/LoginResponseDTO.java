@@ -8,7 +8,9 @@ public record LoginResponseDTO(
         String accessToken,
         String refreshToken,
         String nome,
-        String email
+        String email,
+        UUID id,    // <-- Talvez tenha que comentar
+        String role // <-- ADICIONE ESTA LINHA
 ) {
 
 }
