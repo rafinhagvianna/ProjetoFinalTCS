@@ -63,7 +63,7 @@ authorization: Bearer Token
         "prioridade": 3,
         "tempoMedioMinutos": 20,
         "documentosObrigatoriosIds": [],
-        "icone": null
+        "icone": "fa fa-building-columns"
     },
     {
         "id": "df74aac7-52aa-48c7-a702-fad6508c3814",
