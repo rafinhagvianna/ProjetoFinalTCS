@@ -114,6 +114,7 @@ public class TriagemService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Nenhuma triagem aguardando na fila."));
 
         triagem.setStatus(StatusTriagem.EM_ATENDIMENTO);
+        triagem.setHorarioEstimadoAtendimento(LocalDateTime.now());
         Triagem atualizada = triagemRepository.save(triagem);
 
         recalcularHorariosEstimadosDaFila();
@@ -345,6 +346,14 @@ public class TriagemService {
 
     public List<TriagemResponseDTO> listarTodasTriagens() {
         return triagemRepository.findByStatusOrStatusOrderByPrioridadeAscHorarioSolicitacaoAsc(StatusTriagem.AGUARDANDO, StatusTriagem.EM_ATENDIMENTO)
+                .stream()
+                .map(this::converteParaDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TriagemResponseDTO> listarTriagensPorStatus(StatusTriagem status) {
+        return triagemRepository.findByStatusOrderByHorarioSolicitacaoDesc(status)
                 .stream()
                 .map(this::converteParaDTO)
                 .collect(Collectors.toList());
