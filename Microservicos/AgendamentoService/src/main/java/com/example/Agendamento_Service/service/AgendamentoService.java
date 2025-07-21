@@ -265,7 +265,9 @@ public class AgendamentoService {
             agendamentoExistente.setAtendenteId(dto.atendenteId());
             agendamentoExistente.setServicoId(dto.servicoId());
             agendamentoExistente.setDataHora(dto.dataHora());
-            agendamentoExistente.setObservacoes(dto.observacoes()); // <-- ADICIONE ESTA LINHA AQUI!
+            agendamentoExistente.setObservacoes(dto.observacoes());
+            agendamentoExistente.setStatus(dto.status());
+            agendamentoExistente.setAtendidoEm(dto.atendidoEm());
 
             // Se necessário, atualizar snapshots de nome de cliente/serviço
             agendamentoExistente.setNomeClienteSnapshot(usuarioServiceFacade.buscarNomeCliente(agendamentoExistente.getUsuarioId()));
