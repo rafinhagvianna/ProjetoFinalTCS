@@ -15,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
     public CorsWebFilter corsFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.addAllowedOrigin("http://localhost:4200"); // Seu frontend Angular
-        corsConfig.addAllowedOrigin("https://bankflow.ddns-ip.net");
+	corsConfig.addAllowedOrigin("https://bankflow.ddns-ip.net");
         corsConfig.addAllowedMethod("*"); // GET, POST, PUT, DELETE, OPTIONS, etc.
         corsConfig.addAllowedHeader("*"); // Todos os cabeçalhos (Authorization, Content-Type, etc.)
         corsConfig.setAllowCredentials(true); // Permite credenciais (cookies, headers de auth)
@@ -32,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // todos os caminhos do Gateway
                 .allowedOrigins("http://localhost:4200") // url do Angular
-                .allowedOrigins("http://bankflow.ddns-ip.net")
+		.allowedOrigins("https://bankflow.ddns-ip.net")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
                 .allowCredentials(true);
