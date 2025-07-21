@@ -14,4 +14,6 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, UUID> 
     List<Agendamento> findByDataHoraBetween(LocalDateTime start, LocalDateTime end);
     Optional<Agendamento> findByUsuarioIdAndServicoIdAndDataHora(UUID usuarioId, UUID servicoId, LocalDateTime dataHora);
     List<Agendamento> findByUsuarioIdAndStatus(UUID usuarioId, StatusAgendamento statusAgendamento);
+    Optional<Agendamento> findFirstByUsuarioIdAndStatusAndDataHoraAfterOrderByDataHoraAsc(
+            UUID usuarioId, StatusAgendamento status, LocalDateTime dataAtual);
 }

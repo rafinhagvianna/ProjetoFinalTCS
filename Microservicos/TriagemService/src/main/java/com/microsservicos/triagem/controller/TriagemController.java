@@ -7,6 +7,7 @@ import com.microsservicos.triagem.dto.TriagemResponseDTO;
 import com.microsservicos.triagem.enums.StatusTriagem;
 import com.microsservicos.triagem.exception.AuthServiceException;
 import com.microsservicos.triagem.exception.InvalidTokenException;
+import com.microsservicos.triagem.exception.RecursoNaoEncontradoException;
 import com.microsservicos.triagem.model.Triagem;
 import com.microsservicos.triagem.service.TriagemService;
 import jakarta.validation.Valid; // Importante: Adicionar import para @Valid
@@ -155,6 +156,34 @@ public class TriagemController {
     public ResponseEntity<List<TriagemResponseDTO>> listarHistorico() {
         List<TriagemResponseDTO> triagens = triagemService.listarTriagensPorStatus(StatusTriagem.FINALIZADO);
         return ResponseEntity.ok(triagens);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> cancelarTriagem(@PathVariable UUID id){
+        triagemService.cancelarTriagem(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/cliente/ativa")
+    public ResponseEntity<?> buscarTriagemAtiva(@RequestHeader("Authorization") String authorizationHeader) {
+        UUID idCliente;
+        try {
+            // 1. Valida o token e obtém o ID do cliente (reutilizando sua lógica)
+            idCliente = triagemService.validateTokenAndGetUserId(authorizationHeader);
+        } catch (InvalidTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao validar sessão.");
+        }
+
+        try {
+            // 2. Tenta buscar a triagem ativa para o cliente
+            TriagemResponseDTO triagemAtiva = triagemService.buscarTriagemAtivaPorCliente(idCliente);
+            return ResponseEntity.ok(triagemAtiva);
+        } catch (RecursoNaoEncontradoException e) {
+            // 3. Se não encontrar, retorna 404 Not Found. É exatamente o que o frontend espera!
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
     
 }

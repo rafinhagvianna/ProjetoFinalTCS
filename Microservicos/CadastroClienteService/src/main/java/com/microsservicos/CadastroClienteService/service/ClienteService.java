@@ -32,6 +32,12 @@ public class ClienteService {
 
     public ClienteResponse criarCliente(ClienteRequest req) {
 
+        if (req.email() != null && req.email().toLowerCase().endsWith("@bankflow.com")) {
+            // Lança uma exceção que será tratada pelo Controller
+            throw new IllegalArgumentException("Cadastro de e-mail corporativo não é permitido para clientes.");
+        }
+
+
         String senhaCodificada = passwordEncoder.encode(req.senha());
 
         Cliente entidade = new Cliente(

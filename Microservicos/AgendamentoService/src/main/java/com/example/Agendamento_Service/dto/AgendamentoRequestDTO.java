@@ -1,5 +1,6 @@
 package com.example.Agendamento_Service.dto;
 
+import com.example.Agendamento_Service.enums.StatusAgendamento;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -14,8 +15,8 @@ public record AgendamentoRequestDTO(
         @NotNull(message = "A data e hora do agendamento são obrigatórias.")
         @FutureOrPresent(message = "A data e hora do agendamento devem ser de hoje para frente")
         LocalDateTime dataHora,
-        String observacoes
+        String observacoes,
+        StatusAgendamento status,
+        LocalDateTime atendidoEm
 ) {
-    // Records automatically provide constructor, getters, equals, hashCode, toString.
-    // No need for manual getters/setters or default constructor.
 }
