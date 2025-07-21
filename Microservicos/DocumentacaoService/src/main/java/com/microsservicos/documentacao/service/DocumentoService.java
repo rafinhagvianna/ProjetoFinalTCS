@@ -131,12 +131,12 @@ public class DocumentoService {
         Documento salvo = documentoRepository.save(documento); // Salva (ou atualiza) o documento
 
         // --- ATUALIZAR urlVisualizacao COM O ID REAL DO DOCUMENTO ---
-        // String finalFileDownloadUri = "https://bankflow.ddns-ip.net" + "/api/documentacao/" + salvo.getId().toString() + "/download";
-        String finalFileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/documentacao/")
-                .path(salvo.getId().toString())
-                .path("/download")
-                .toUriString();
+        String finalFileDownloadUri = "https://bankflow.ddns-ip.net" + "/api/documentacao/" + salvo.getId().toString() + "/download";
+        // String finalFileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                // .path("/api/documentacao/")
+                // .path(salvo.getId().toString())
+                // .path("/download")
+                // .toUriString();
         salvo.setUrlVisualizacao(finalFileDownloadUri);
         documentoRepository.save(salvo); // Salvar novamente para persistir a URL atualizada
 
