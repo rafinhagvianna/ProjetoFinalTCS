@@ -52,7 +52,8 @@ A aplicação é hospedada na Oracle Cloud e conta com Nginx como servidor de ap
 
 ## 🎨 Arquitetura
 
-<img width="2781" height="1201" alt="arquitetura drawio" src="https://github.com/user-attachments/assets/82b5c39e-468b-4339-a043-0c3fd3536df8" />
+
+<img width="2752" height="1201" alt="Diagrama sem nome drawio" src="https://github.com/user-attachments/assets/5289ffec-4833-4381-9bdb-5b052fb9c773" />
 
 
 ---
