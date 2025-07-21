@@ -76,6 +76,15 @@ public class AgendamentoService {
         return repository.findByUsuarioIdAndStatus(id, StatusAgendamento.AGENDADO);
     }
 
+    @Transactional(readOnly = true)
+    public Agendamento buscarAgendamentoAtivoPorCliente(UUID clienteId) {
+        return repository.findFirstByUsuarioIdAndStatusAndDataHoraAfterOrderByDataHoraAsc(
+                clienteId,
+                StatusAgendamento.AGENDADO,
+                LocalDateTime.now() // Busca apenas agendamentos a partir de agora
+        ).orElseThrow(() -> new RecursoNaoEncontradoException("Nenhum agendamento ativo encontrado para este cliente."));
+    }
+
 //    @Transactional
 //    public Agendamento salvar(AgendamentoRequestDTO agendamentoDTO, UUID idCliente) {
 //        // log.info("Iniciando criação de novo agendamento para usuário ID: {} e serviço ID: {}", agendamentoDTO.usuarioId(), agendamentoDTO.servicoId());
