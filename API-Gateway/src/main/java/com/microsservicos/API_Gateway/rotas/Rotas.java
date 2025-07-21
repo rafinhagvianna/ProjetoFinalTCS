@@ -202,13 +202,22 @@ public class Rotas {
     }
 
 
+//    @Bean
+//    public RouterFunction<ServerResponse> clienteServiceRota(){
+//        return route("cliente_service") //
+//                .route(RequestPredicates.path("/api/cliente"), HandlerFunctions.http("http://localhost:8086"))
+//                .route(RequestPredicates.POST("/api/cliente/login"), HandlerFunctions.http("http://localhost:8086"))
+//                .route(RequestPredicates.POST("/api/cliente/esqueci-senha"), HandlerFunctions.http("http://localhost:8086"))
+//                .route(RequestPredicates.POST("/api/cliente/redefinir-senha"), HandlerFunctions.http("http://localhost:8086"))
+//                .build();
+//    }
+
     @Bean
-    public RouterFunction<ServerResponse> clienteServiceRota(){
-        return route("cliente_service") //
-                .route(RequestPredicates.path("/api/cliente"), HandlerFunctions.http("http://localhost:8086"))
-                .route(RequestPredicates.POST("/api/cliente/login"), HandlerFunctions.http("http://localhost:8086"))
-                .route(RequestPredicates.POST("/api/cliente/esqueci-senha"), HandlerFunctions.http("http://localhost:8086"))
-                .route(RequestPredicates.POST("/api/cliente/redefinir-senha"), HandlerFunctions.http("http://localhost:8086"))
+    public RouterFunction<ServerResponse> clienteServiceRota() {
+        return route("cliente_service")
+                // 👇 A CORREÇÃO ESTÁ AQUI 👇
+                // Usamos "/api/cliente/**" para cobrir TODAS as sub-rotas.
+                .route(RequestPredicates.path("/api/cliente/**"), HandlerFunctions.http("http://localhost:8086"))
                 .build();
     }
 

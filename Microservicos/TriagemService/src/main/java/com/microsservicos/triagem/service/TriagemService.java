@@ -8,10 +8,7 @@ import com.microsservicos.triagem.client.DocumentoCatalogoResponse;
 import com.microsservicos.triagem.dto.*;
 import com.microsservicos.triagem.enums.StatusDocumento;
 import com.microsservicos.triagem.enums.StatusTriagem;
-import com.microsservicos.triagem.exception.AuthServiceException;
-import com.microsservicos.triagem.exception.ComunicacaoServicoException;
-import com.microsservicos.triagem.exception.InvalidTokenException;
-import com.microsservicos.triagem.exception.RecursoNaoEncontradoException;
+import com.microsservicos.triagem.exception.*;
 import com.microsservicos.triagem.mapper.TriagemMapper;
 import com.microsservicos.triagem.model.DocumentoPendente;
 import com.microsservicos.triagem.model.Triagem;
@@ -57,6 +54,18 @@ public class TriagemService {
 
     @Transactional
     public TriagemResponseDTO criarTriagem(TriagemRequestDTO dto, UUID clienteId) {
+
+        // verificação se já possui uma triagem com o status de AGUARDANDO
+        Optional<Triagem> triagemExistente = triagemRepository
+                .findFirstByClienteIdAndStatusOrderByHorarioSolicitacaoAsc(clienteId, StatusTriagem.AGUARDANDO);
+
+        if (triagemExistente.isPresent()) {
+            // Lançamos uma exceção. O Controller irá capturá-la e retornar um erro 409 (Conflict).
+            throw new RegraDeNegocioException("Este cliente já possui uma triagem ativa e não pode entrar em uma nova fila.");
+        }
+
+
+
         Triagem triagem = new Triagem();
         triagem.setClienteId(clienteId);
         triagem.setServicoId(dto.servicoId());
@@ -357,6 +366,23 @@ public class TriagemService {
                 .stream()
                 .map(this::converteParaDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void cancelarTriagem(UUID id) {
+        // Simplesmente chama o método de atualização de status com o status CANCELADO
+        this.atualizarStatus(id, StatusTriagem.CANCELADO);
+    }
+
+    @Transactional(readOnly = true)
+    public TriagemResponseDTO buscarTriagemAtivaPorCliente(UUID clienteId) {
+        // Usamos o novo método do repositório para buscar a triagem
+        Triagem triagem = triagemRepository
+                .findFirstByClienteIdAndStatusOrderByHorarioSolicitacaoAsc(clienteId, StatusTriagem.AGUARDANDO)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Nenhuma triagem ativa encontrada para este cliente."));
+
+        // Se encontrarmos, convertemos para DTO e retornamos
+        return converteParaDTO(triagem); // Reutilizando seu método privado de conversão
     }
 
     private TriagemResponseDTO converteParaDTO(Triagem triagem) {
