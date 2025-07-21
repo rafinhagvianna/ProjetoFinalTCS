@@ -5,6 +5,7 @@ import com.microsservicos.documentacao.client.TriagemServiceClient; // NOVO
 import com.microsservicos.documentacao.dto.DocumentoResponseDTO;
 import com.microsservicos.documentacao.dto.DocumentoStatusUpdateRequestDTO; // NOVO
 import com.microsservicos.documentacao.dto.ValidacaoDocumentoRequestDTO;
+import com.microsservicos.documentacao.dto.ValidacaoDocumentoRequestIdDTO;
 import com.microsservicos.documentacao.enums.StatusDocumento;
 import com.microsservicos.documentacao.exception.RecursoNaoEncontradoException;
 import com.microsservicos.documentacao.model.Documento;
@@ -156,9 +157,43 @@ public class DocumentoService {
     }
 
     @Transactional
-    public DocumentoResponseDTO validarDocumento(UUID documentoId, ValidacaoDocumentoRequestDTO validacaoDTO) {
+    public DocumentoResponseDTO validarDocumentoId(UUID documentoId, ValidacaoDocumentoRequestIdDTO validacaoDTO) {
         Documento documento = documentoRepository.findById(documentoId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Documento com ID " + documentoId + " não encontrado."));
+
+        if (validacaoDTO.novoStatus() == StatusDocumento.REJEITADO && (validacaoDTO.observacao() == null || validacaoDTO.observacao().isBlank())) {
+            throw new IllegalArgumentException("Observação é obrigatória para documentos rejeitados.");
+        }
+
+        documento.setStatus(validacaoDTO.novoStatus());
+        documento.setObservacaoValidacao(validacaoDTO.observacao());
+        documento.setDataValidacao(LocalDateTime.now());
+
+        Documento atualizado = documentoRepository.save(documento);
+
+        // --- NOVO: Comunicar ao Triagem/Agendamento Service após validação ---
+        DocumentoStatusUpdateRequestDTO updateDTO = new DocumentoStatusUpdateRequestDTO(
+                atualizado.getId(),
+                atualizado.getStatus(),
+                atualizado.getUrlVisualizacao(),
+                atualizado.getObservacaoValidacao()
+        );
+
+        if (atualizado.getTriagemId() != null) {
+            triagemServiceClient.atualizarStatusDocumentoTriagem(atualizado.getTriagemId(), atualizado.getDocumentoCatalogoId(), updateDTO);
+        } else if (atualizado.getAgendamentoId() != null) {
+            agendamentoServiceClient.atualizarStatusDocumentoAgendamento(atualizado.getAgendamentoId(), atualizado.getDocumentoCatalogoId(), updateDTO);
+        }
+
+        return toResponseDTO(atualizado);
+    }
+    public DocumentoResponseDTO validarDocumento(ValidacaoDocumentoRequestDTO validacaoDTO) {
+        Documento documento;
+        if (validacaoDTO.triagemId() != null) {
+            documento = documentoRepository.findByTriagemIdAndDocumentoCatalogoId(validacaoDTO.triagemId(), validacaoDTO.documentoCatalogoId()).orElseThrow();
+        } else { // agendamentoId != null
+            documento = documentoRepository.findByAgendamentoIdAndDocumentoCatalogoId(validacaoDTO.agendamentoId(), validacaoDTO.documentoCatalogoId()).orElseThrow();
+        }
 
         if (validacaoDTO.novoStatus() == StatusDocumento.REJEITADO && (validacaoDTO.observacao() == null || validacaoDTO.observacao().isBlank())) {
             throw new IllegalArgumentException("Observação é obrigatória para documentos rejeitados.");
