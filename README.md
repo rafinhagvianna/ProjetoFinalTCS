@@ -1,17 +1,17 @@
 <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&pause=1000&color=30D158&width=1000&lines=BankFlow+-+uma+aplicação+web+inovadora!;"  />
 
-============================================================================================
+
 
 Este programa foi desenvolvido com o objetivo de reduzir o tempo de espera em filas bancárias, oferecendo um sistema inteligente de triagem e agendamento para clientes. A plataforma pode ser acessada tanto pelo computador quanto pelo celular, promovendo agilidade e organização no atendimento presencial.
 
-============================================================================================
+
 
 
 Escaneie o qr Code abaixo ou se preferir [clique aqui](http://bankflow.ddns-ip.net/) para acessar o site direto, abaixo também esta disponivel a nossa apresentação.
 
 <img width="200" height="200" alt="QR-CODE" src="https://github.com/user-attachments/assets/b8853e6e-2cb7-4882-9682-d00c9d07a8aa" />  [<img width="200" height="200" alt="image" src="https://github.com/user-attachments/assets/2a75b381-8473-45b5-a678-0c0241cdffe7" />](https://www.canva.com/design/DAGtbrEnMdM/63F3ElAnO-EUj-Qb3vlKXQ/edit?utm_content=DAGtbrEnMdM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
-============================================================================================
+
 
 ## 📌 Funcionalidades
 
