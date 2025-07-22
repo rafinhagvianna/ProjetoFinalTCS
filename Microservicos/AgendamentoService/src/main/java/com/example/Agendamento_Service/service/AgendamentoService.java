@@ -1,9 +1,6 @@
 package com.example.Agendamento_Service.service;
 
-import com.example.Agendamento_Service.dto.AgendamentoRequestDTO;
-import com.example.Agendamento_Service.dto.DocumentoPendenteResponseDTO;
-import com.example.Agendamento_Service.dto.DocumentoStatusUpdateRequestDTO;
-import com.example.Agendamento_Service.dto.TokenValidationDTO;
+import com.example.Agendamento_Service.dto.*;
 import com.example.Agendamento_Service.client.AuthServiceClient;
 import com.example.Agendamento_Service.client.DocumentoCatalogoResponse;
 import com.example.Agendamento_Service.client.ServicoResponse;
@@ -30,7 +27,6 @@ import java.util.List;
 import java.util.Objects; // Adicionado para Objects.equals no PATCH
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class AgendamentoService {
@@ -509,5 +505,11 @@ public class AgendamentoService {
         }
 
         return idCliente;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ContagemPorItemDTO> contarAtendimentosPorServico() {
+        // Simplesmente chama o método do repositório e retorna o resultado
+        return repository.contarAtendimentosPorServico();
     }
 }
