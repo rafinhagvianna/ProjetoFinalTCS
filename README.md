@@ -7,9 +7,9 @@ Este programa foi desenvolvido com o objetivo de reduzir o tempo de espera em fi
 
 
 
-Escaneie o qr Code abaixo ou se preferir [clique aqui](http://bankflow.ddns-ip.net/) para acessar o site direto, abaixo também esta disponivel a nossa apresentação.
+[clique aqui](http://bankflow.ddns-ip.net/) para acessar o site e testar as funcionalidades, abaixo também esta disponivel a nossa apresentação.
 
-<img width="200" height="200" alt="QR-CODE" src="https://github.com/user-attachments/assets/b8853e6e-2cb7-4882-9682-d00c9d07a8aa" />  [<img width="200" height="200" alt="image" src="https://github.com/user-attachments/assets/2a75b381-8473-45b5-a678-0c0241cdffe7" />](https://www.canva.com/design/DAGtbrEnMdM/63F3ElAnO-EUj-Qb3vlKXQ/edit?utm_content=DAGtbrEnMdM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+[<img width="200" height="200" alt="image" src="https://github.com/user-attachments/assets/2a75b381-8473-45b5-a678-0c0241cdffe7" />](https://www.canva.com/design/DAGtbrEnMdM/63F3ElAnO-EUj-Qb3vlKXQ/edit?utm_content=DAGtbrEnMdM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 
 
