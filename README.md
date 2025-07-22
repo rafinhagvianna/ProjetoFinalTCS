@@ -1,15 +1,17 @@
-# 🏦 BankFlow
+<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&pause=1000&color=30D158&width=1000&lines=BankFlow+-+uma+aplicação+web+inovadora!;"  />
 
-**BankFlow** é uma aplicação web inovadora desenvolvida com o objetivo de reduzir o tempo de espera em filas bancárias, oferecendo um sistema inteligente de triagem e agendamento para clientes. A plataforma pode ser acessada tanto pelo computador quanto pelo celular, promovendo agilidade e organização no atendimento presencial.
+============================================================================================
+
+Este programa foi desenvolvido com o objetivo de reduzir o tempo de espera em filas bancárias, oferecendo um sistema inteligente de triagem e agendamento para clientes. A plataforma pode ser acessada tanto pelo computador quanto pelo celular, promovendo agilidade e organização no atendimento presencial.
+
+============================================================================================
 
 
-Slides: [clique aqui](https://www.canva.com/design/DAGtbrEnMdM/63F3ElAnO-EUj-Qb3vlKXQ/edit?utm_content=DAGtbrEnMdM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+Escaneie o qr Code abaixo ou se preferir [clique aqui](http://bankflow.ddns-ip.net/) para acessar o site direto, abaixo também esta disponivel a nossa apresentação.
 
-Acesse nosso site pelo link ou pelo qr code abaixo : 
+<img width="200" height="200" alt="QR-CODE" src="https://github.com/user-attachments/assets/b8853e6e-2cb7-4882-9682-d00c9d07a8aa" />  [<img width="200" height="200" alt="image" src="https://github.com/user-attachments/assets/2a75b381-8473-45b5-a678-0c0241cdffe7" />](https://www.canva.com/design/DAGtbrEnMdM/63F3ElAnO-EUj-Qb3vlKXQ/edit?utm_content=DAGtbrEnMdM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
-http://bankflow.ddns-ip.net/
-
-<img width="300" height="300" alt="QR-CODE" src="https://github.com/user-attachments/assets/b8853e6e-2cb7-4882-9682-d00c9d07a8aa" />
+============================================================================================
 
 ## 📌 Funcionalidades
 
@@ -17,6 +19,7 @@ http://bankflow.ddns-ip.net/
 - **Setor de agendamento**: Serviços mais simples ou não urgentes são agendados pelo cliente, com data e horário definidos, evitando filas e esperas prolongadas.
 - **Atendimento prioritário**: Serviços de emergência como bloqueio/desbloqueio de cartão têm tempo de espera reduzido.
 - **Gestão por funcionários**: Os funcionários do banco visualizam os dados dos clientes em espera e podem chamar o próximo disponível mesmo antes do fim do tempo estimado.
+
 
 ## 👨‍💻 Tecnologias Utilizadas
 
@@ -32,6 +35,8 @@ http://bankflow.ddns-ip.net/
 | **Versionamento** | Git, GitHub                  |
 | **Metodologia Ágil** | Kanban                   |
 
+
+
 ## 👥 Equipe de Desenvolvimento
 
 - Gabriel Bachega  
@@ -40,9 +45,7 @@ http://bankflow.ddns-ip.net/
 - Rafael de Godoy Vianna  
 - Rafael de Palma Francisco  
 
-## 🚀 Como acessar
 
-A aplicação é hospedada na Oracle Cloud e conta com Nginx como servidor de aplicação. O acesso pode ser feito diretamente pelo navegador, tanto em dispositivos móveis quanto desktop.
 
 ## 📖 Documentação e Testes
 
@@ -50,10 +53,14 @@ A aplicação é hospedada na Oracle Cloud e conta com Nginx como servidor de ap
 - Testes de API utilizando **Postman**
 - Modelos e protótipos desenvolvidos com **Figma**
 
+
+
 ## 📌 Status do Projeto
 
 ✅ Projeto em desenvolvimento com foco na melhoria contínua e validação de funcionalidades.  
 📋 Gerenciado com metodologia Kanban para melhor organização e produtividade.
+
+
 
 ## 🎨 Arquitetura
 
