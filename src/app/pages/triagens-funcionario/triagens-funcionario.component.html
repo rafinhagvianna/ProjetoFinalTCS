@@ -1,0 +1,93 @@
+<app-navbar></app-navbar>
+
+<div class="d-flex justify-content-center align-items-center menu-funcionario-bg">
+
+  <div class="triagens-container p-4 p-md-5 rounded-4 border border-white border-opacity-10 text-light">
+    
+    <h1 class="text-center mb-4">Acompanhamento de Triagens</h1>
+
+    <div *ngIf="isLoading" class="text-center mt-4">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+      <p class="mt-2">Carregando triagens...</p>
+    </div>
+    <div *ngIf="errorMsg" class="alert alert-danger mt-4">
+      {{ errorMsg }}
+    </div>
+
+    <div *ngIf="!isLoading && triagens.length === 0 && !errorMsg" class="text-center empty-state">
+      <i class="bi bi-clipboard-check-fill"></i>
+      <h2>Nenhuma triagem na fila!</h2>
+      <p class="text-white-50">Todos os clientes foram atendidos. Bom trabalho!</p>
+    </div>
+
+    <!-- <div *ngIf="!isLoading && triagens.length > 0" class="table-responsive">
+      <table class="table table-dark table-hover align-middle mt-4">
+        <thead>
+          <tr class="text-uppercase">
+            <th>Cliente</th>
+            <th>Status</th>
+            <th>Serviço Solicitado</th>
+            <th>Solicitação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of triagens">
+            <td>{{ t.nomeClienteSnapshot || 'Cliente não identificado' }}</td>
+            <td>
+              <span class="badge rounded-pill" [ngClass]="{
+                'text-bg-danger': t.status === 'EM_ATENDIMENTO',
+                'text-bg-warning': t.status === 'AGUARDANDO'
+              }">
+                {{ t.status }}
+              </span>
+            </td>
+            <td>{{ t.nomeServicoSnapshot }}</td>
+            <td>{{ t.horarioSolicitacao | date:'shortTime' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div> -->
+
+    <div *ngIf="!isLoading && triagens.length > 0" class="table-responsive">
+      <table class="table table-dark table-hover align-middle mt-4">
+        <thead>
+          </thead>
+        <tbody>
+          <tr *ngFor="let t of triagens" 
+              (click)="verDetalhesCliente(t)" 
+              class="linha-clicavel"
+              title="Clique para ver detalhes do atendimento">
+              
+            <td>{{ t.nomeClienteSnapshot || 'Cliente não identificado' }}</td>
+            <td>
+              <span class="badge rounded-pill" [ngClass]="{
+                'text-bg-danger': t.status === 'EM_ATENDIMENTO',
+                'text-bg-warning': t.status === 'AGUARDANDO'
+              }">
+                {{ t.status }}
+              </span>
+            </td>
+            <td>{{ t.nomeServicoSnapshot }}</td>
+            <td>{{ t.horarioSolicitacao | date:'shortTime' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
+      
+      <button class="btn btn-custom-secondary-outline" (click)="irHistorico()">
+        Histórico
+      </button>
+      <button class="btn btn-primary ms-2" (click)="onChamarProximo()" [disabled]="isChamando">
+        {{ isChamando ? 'Chamando...' : 'Chamar Próximo' }}
+      </button>
+      <button class="btn btn-primary ms-2" (click)="retornar()">
+        Voltar
+      </button>
+    </div>
+
+  </div>
+</div>

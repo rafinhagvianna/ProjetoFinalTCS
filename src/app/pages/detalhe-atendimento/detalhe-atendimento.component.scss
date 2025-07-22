@@ -1,0 +1,38 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+:host {
+  display: block;
+  background: url('/assets/Background/darkBackground.png') center/cover no-repeat fixed;
+  min-height: 100vh;
+}
+
+.detalhe-container {
+  width: 90%;
+  max-width: 900px;
+  background: rgba(25, 35, 50, 0.6);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+// Estilo para os labels dos campos
+.form-label-static {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+// Estilo para os inputs desabilitados ficarem legíveis
+.form-control:disabled {
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #f8f9fa;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  opacity: 1; // Garante que o texto não fique esmaecido
+}
+
+// Estilo para a lista de documentos
+.list-group-item {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f8f9fa;
+}

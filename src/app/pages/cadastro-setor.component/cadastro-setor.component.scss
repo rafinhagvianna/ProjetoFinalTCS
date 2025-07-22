@@ -1,0 +1,60 @@
+body {
+    height: 100%;
+    padding: 100px 20px;
+}
+
+.card {
+    background-color: rgba(25, 35, 50, 0.6);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+h1{
+    color: #F8F9FA;
+}
+
+.form-control,
+.dropdown-menu {
+
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-control:focus,
+label,
+input,
+textarea,
+i,
+a {
+    color: #f7f7f7;
+
+}
+
+.form-check input, .form-check .badge, .form-check-input{
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    a {
+        cursor: pointer;
+    }
+
+    a:hover {
+        color: #f7f7f7;
+        background-color: rgba(255, 255, 255, 0.11);
+    }
+}
+
+::placeholder,
+.text-muted {
+    color: gray !important;
+}
+
+.multi-select-container {
+    cursor: pointer;
+    position: relative;
+}
+
+.dropdown-arrow.rotated {
+    transform: rotate(180deg);
+}

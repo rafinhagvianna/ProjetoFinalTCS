@@ -1,0 +1,30 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+.menu-funcionario-page {
+  // Aumentando o padding para dar mais respiro ao contêiner geral
+  padding: 120px 2rem; 
+  background: url('/assets/Background/darkBackground.png') center/cover no-repeat fixed;
+  min-height: 100vh;
+}
+
+.card-custom {
+  background-color: rgba(30, 41, 59, 0.75); 
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.2); 
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  color: #f8f9fa;
+  min-height: 280px; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.card-link {
+  text-decoration: none; 
+  display: block; 
+  
+  &:hover .card-custom {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+    border-color: $primary; 
+  }
+}

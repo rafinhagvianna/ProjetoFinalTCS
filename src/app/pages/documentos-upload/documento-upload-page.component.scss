@@ -1,0 +1,42 @@
+:host {
+//deixar vazio
+}
+
+.upload-container-custom {
+  width: 100%;
+  max-width: 600px;
+  background-color: rgba(255, 255, 255, 0.9); 
+  border-radius: 8px; 
+  margin-top: 100px; 
+
+  .badge {
+    padding: 0.3em 0.6em; 
+    font-size: 0.75em; 
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    &.status-pendente {
+      background-color: var(--bs-warning);
+      color: var(--bs-dark);
+    }
+    &.status-aprovado {
+      background-color: var(--bs-success);
+      color: var(--bs-white);
+    }
+    &.status-rejeitado {
+      background-color: var(--bs-danger);
+      color: var(--bs-white);
+    }
+    &.status-aguardando {
+      background-color: var(--bs-info);
+      color: var(--bs-white);
+    }
+  }
+
+  .text-muted.small {
+    margin-left: auto; 
+    flex-basis: 100%; 
+    padding-right: 0; 
+  }
+}

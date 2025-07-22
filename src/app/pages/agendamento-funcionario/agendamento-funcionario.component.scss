@@ -1,0 +1,76 @@
+// body {
+//     padding-top: 100px;
+// }
+
+// .form-label, .titulo {
+//     color: #f7f7f7;
+// }
+
+// table thead tr th:first-child {
+//     border-top-left-radius: 8px;
+// }
+
+// table thead tr th:last-child {
+//     border-top-right-radius: 8px;
+// }
+
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+:host {
+  display: block;
+  // Aplica a imagem de fundo escura a toda a área do componente
+  background: url('/assets/Background/darkBackground.png') center/cover no-repeat fixed;
+  min-height: 100vh;
+}
+// Container principal que imita o .triagens-container
+.custom-container {
+  width: 90%;
+  max-width: 1200px;
+  background: rgba(25, 35, 50, 0.6); // Fundo escuro e translúcido
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+// Estilo para o input de data, para combinar com o tema escuro
+.form-control {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f8f9fa; // Texto branco
+
+  // Ajuste de cor para o calendário no Chrome/Edge
+  &::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+
+  &:focus {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-color: $primary; // Usa a cor primária do seu projeto no foco
+    color: #f8f9fa;
+    box-shadow: 0 0 0 0.25rem rgba($primary, 0.25);
+  }
+}
+
+// Estilo para a label do seletor de data
+.form-label {
+  color: #f8f9fa; // Texto branco
+}
+
+// Adiciona o efeito de hover nas linhas da tabela
+.linha-clicavel {
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+// Adiciona um pequeno espaçamento nos ícones dos botões
+.btn i {
+  margin-right: 0.25rem;
+}
+
+.menu-funcionario-bg {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}

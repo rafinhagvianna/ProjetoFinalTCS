@@ -1,0 +1,108 @@
+:host {
+    display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  }
+  
+  
+  .register-container {
+    width: 100%;
+    max-width: 380px;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.65);
+    border-radius: 12px;
+    color: #e0e0e0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    text-align: center;   
+    z-index: 1;
+  
+    h1 {
+      margin-bottom: 0.5rem;
+      font-size: 1.8rem;
+      color: #6ec1e4;  
+    }
+  
+    p {
+      margin-bottom: 1.5rem;
+      color: #b0cfee;
+    }
+  
+    a {
+      color: #6ec1e4;
+      text-decoration: none;
+      &:hover {
+        color: #fff;
+        text-decoration: underline;
+      }
+    }
+  
+    .form-control {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      border-radius: 4px;
+      padding: 1rem 0.75rem;
+  
+      &:focus {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #6ec1e4;
+        box-shadow: 0 0 0 0.2rem rgba(110, 193, 228, 0.4);
+        color: #fff;
+      }
+  
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+    }
+  
+    .btn-primary {
+      background-color: #33609c;
+      border-color: #33609c;
+      color: #fff;
+      border-radius: 50px;
+      padding: 0.6rem 1.8rem;
+      font-weight: 500;
+  
+      &:hover {
+        background-color: darken(#33609c, 10%);
+        border-color: darken(#33609c, 10%);
+      }
+    }
+  
+    .btn-outline-primary {
+      color: #fff;
+      border-color: #fff;
+      border-radius: 50px;
+      padding: 0.6rem 1.8rem;
+  
+      &:hover {
+        background-color: #fff;
+        color: #33609c;
+      }
+    }
+  }
+
+  .form-floating {
+    position: relative;              
+  
+    .input-icon-custom {
+      position: absolute;           
+      top: 50%;                      
+      transform: translateY(-50%);   
+      right: 1rem;                   
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+
+  register-page-bg {
+    padding-top: 80px;  
+  }
+  
+  :host-context(.menu-funcionario-bg) .register-container {
+    padding-top: 80px;
+  }
+  

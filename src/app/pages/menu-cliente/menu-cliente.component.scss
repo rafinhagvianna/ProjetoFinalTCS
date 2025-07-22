@@ -1,0 +1,278 @@
+$bg-image:  url('../../../assets/Background/background.png');
+$acc-red:   #b13f3f;
+$acc-blue:  #007bff;
+$card-bg:   #fff;
+$text-dark: #3b3b3b;
+$shadow:    rgba(0, 0, 0, 0.08);
+
+footer {
+  display: none !important;
+}
+
+/* -------------------------------------------------
+   Layout de Página (fundo e centralização)
+   ------------------------------------------------- */
+section.menu-bg,
+.menu-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+section.menu-bg {
+  padding: 5rem 1rem;
+  padding-top: 100px;
+  min-height: 100vh;
+  background: $bg-image center/cover no-repeat;
+}
+
+.menu-container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 1rem;
+}
+
+/* -------------------------------------------------
+   Grid de Cartões
+   ------------------------------------------------- */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+
+  @media (min-width: 901px) {
+    grid-template-columns: repeat(2, 400px);
+  }
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -------------------------------------------------
+   Cartão Base (fundo claro + efeitos do modo escuro)
+   ------------------------------------------------- */
+.card-menu {
+  position: relative;
+  background: $card-bg;
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+  box-shadow:
+    0 4px 12px $shadow,
+    0 2px 6px $shadow;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+
+  /* Overlay diagonal sutil */
+  &::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 150%;
+    height: 150%;
+    background: rgba(0, 0, 0, 0.05);
+    transform: rotate(45deg);
+    transition: background 0.3s ease;
+    z-index: 0;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.12),
+      0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Garante que o conteúdo fique acima do overlay */
+  .card-icon,
+  .card-body {
+    position: relative;
+    z-index: 1;
+  }
+
+  .card-icon {
+    flex-shrink: 0;
+    width: 5rem;
+    height: 5rem;
+    margin-right: 1.25rem;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      background 0.3s ease,
+      transform 0.3s ease;
+
+    i {
+      font-size: 2.5rem;
+      color: currentColor;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    /* Leve ‘zoom’ no ícone ao passar o mouse */
+    .card-menu:hover & {
+      transform: scale(1.1);
+    }
+  }
+
+  .card-title {
+    margin: 0 0 0.5rem;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: $text-dark;
+    position: relative;
+    transition: color 0.3s ease;
+
+    /* Barra de destaque abaixo do título */
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -0.25rem;
+      left: 0;
+      width: 3rem;
+      height: 0.25rem;
+      background: currentColor;
+      border-radius: 2px;
+      z-index: 1;
+      transition: background 0.3s ease;
+    }
+  }
+
+  .card-desc {
+    margin: 0;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba($text-dark, 0.8);
+    transition: color 0.3s ease;
+  }
+}
+
+/* -------------------------------------------------
+   Ajustes de cor para pares e ímpares
+   ------------------------------------------------- */
+.menu-grid {
+  /* Cartões 1, 3, 5 (ímpares) em azul */
+  .card-menu:nth-child(odd) {
+    color: $acc-blue;
+
+    &::before {
+      background: rgba($acc-blue, 0.1);
+    }
+    &:hover::before {
+      background: rgba($acc-blue, 0.2);
+    }
+
+    .card-icon {
+      background: rgba($acc-blue, 0.1);
+    }
+    &:hover .card-icon {
+      background: rgba($acc-blue, 0.2);
+    }
+  }
+
+  /* Cartões 2, 4, 6 (pares) em vermelho */
+  .card-menu:nth-child(even) {
+    color: $acc-red;
+
+    &::before {
+      background: rgba($acc-red, 0.1);
+    }
+    &:hover::before {
+      background: rgba($acc-red, 0.2);
+    }
+
+    .card-icon {
+      background: rgba($acc-red, 0.1);
+    }
+    &:hover .card-icon {
+      background: rgba($acc-red, 0.2);
+    }
+  }
+}
+
+// .triagem-ativa-card {
+//   background: #fff3cd; // Um amarelo claro para chamar atenção
+//   border: 1px solid #ffeeba;
+//   cursor: pointer;
+//   margin-bottom: 2rem; // Espaçamento abaixo do card
+
+//   .card-icon i {
+//     color: #856404; // Cor do ícone
+//   }
+
+//   &:hover {
+//     background: #ffeeba; // Um pouco mais escuro ao passar o mouse
+//   }
+// }
+
+// .fa-beat {
+//     animation: fa-beat 1s ease-in-out infinite;
+// }
+
+.notificacao-triagem {
+  // Posicionamento
+  position: fixed; // Fica fixo na tela, mesmo com scroll
+  top: 100px;      // Distância do topo (abaixo do seu navbar)
+  right: 20px;     // Distância da direita
+  z-index: 1050;   // Garante que fique sobre outros elementos
+  
+  // Aparência
+  max-width: 350px; // Largura máxima
+  padding: 1rem 1.25rem;
+  background-color: #fff3cd; // O fundo amarelo que você gostou
+  border: 1px solid #ffeeba;
+  border-radius: 0.5rem; // Bordas mais suaves
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+
+  // Layout interno
+  display: flex;
+  align-items: center;
+  gap: 1rem; // Espaço entre o ícone e o texto
+
+  &:hover {
+    transform: translateY(-3px); // Leve elevação ao passar o mouse
+    background-color: #ffeeba;
+  }
+}
+
+.notificacao-icon {
+  font-size: 1.8rem;
+  color: #856404; // Cor do ícone
+}
+
+.notificacao-texto {
+  display: flex;
+  flex-direction: column;
+  color: #856404; // Cor do texto
+  
+  strong {
+    font-weight: 600;
+  }
+
+  span {
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+}
+
+.fa-beat {
+    animation: fa-beat 1s ease-in-out infinite;
+}
+
+.notificacao-agendamento {
+  background-color: #cce5ff; 
+  border-color: #b8daff;
+
+  .notificacao-icon, .notificacao-texto {
+    color: #004085; // Azul escuro
+  }
+}

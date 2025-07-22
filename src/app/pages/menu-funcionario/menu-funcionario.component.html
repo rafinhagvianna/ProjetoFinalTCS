@@ -1,0 +1,41 @@
+<app-navbar></app-navbar>
+
+<div class="menu-funcionario-page">
+  <div class="container py-5">
+
+    <div class="text-center mb-5">
+      <h1 class="display-4 fw-bold text-light">Painel do Funcionário</h1>
+      <p class="lead text-light">Selecione uma das opções abaixo para gerenciar o sistema.</p>
+    </div>
+    <div>
+        <a routerLink="/menu-funcionario/dashboard" class="btn btn-outline-light btn-lg mb-4">
+          <i class="bi bi-bar-chart-line-fill me-2"></i>
+          Ver Dashboard
+        </a>
+      </div>
+
+    <div class="row g-5">
+      <div *ngFor="let tarefa of tarefas" class="col-lg-6">
+        
+        <a [routerLink]="tarefa.rota" class="card-link">
+          <div class="card h-100 card-custom">
+            <div class="card-body d-flex flex-column p-4">
+              
+              <h5 class="card-title fw-bold border-start border-primary border-3 ps-3 mb-3 fs-3">
+                {{ tarefa.nome }}
+              </h5>
+              
+              <p class="card-text text-white-50 flex-grow-1 fs-5">
+                {{ tarefa.descricao }}
+              </p>
+              
+              <span class="btn btn-primary mt-auto align-self-start btn-lg">
+                Acessar
+              </span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

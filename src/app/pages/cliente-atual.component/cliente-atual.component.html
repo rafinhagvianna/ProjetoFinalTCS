@@ -1,0 +1,81 @@
+<body class="menu-funcionario-bg d-flex justify-content-start align-items-center flex-column">
+    <app-navbar></app-navbar>
+  
+    <form class="row p-3 rounded row-gap-3">
+      <h2 class="col-12 text-center" *ngIf="triagem">{{ triagem.nomeClienteSnapshot }}</h2>
+      <h2 class="col-12 text-center" *ngIf="!triagem">Carregando Cliente...</h2>
+  
+      <!-- ID da Triagem -->
+      <div class="col-md-6">
+        <label for="triagemId" class="form-label">ID da Triagem</label>
+        <input type="text" class="form-control" id="triagemId" [ngModel]="triagem?.id" name="triagemId" disabled>
+      </div>
+      
+      <!-- ID do Cliente -->
+      <div class="col-md-6">
+        <label for="clienteId" class="form-label">ID do Cliente</label>
+        <input type="text" class="form-control" id="clienteId" [ngModel]="triagem?.clienteId" name="clienteId" disabled>
+      </div>
+  
+      <!-- ID do Serviço -->
+      <div class="col-md-6">
+        <label for="servicoId" class="form-label">ID do Serviço</label>
+        <input type="text" class="form-control" id="servicoId" [ngModel]="triagem?.servicoId" name="servicoId" disabled>
+      </div>
+  
+      <!-- Nome do Serviço -->
+      <div class="col-md-6">
+        <label for="nomeServico" class="form-label">Serviço Solicitado</label>
+        <input type="text" class="form-control" id="nomeServico" [ngModel]="triagem?.nomeServicoSnapshot" name="nomeServico" disabled>
+      </div>
+  
+      <!-- Status da Triagem -->
+      <div class="col-md-6">
+        <label for="statusTriagem" class="form-label">Status da Triagem</label>
+        <input type="text" class="form-control" id="statusTriagem" [ngModel]="triagem?.status" name="statusTriagem" disabled>
+      </div>
+  
+      <!-- Prioridade -->
+      <div class="col-md-6">
+        <label for="prioridade" class="form-label">Prioridade</label>
+        <input type="number" class="form-control" id="prioridade" [ngModel]="triagem?.prioridade" name="prioridade" disabled>
+      </div>
+  
+      <!-- Horário da Solicitação -->
+      <div class="col-md-6">
+        <label for="horarioSolicitacao" class="form-label">Horário da Solicitação</label>
+        <input type="text" class="form-control" id="horarioSolicitacao" [ngModel]="getFormattedDateTime(triagem?.horarioSolicitacao ?? null)" name="horarioSolicitacao" disabled>
+      </div>
+  
+      <!-- Horário Estimado Atendimento -->
+      <div class="col-md-6">
+        <label for="horarioEstimado" class="form-label">Horário Estimado Atendimento</label>
+        <input type="text" class="form-control" id="horarioEstimado" [ngModel]="getFormattedDateTime(triagem?.horarioEstimadoAtendimento ?? null)" name="horarioEstimado" disabled>
+      </div>
+  
+      <!-- Tempo Estimado Minutos -->
+      <div class="col-12">
+        <label for="tempoEstimado" class="form-label">Tempo Estimado (Minutos)</label>
+        <input type="number" class="form-control" id="tempoEstimado" [ngModel]="triagem?.tempoEstimadoMinutos" name="tempoEstimado" disabled>
+      </div>
+  
+      <!-- Seção de Documentos Pendentes -->
+      <div class="col-12 mt-3">
+        <h4 class="mb-2">Documentos Pendentes</h4>
+        <ul class="list-group">
+          <li *ngIf="triagem && triagem.documentosPendentes.length === 0" class="list-group-item text-muted">Nenhum documento pendente.</li>
+          <li *ngFor="let doc of triagem?.documentosPendentes || []" class="list-group-item d-flex justify-content-between align-items-center">
+            {{ doc.nomeDocumentoSnapshot }} - Status: {{ doc.status }}
+            <a *ngIf="doc.urlDocumento" [href]="doc.urlDocumento" target="_blank" class="btn btn-sm btn-outline-primary">Visualizar</a>
+          </li>
+        </ul>
+      </div>
+  
+      <div class="col-12 mt-3 d-flex justify-content-center">
+        <button type="button" class="btn btn-secondary" (click)="retornar()">Voltar</button>
+        <button type="button" class="btn btn-info ms-2" (click)="avancar()">Tela de Triagens</button>
+        <button type="button" class="btn btn-info ms-2" (click)="encerrarAtendimento()">Encerrar Atendimento</button>
+        <button type="button" class="btn btn-info ms-2" (click)="historicoAtendimentos()">Histórico de Atendimentos</button>
+      </div>
+    </form>
+  </body>

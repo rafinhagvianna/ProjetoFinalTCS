@@ -1,0 +1,53 @@
+:host {
+  display: block;
+}
+
+// Container principal que aplica o padding e altura mínima
+.menu-funcionario-bg {
+  min-height: 100vh;
+  padding: 120px 20px 40px 20px;
+}
+
+// Card "flutuante" escuro e translúcido
+.custom-container {
+  width: 95%;
+  max-width: 1400px; // Um pouco maior para dashboards
+  background: rgba(25, 35, 50, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// Container para o gráfico, para garantir que ele seja visível
+.chart-container {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 8px;
+  min-height: 450px; // Altura mínima para o gráfico não ficar esmagado
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Deixa os itens do dropdown mais legíveis
+.dropdown-menu-dark .dropdown-item {
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.card-custom {
+  background: rgba(25, 35, 50, 0.7) !important; // Usa o mesmo fundo do container principal
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f8f9fa; // Garante que o texto dentro (como o título) seja branco
+}
+
+.chart-container {
+  // Removido o fundo daqui, pois o card já tem
+  padding: 1rem;
+  min-height: 450px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

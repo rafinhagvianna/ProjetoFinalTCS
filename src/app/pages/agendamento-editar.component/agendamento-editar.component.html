@@ -1,0 +1,86 @@
+<body class="menu-funcionario-bg">
+    <app-navbar></app-navbar>
+    <section class="container py-4">
+        <div *ngIf="!agendamento" class="alert alert-info" role="alert">
+            <p>Carregando agendamento ou agendamento não encontrado...</p>
+        </div>
+
+        <div *ngIf="agendamento" class="card p-4 shadow-sm">
+            <h1 class="mb-4">Editar Agendamento</h1>
+            <form (ngSubmit)="salvarAlteracoes()">
+                <div class="mb-3">
+                    <label for="agendamentoId" class="form-label fw-bold">ID do Agendamento:</label>
+                    <input type="text" id="agendamentoId" class="form-control" [ngModel]="agendamento.id"
+                        name="agendamentoId" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="nomeCliente" class="form-label fw-bold">Nome do Cliente:</label>
+                    <input type="text" id="nomeCliente" class="form-control" [ngModel]="agendamento.nomeClienteSnapshot"
+                        name="nomeCliente" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="nomeServico" class="form-label fw-bold">Nome do Serviço:</label>
+                    <input type="text" id="nomeServico" class="form-control" [ngModel]="agendamento.nomeServicoSnapshot"
+                        name="nomeServico" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="criadoEm" class="form-label fw-bold">Criado Em:</label>
+                    <input type="text" id="criadoEm" class="form-control"
+                        [ngModel]="getFormattedDate(agendamento.criadoEm) + ' ' + getFormattedTime(agendamento.criadoEm)"
+                        name="criadoEm" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="status" class="form-label fw-bold">Status:</label>
+                    <select id="status" class="form-control" [(ngModel)]="agendamentoEditavel.status" name="status" required>
+                        <option value="EM_ATENDIMENTO">EM ATENDIMENTO</option> 
+                        <option value="PENDENTE">PENDENTE</option>
+                        <option value="CONCLUIDO">CONCLUIDO</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="atendidoEm" class="form-label fw-bold">Atendido Em:</label>
+                    <input type="text" id="atendidoEm" class="form-control"
+                        [ngModel]="agendamentoEditavel.atendidoEm ? (getFormattedDate(agendamentoEditavel.atendidoEm) + ' ' + getFormattedTime(agendamentoEditavel.atendidoEm)) : 'Não atendido'"
+                        name="atendidoEm" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="usuarioIdEditavel" class="form-label fw-bold">ID do Cliente:</label>
+                    <input type="text" id="usuarioIdEditavel" class="form-control"
+                        [(ngModel)]="agendamentoEditavel.usuarioId" name="usuarioIdEditavel" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="servicoIdEditavel" class="form-label fw-bold">ID do Serviço:</label>
+                    <input type="text" id="servicoIdEditavel" class="form-control"
+                        [(ngModel)]="agendamentoEditavel.servicoId" name="servicoIdEditavel" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="dataHoraEditavel" class="form-label fw-bold">Data e Hora do Agendamento:</label>
+                    <input type="datetime-local" id="dataHoraEditavel" class="form-control"
+                        [(ngModel)]="agendamentoEditavel.dataHora" name="dataHoraEditavel" required
+                        [min]="minDate + 'T00:00'">
+                    <small class="form-text text-muted">Formato: AAAA-MM-DDTHH:MM</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="observacoes" class="form-label fw-bold">Observações:</label>
+                    <textarea id="observacoes" class="form-control" [(ngModel)]="agendamentoEditavel.observacoes"
+                        name="observacoes" rows="3"></textarea>
+                    <small class="form-text text-muted">Adicione ou edite observações sobre o agendamento.</small>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-secondary" (click)="retornar()">Voltar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</body>

@@ -1,0 +1,123 @@
+ORIGINAL
+
+html {
+  scroll-behavior: smooth;
+}
+
+$primary:       #dc3545;
+$primary-hover: #c82333;
+
+.text-primary {
+  color: $primary !important;
+}
+
+.text-bg-primary,
+.bg-primary {
+  background-color: $primary !important;
+  color: #fff !important;
+}
+
+.btn-primary {
+  background-color: $primary !important;
+  border-color: $primary !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: $primary-hover !important;
+  border-color: $primary-hover !important;
+}
+
+.btn-outline-primary {
+  color: $primary !important;
+  border-color: $primary !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  color: #fff !important;
+  background-color: $primary-hover !important;
+  border-color: $primary-hover !important;
+}
+
+.feature-icon-small.text-bg-primary {
+  background-color: $primary !important;
+}
+
+.botao-barra{
+  cursor: pointer;
+}
+
+#sobre {
+  background-color: #fff;
+}
+
+section[id] {
+  scroll-margin-top: 80px;
+}
+
+.navbar .nav-link.botao-barra {
+  position: relative; 
+  padding-bottom: 0.5rem;
+  transition: color 0.3s ease;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #c62828; 
+    transform: scaleX(0); 
+    transition: transform 0.3s ease;
+  }
+
+  &:hover::after {
+    transform: scaleX(1); 
+  }
+}
+
+#sobre, #contato {
+  position: relative;
+  background-color: transparent; 
+}
+
+#sobre::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px; // Altura da onda
+  transform: translateY(-100%); // Move a onda para cima, para a divisa
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3e%3cpath fill='%23f8f9fa' fill-opacity='1' d='M0,160L48,170.7C96,181,192,203,288,202.7C384,203,480,181,576,154.7C672,128,768,96,864,96C960,96,1056,128,1152,144C1248,160,1344,160,1392,160L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3e%3c/path%3e%3c/svg%3e");
+  background-position: center bottom;
+}
+
+#contato::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  transform: translateY(-100%);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3e%3cpath fill='%23ffffff' fill-opacity='1' d='M0,192L60,176C120,160,240,128,360,128C480,128,600,160,720,186.7C840,213,960,235,1080,218.7C1200,203,1320,149,1380,122.7L1440,96L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z'%3e%3c/path%3e%3c/svg%3e");
+  background-position: center bottom;
+}
+
+#sobre {
+  background-color: #fff;
+}
+#contato {
+  background-color: #f8f9fa; // bg-light do bootstrap
+}
+
+.metricas-section {
+  padding-bottom: 120px !important; 
+}

@@ -1,0 +1,68 @@
+<app-navbar></app-navbar>
+
+<section class="menu-bg">
+  <div class="menu-container">
+
+    <div *ngIf="triagemAtiva" 
+         class="notificacao-triagem" 
+         (click)="retornarParaEspera()" 
+         title="Clique para acompanhar seu atendimento">
+      
+      <div class="notificacao-icon">
+        <i class="fa-solid fa-ticket-alt fa-beat"></i>
+      </div>
+      <div class="notificacao-texto">
+        <strong>Você já está na fila!</strong>
+        <span>Acompanhe seu atendimento para {{ triagemAtiva.nomeServicoSnapshot }}.</span>
+      </div>
+    </div>
+
+    <div *ngIf="!triagemAtiva && agendamentoAtivo"
+         class="notificacao-triagem notificacao-agendamento" 
+         (click)="verDetalhesAgendamento()"
+         title="Clique para ver os detalhes do seu agendamento">
+      
+      <div class="notificacao-icon">
+        <i class="fa-solid fa-calendar-check"></i>
+      </div>
+      <div class="notificacao-texto">
+        <strong>Próximo Agendamento</strong>
+        <span>
+            {{ agendamentoAtivo.nomeServicoSnapshot }} em 
+            {{ agendamentoAtivo.dataHora | date:'short' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="menu-grid">
+      <div *ngFor="let setor of setores" class="card-menu" (click)="confirmarSelecao(setor)">
+        <div class="card-icon">
+          <i [ngClass]="setor.icone"></i>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ setor.nome }}</h3>
+          <p class="card-desc">{{ setor.descricao }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <app-navbar></app-navbar>
+
+<section class="menu-bg">
+  <div class="menu-container">
+    <div class="menu-grid">
+      <div *ngFor="let setor of setores" class="card-menu" (click)="confirmarSelecao(setor)">
+        <div class="card-icon">
+          <i [ngClass]="setor.icone"></i>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ setor.nome }}</h3>
+          <p class="card-desc">{{ setor.descricao }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+

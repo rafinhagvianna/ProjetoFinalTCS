@@ -1,0 +1,44 @@
+$primary-custom: #c62828; 
+$text-dark-custom: #313131; 
+$text-light-custom: #6c757d; 
+
+.espera-card-custom {
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+  max-width: 600px;
+}
+
+.espera-card-custom h2 {
+  color: $text-dark-custom; 
+}
+
+.espera-card-custom .lead {
+  color: $text-light-custom; 
+  line-height: 1.6; 
+}
+
+.timer-container-custom {
+  border-color: #f0f0f0 !important; 
+  padding: 1.5rem 3rem; 
+
+  .timer-label {
+    font-size: 0.9rem; 
+    letter-spacing: 1px; 
+    color: $text-light-custom; 
+  }
+  
+  .timer-display-custom {
+    font-size: 4.5rem; 
+    color: $primary-custom; 
+    animation: pulso 2s infinite ease-in-out; 
+  }
+}
+
+.espera-card-custom .small {
+  color: $text-light-custom; 
+}
+
+@keyframes pulso {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}

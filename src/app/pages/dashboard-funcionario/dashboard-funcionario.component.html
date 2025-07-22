@@ -1,0 +1,85 @@
+<!-- <app-navbar></app-navbar>
+
+<div class="d-flex justify-content-center menu-funcionario-bg">
+  <div class="custom-container p-4 p-md-5 rounded-4 text-light">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="mb-0">Dashboard</h1>
+      
+      <div class="dropdown">
+        <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          Mudar Gráfico
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+          <li><a class="dropdown-item" (click)="selecionarGrafico('servicos')">Serviços Mais Utilizados</a></li>
+          <li><a class="dropdown-item" (click)="selecionarGrafico('atendimentosDia')">Atendimentos por Dia</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div *ngIf="graficoSelecionado === 'servicos'">
+        <h3 class="text-center mb-3">Serviços Mais Utilizados (Triagem)</h3>
+        <canvas baseChart [data]="servicosChartData" type="pie" [options]="chartOptions"></canvas>
+      </div>
+      
+      <div *ngIf="graficoSelecionado === 'atendimentosDia'">
+        <h3 class="text-center mb-3">Número de Atendimentos por Dia</h3>
+        <canvas baseChart [data]="atendimentosDiaChartData" type="bar" [options]="chartOptions"></canvas>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
+        <button class="btn btn-secondary" routerLink="/menu-funcionario">Voltar</button>
+    </div>
+  </div>
+</div> -->
+<app-navbar></app-navbar>
+
+<div class="d-flex justify-content-center menu-funcionario-bg">
+  <div class="custom-container p-4 p-md-5 rounded-4 text-light">
+    
+    <h1 class="text-center mb-5">Dashboard de Atendimentos</h1>
+    
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card card-custom h-100">
+          <div class="card-body">
+            <h3 class="text-center mb-3">Serviços Mais Utilizados <br>(Triagem)</h3>
+            <div class="chart-container">
+              <canvas baseChart #triagemChart
+                      [data]="triagemChartData" 
+                      type="doughnut" 
+                      [options]="chartOptions">
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-6">
+        <div class="card card-custom h-100">
+          <div class="card-body">
+            <h3 class="text-center mb-3">Serviços Mais Utilizados <br>(Agendamento)</h3>
+            <div class="chart-container">
+              <canvas baseChart #agendamentoChart
+                      [data]="agendamentoChartData" 
+                      type="pie" 
+                      [options]="chartOptions">
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      
+
+      <button class="btn btn-secondary" routerLink="/menu-funcionario">Voltar</button>
+    </div>
+
+  </div>
+</div>
+
+

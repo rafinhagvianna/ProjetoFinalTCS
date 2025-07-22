@@ -1,0 +1,165 @@
+$primary-text: #333;
+$bg-light:   #ffffff;
+$shadow:     rgba(0, 0, 0, 0.1);
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  background-color: $bg-light;
+  box-shadow: 0 2px 4px $shadow;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.navbar-logo img {
+  height: 40px;
+}
+
+.navbar-user {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .user-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid #ddd;
+    cursor: pointer;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .edit-icon {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 2px;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+  }
+
+  .arrow-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: $primary-text;
+  }
+
+  .dropdown-menu {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 60px;
+    width: 300px;
+    background: $bg-light;
+    box-shadow: 0 2px 8px $shadow;
+    border-radius: 8px;
+    padding: 1rem;
+    z-index: 999;
+    animation: fadeIn 0.2s ease-in-out;
+  } 
+
+  .dropdown-header {
+    text-align: center;
+
+    .dropdown-user-photo .edit-icon{
+      cursor: pointer;
+    }
+
+    .dropdown-user-photo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .greeting-text {
+      margin: 0;
+      font-size: 1.1rem;
+      color: $primary-text;
+    }
+
+    .userEmail-text {
+      font-size: 0.9rem;
+      color: gray;
+    }
+  }
+
+  .logout-button {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    color: red;
+    font-weight: bold;
+    cursor: pointer;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:host-context(.menu-funcionario-bg) {
+  .navbar {
+    background-color: #040f1d;  // seu tom de azul‐preto
+    color: #fff;                // textos brancos por padrão
+  }
+
+  // logo, todos os ícones e labels
+  .navbar-logo img{
+  filter: brightness(0) invert(1); 
+}
+
+  // .arrow-toggle i {
+  //   filter: brightness(0) invert(1); // inverte logo se precisar
+  // }
+
+  
+  .dropdown-menu {
+    background-color: #040f1d;
+    color: #fff;
+  }
+
+  .dropdown-header {
+    .greeting-text,
+    .userEmail-text {
+      color: #f1f1f1;
+    }
+  }
+
+  .user-icon{
+    border-color:  #0c2c55
+  }
+
+ 
+  .logout-button {
+    color: #1e90ff;     
+    font-weight: bold;
+  }
+}
+

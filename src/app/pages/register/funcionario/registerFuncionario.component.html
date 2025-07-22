@@ -1,0 +1,162 @@
+<app-navbar></app-navbar>
+<div class="register-page-bg">
+<form 
+  class="register-container" 
+  [formGroup]="registerForm" 
+  (ngSubmit)="onSubmit()" 
+  novalidate
+>
+  <h1>Cadastrar Novo Funcionário</h1>
+  <p>Preencha os dados abaixo para adicionar um novo funcionário ao sistema.
+
+  <div class="form-floating mb-3">
+    <input
+      type="text"
+      formControlName="nome"
+      id="nome"
+      placeholder="Nome completo"
+      class="form-control form-control-underline"
+    />
+    <label for="nome">Nome completo</label>
+    <div
+      *ngIf="registerForm.get('nome')?.touched && registerForm.get('nome')?.hasError('required')"
+      class="text-danger small text-start mt-1"
+    >
+      O nome é obrigatório.
+    </div>
+  </div>
+
+  <div class="form-floating mb-3">
+    <input
+      type="text"
+      mask="000.000.000-00"
+      [showMaskTyped]="false"
+      formControlName="cpf"
+      id="cpf"
+      placeholder="CPF"
+      class="form-control form-control-underline"
+    />
+    <label for="cpf">CPF</label>
+    <div
+      *ngIf="registerForm.get('cpf')?.touched && registerForm.get('cpf')?.errors"
+      class="text-danger small text-start mt-1"
+    >
+      <div *ngIf="registerForm.get('cpf')?.errors?.['required']">
+        O CPF é obrigatório.
+      </div>
+      <div *ngIf="registerForm.get('cpf')?.errors?.['cpfInvalido']">
+        O CPF deve conter exatamente 11 números.
+      </div>
+    </div>
+  </div>
+
+
+  <div class="form-floating mb-4">
+    <input
+      type="email"
+      formControlName="email"
+      id="email"
+      placeholder="E-mail"
+      class="form-control form-control-underline"
+    />
+    <label for="email">E-mail</label>
+  
+
+    <ng-container *ngIf="registerForm.get('email')?.touched">
+      <div
+        *ngIf="registerForm.get('email')?.hasError('invalidFuncionarioEmail')"
+        class="text-danger small text-start mt-1"
+      >
+        E-mail de funcionário deve terminar com &#64;bankflow.com.
+      </div>
+  
+      <div
+        *ngIf="registerForm.get('email')?.hasError('required')"
+        class="text-danger small text-start mt-1"
+      >
+        O e-mail é obrigatório.
+      </div>
+
+      <div
+        *ngIf="registerForm.get('email')?.hasError('email')"
+        class="text-danger small text-start mt-1"
+      >
+        Insira um e-mail válido.
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="form-floating mb-3 position-relative">
+    <input
+      id="senha"
+      [type]="hideRegisterPassword ? 'password' : 'text'"
+      formControlName="senha"
+      placeholder="Senha"
+      class="form-control form-control-underline pe-5"
+    />
+    <label for="senha">Senha</label>
+
+    <i
+      (click)="hideRegisterPassword = !hideRegisterPassword"
+      class="material-icons input-icon-custom clickable text-white"
+    >
+      {{ hideRegisterPassword ? 'visibility_off' : 'visibility' }}
+    </i>
+
+    <div
+      *ngIf="registerForm.get('senha')?.touched && registerForm.get('senha')?.errors"
+      class="text-danger small text-start mt-1"
+    >
+      <div *ngIf="registerForm.get('senha')?.hasError('required')">
+        Senha é obrigatória.
+      </div>
+    </div>
+  </div>
+
+  <div class="form-floating mb-4 position-relative">
+    <input
+      [type]="hideRegisterPassword ? 'password' : 'text'"
+      formControlName="confirmarSenha"
+      placeholder="Confirme sua Senha"
+      class="form-control form-control-underline pe-5"
+      id="confirmarSenha"
+    />
+    <label for="confirmarSenha">Confirme sua Senha</label>
+
+    <i
+      (click)="hideRegisterPassword = !hideRegisterPassword"
+      class="material-icons input-icon-custom clickable text-white"
+    >
+      {{ hideRegisterPassword ? 'visibility_off' : 'visibility' }}
+    </i>
+  </div>
+  <div
+    *ngIf="registerForm.hasError('senhasNaoCorrespondem') && registerForm.get('confirmarSenha')?.touched"
+    class="text-danger small text-start mt-1 mb-3"
+  >
+    As senhas não correspondem.
+  </div>
+
+                    <!-- Botões lado a lado -->
+
+  <!-- <div class="d-flex justify-content-between mb-3">
+    <button (click)="onSubmit()" class="btn btn-primary">Salvar</button>
+    <button type="reset" class="btn btn-primary">Limpar</button>
+    <button type="button" class="btn btn-outline-primary">Cancelar</button>
+  </div> -->
+
+  <div class="d-grid gap-2 mb-3">
+    <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+      {{ isLoading ? 'Salvando...' : 'Salvar' }}
+    </button>
+    <button type="reset" class="btn btn-primary">Limpar</button>
+    <button type="button" class="btn btn-outline-primary" (click)="onCancel()">
+      Cancelar
+    </button>
+  </div>
+
+  <p class="mt-3 small text-center">
+    Já fez o registro? <a routerLink="/">Clique aqui</a>
+  </p>
+</form>
+</div>

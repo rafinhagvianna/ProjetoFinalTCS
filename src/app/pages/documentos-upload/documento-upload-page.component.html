@@ -1,0 +1,99 @@
+<app-navbar></app-navbar>
+<div class="container-fluid d-flex justify-content-center align-items-start pt-5 mb-5 vh-75">
+  <div class="card p-4 shadow-sm upload-container-custom">
+    <h2 class="text-center mb-4 text-dark">Upload de Documentos</h2>
+
+    <div *ngIf="uploadError && !agendamentoDetails && !triagemDetails" class="alert alert-warning mt-3" role="alert">
+      {{ uploadError }}
+    </div>
+
+    <div *ngIf="agendamentoDetails || triagemDetails" class="card mb-4 border-primary border-start-5 rounded-3">
+      <div class="card-body">
+        <h3 *ngIf="agendamentoDetails" class="card-title text-primary fs-5">Agendamento: {{ agendamentoDetails.nomeServicoSnapshot }} em {{ agendamentoDetails.dataHora | date:'short' }}</h3>
+        <h3 *ngIf="triagemDetails" class="card-title text-primary fs-5">Triagem: {{ triagemDetails.nomeServicoSnapshot }} <br> Previsão de Atendimento: {{ triagemDetails.horarioEstimadoAtendimento | date:'short' }}</h3>
+      </div>
+    </div>
+
+    <div *ngIf="documentosNecessarios.length > 0 && (agendamentoDetails || triagemDetails)" class="mb-4">
+      <h3 class="fs-6 text-dark mb-3">Documentos Necessários:</h3>
+      <ul class="list-group list-group-flush">
+        <li *ngFor="let doc of documentosNecessarios" class="list-group-item d-flex align-items-center py-2 px-0">
+          <span class="fw-medium text-dark flex-grow-1">{{ doc.nomeDocumentoSnapshot }}</span>
+          <span [ngClass]="getStatusClass(doc.status)" class="badge text-uppercase ms-2">{{ doc.status | titlecase }}</span>
+          <a *ngIf="doc.urlDocumento" [href]="doc.urlDocumento" target="_blank" class="btn btn-link btn-sm ms-3 p-0">Ver Documento</a>
+          <p *ngIf="doc.observacao" class="text-muted small mt-1 w-100 ps-0 pe-0 mb-0">Obs: {{ doc.observacao }}</p>
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="documentosNecessarios.length === 0 && (agendamentoDetails || triagemDetails) && !uploadError" class="alert alert-info mt-3" role="alert">
+      Não há documentos pendentes para este {{ agendamentoDetails ? 'agendamento' : 'triagem' }}.
+    </div>
+
+    <hr class="my-4">
+
+    <ng-container *ngIf="!agendamentoId && !triagemId">
+      <div class="mb-3">
+        <label for="agendamentoSelect" class="form-label fw-bold text-secondary">Associar a Agendamento:</label>
+        <select id="agendamentoSelect" [(ngModel)]="agendamentoId" (change)="onAgendamentoSelected(agendamentoId!)" class="form-select">
+          <option [ngValue]="null" disabled selected>Selecione um agendamento</option>
+          <option *ngFor="let agendamento of agendamentosDisponiveis" [value]="agendamento.id">
+            {{ agendamento.dataHora | date:'short' }} - {{ agendamento.nomeServicoSnapshot }}
+          </option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="triagemSelect" class="form-label fw-bold text-secondary">Associar a Triagem:</label>
+        <select id="triagemSelect" [(ngModel)]="triagemId" (change)="onTriagemSelectedDropdown(triagemId!)" class="form-select">
+          <option [ngValue]="null" disabled selected>Selecione uma triagem</option>
+          <option *ngFor="let triagem of triagensDisponiveis" [value]="triagem.id">
+            {{ triagem.horarioEstimadoAtendimento | date:'HH:mm' }} - {{ triagem.nomeServicoSnapshot }}
+          </option>
+        </select>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="agendamentoId || triagemId">
+      <div class="mb-3">
+        <label for="documentoTipoSelect" class="form-label fw-bold text-secondary">Tipo de Documento <span class="text-danger">*</span>:</label>
+        <select id="documentoTipoSelect" [(ngModel)]="documentoCatalogoId" class="form-select" required>
+          <option [ngValue]="null" disabled selected>Selecione o tipo de documento</option>
+          <option *ngFor="let tipo of tiposDocumentoDisponiveisParaUpload" [value]="tipo.id">
+            {{ tipo.nome }}
+          </option>
+        </select>
+        <div *ngIf="!tiposDocumentoDisponiveisParaUpload || tiposDocumentoDisponiveisParaUpload.length === 0" class="alert alert-info mt-2">
+          Não há tipos de documentos pendentes para este agendamento/triagem ou o catálogo de documentos não foi carregado.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="fileInput" class="form-label fw-bold text-secondary">Selecione o Arquivo <span class="text-danger">*</span>:</label>
+        <input type="file" id="fileInput" (change)="onFileSelected($event)" accept=".pdf,.png,.jpg,.jpeg" class="form-control" required>
+      </div>
+
+      <button (click)="onUpload()" [disabled]="isUploading || !selectedFile || !documentoCatalogoId || (!agendamentoId && !triagemId)" class="btn btn-primary w-100 py-2">
+        <span *ngIf="isUploading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        {{ isUploading ? 'Enviando...' : 'Upload' }}
+      </button>
+
+      <div *ngIf="uploadProgress > 0 && uploadProgress < 100" class="progress mt-3" style="height: 25px;">
+        <div class="progress-bar bg-success" role="progressbar" [style.width.%]="uploadProgress"
+             [attr.aria-valuenow]="uploadProgress" aria-valuemin="0" aria-valuemax="100">
+          {{ uploadProgress }}%
+        </div>
+      </div>
+
+      <div *ngIf="uploadMessage" class="alert alert-success mt-3" role="alert">
+        {{ uploadMessage }}
+      </div>
+
+      <div *ngIf="uploadError && isUploading === false" class="alert alert-danger mt-3" role="alert">
+        {{ uploadError }}
+      </div>
+    </ng-container>
+    <hr class="my-4">
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-secondary" (click)="voltarParaMenu()">Voltar ao Menu</button>
+  </div>
+</div>

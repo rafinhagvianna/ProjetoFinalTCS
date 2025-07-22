@@ -1,0 +1,166 @@
+<!-- <body class="menu-funcionario-bg">
+    <app-navbar></app-navbar>
+    <section class="container py-4">
+        <h2 class="mb-4">Validar Documentos do Agendamento</h2>
+
+        <div *ngIf="!agendamento" class="alert alert-info" role="alert">
+            <p>Carregando agendamento ou agendamento não encontrado...</p>
+        </div>
+
+        <div *ngIf="agendamento" class="card p-4 shadow-sm">
+            <form (ngSubmit)="confirmarValidacao()">
+                <div class="mb-3">
+                    <label for="agendamentoId" class="form-label fw-bold">ID do Agendamento:</label>
+                    <input type="text" id="agendamentoId" class="form-control" [ngModel]="agendamento.id"
+                        name="agendamentoId" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="nomeCliente" class="form-label fw-bold">Nome do Cliente:</label>
+                    <input type="text" id="nomeCliente" class="form-control" [ngModel]="agendamento.nomeClienteSnapshot"
+                        name="nomeCliente" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="nomeServico" class="form-label fw-bold">Nome do Serviço:</label>
+                    <input type="text" id="nomeServico" class="form-control" [ngModel]="agendamento.nomeServicoSnapshot"
+                        name="nomeServico" disabled>
+                </div>
+
+                <div class="mb-4">
+                    <h3>Documentos para Validação:</h3>
+                    <div *ngIf="documentosParaValidar.length === 0" class="alert alert-warning" role="alert">
+                        Nenhum documento pendente para este agendamento.
+                    </div>
+
+                    <div *ngFor="let doc of documentosParaValidar; let i = index" class="card mb-3 p-3 border">
+                        <h5 class="card-title">{{ doc.nomeDocumentoSnapshot }}</h5>
+
+                        <div *ngIf="doc.urlDocumento" class="mb-3 text-center">
+                            <label class="form-label fw-bold">Visualizar Documento:</label>
+                            <a [href]="doc.urlDocumento" target="_blank" rel="noopener noreferrer">
+                                <img [src]="doc.urlDocumento" alt="Documento {{ doc.nomeDocumentoSnapshot }}" class="img-fluid rounded" style="max-height: 250px; cursor: pointer;">
+                            </a>
+                            <small class="form-text text-muted d-block mt-1">Clique na imagem para abrir em nova aba.</small>
+                        </div>
+                        <div *ngIf="!doc.urlDocumento" class="mb-3 alert alert-secondary text-center">
+                            Documento ainda não enviado ou URL não disponível.
+                        </div>
+
+                        <div class="mb-2">
+                            <label [for]="'status-' + i" class="form-label">Status Atual:</label>
+                            <select [id]="'status-' + i" class="form-select" [(ngModel)]="doc.status"
+                                [name]="'docStatus-' + i">
+                                <option [value]="StatusDocumento.ENVIADO">Enviado</option>
+                                <option [value]="StatusDocumento.APROVADO">Aprovado</option>
+                                <option [value]="StatusDocumento.REJEITADO">Rejeitado</option>
+                            </select>
+                        </div>
+                        <div *ngIf="doc.status === StatusDocumento.REJEITADO" class="mb-2">
+                            <label [for]="'observacao-' + i" class="form-label">Motivo da Rejeição:</label>
+                            <textarea [id]="'observacao-' + i" class="form-control" rows="2"
+                                [(ngModel)]="doc.observacao" [name]="'docMotivo-' + i"
+                                placeholder="Informe o motivo da rejeição..." required></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-secondary" (click)="retornar()">Voltar</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isConfirming">
+                        <span *ngIf="isConfirming" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        {{ isConfirming ? 'Confirmando...' : 'Confirmar Validação' }}
+                    </button>
+                </div>
+                <div *ngIf="validationMessage" [ngClass]="{'alert-success': validationSuccess, 'alert-danger': !validationSuccess}" class="alert mt-3">
+                    {{ validationMessage }}
+                </div>
+            </form>
+        </div>
+    </section>
+</body> --> 
+
+<app-navbar></app-navbar>
+
+<div class="d-flex justify-content-center menu-funcionario-bg">
+
+  <div class="custom-container p-4 p-md-5 rounded-4 border border-white border-opacity-10 text-light">
+    
+    <h1 class="text-center mb-4">Validar Documentos do Agendamento</h1>
+
+    <div *ngIf="isLoading" class="text-center mt-4">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="mt-2">Carregando agendamento...</p>
+    </div>
+
+    <div *ngIf="!isLoading && !agendamento" class="alert alert-warning text-center">
+      Agendamento não encontrado ou não há documentos para validar.
+    </div>
+
+    <div *ngIf="!isLoading && agendamento">
+      <form (ngSubmit)="confirmarValidacao()">
+        
+        <div class="row g-3 mb-3">
+          <div class="col-md-5">
+            <label for="nomeCliente" class="form-label">Cliente:</label>
+            <input type="text" id="nomeCliente" class="form-control" [ngModel]="agendamento.nomeClienteSnapshot" name="nomeCliente" disabled>
+          </div>
+          <div class="col-md-5">
+            <label for="nomeServico" class="form-label">Serviço:</label>
+            <input type="text" id="nomeServico" class="form-control" [ngModel]="agendamento.nomeServicoSnapshot" name="nomeServico" disabled>
+          </div>
+          <div class="col-md-2">
+              <label for="agendamentoId" class="form-label">ID:</label>
+              <input type="text" id="agendamentoId" class="form-control" [ngModel]="agendamento.id" name="agendamentoId" disabled>
+          </div>
+        </div>
+
+        <hr class="my-4 border-light opacity-25">
+
+        <h3 class="mb-3 fs-4">Documentos Enviados:</h3>
+        <div *ngIf="documentosParaValidar.length === 0" class="alert alert-secondary text-center">
+            Nenhum documento enviado para este agendamento.
+        </div>
+
+        <div *ngFor="let doc of documentosParaValidar; let i = index" class="card card-documento mb-3 p-3">
+          <div class="row align-items-center g-3">
+            <div class="col-md-4 text-center">
+                <h5 class="card-title mb-3 d-md-none">{{ doc.nomeDocumentoSnapshot }}</h5> <a *ngIf="doc.urlDocumento" [href]="doc.urlDocumento" target="_blank" rel="noopener noreferrer" title="Clique para ampliar">
+                    <img [src]="doc.urlDocumento" alt="Documento {{ doc.nomeDocumentoSnapshot }}" class="img-fluid rounded documento-thumbnail">
+                </a>
+                <div *ngIf="!doc.urlDocumento" class="text-white-50">Documento não enviado.</div>
+            </div>
+            <div class="col-md-8">
+                <h5 class="card-title mb-3 d-none d-md-block">{{ doc.nomeDocumentoSnapshot }}</h5> <div class="mb-3">
+                    <label [for]="'status-' + i" class="form-label text-light">Análise:</label>
+                    <select [id]="'status-' + i" class="form-select" [(ngModel)]="doc.status" [name]="'docStatus-' + i">
+                      <option [value]="StatusDocumento.ENVIADO" [disabled]="true">Enviado</option>
+                      <option [value]="StatusDocumento.APROVADO">Aprovar</option>
+                      <option [value]="StatusDocumento.REJEITADO">Rejeitar</option>
+                    </select>
+                </div>
+                <div *ngIf="doc.status === StatusDocumento.REJEITADO" class="mb-2">
+                    <label [for]="'observacao-' + i" class="form-label text-light">Motivo da Rejeição:</label>
+                    <textarea [id]="'observacao-' + i" class="form-control" rows="2" [(ngModel)]="doc.observacao" [name]="'docMotivo-' + i" placeholder="Informe o motivo..." required></textarea>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+          <button type="button" class="btn btn-secondary" (click)="retornar()">Voltar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="isConfirming">
+            <span *ngIf="isConfirming" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ isConfirming ? 'Confirmando...' : 'Confirmar Validação' }}
+          </button>
+        </div>
+
+        <div *ngIf="validationMessage" [ngClass]="{'alert-success': validationSuccess, 'alert-danger': !validationSuccess}" class="alert mt-3">
+          {{ validationMessage }}
+        </div>
+      </form>
+    </div>
+
+  </div> </div>

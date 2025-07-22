@@ -1,0 +1,157 @@
+
+
+<div class="landing-body">
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+    <div class="container-fluid px-5">
+      <a class="navbar-brand" href="#">
+        <img src="/assets/BankFlow.png" alt="Logo BankFlow" style="height: 40px;">
+      </a>
+      <div class="navbar-nav ms-auto d-flex flex-row align-items-center gap-4">
+        <a class="nav-link fw-bold botao-barra" (click)="scrollTo('sobre')">Sobre</a>
+        <a class="nav-link fw-bold botao-barra" (click)="scrollTo('contato')">Contato</a>
+        <a routerLink="/login" class="btn btn-outline-primary rounded-pill">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero-gradient">
+    <div class="container col-xxl-8 px-4 py-5">
+      <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+        <div class="col-10 col-sm-8 col-lg-6 animate-fade-in">
+          <img src="/assets/LandingPage-Image.jpg"
+               class="d-block mx-lg-auto img-fluid rounded-4 shadow-lg"
+               alt="Ilustração do App">
+        </div>
+        <div class="col-lg-6 animate-slide-in-up">
+          <h1 class="display-4 fw-bold lh-1 mb-3">
+            Otimize seu Atendimento.<br>Transforme a Experiência.
+          </h1>
+          <p class="lead text-muted">
+            A solução inteligente para o gerenciamento de filas bancárias, que
+            direciona cada cliente para o atendimento certo, sem espera desnecessária.
+          </p>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            <a routerLink="/register"
+               class="btn btn-primary btn-lg rounded-pill px-4 me-md-2">
+              Comece Agora
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="py-5 bg-light border-bottom metricas-section">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-3 col-6">
+          <h3 class="display-5 fw-bold text-primary">+1M</h3>
+          <p class="text-muted">Atendimentos Gerenciados</p>
+        </div>
+        <div class="col-md-3 col-6">
+          <h3 class="display-5 fw-bold text-primary">-30%</h3>
+          <p class="text-muted">No Tempo de Espera</p>
+        </div>
+        <div class="col-md-3 col-6">
+          <h3 class="display-5 fw-bold text-primary">99.9%</h3>
+          <p class="text-muted">Disponibilidade (Uptime)</p>
+        </div>
+        <div class="col-md-3 col-6">
+          <h3 class="display-5 fw-bold text-primary">Nível A</h3>
+          <p class="text-muted">Segurança Bancária</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="sobre" class="py-5">
+    <div class="container px-4 py-5">
+      <h2 class="text-center display-5 fw-bold mb-3">
+        Nossa Missão é Transformar a Experiência Bancária
+      </h2>
+      <p class="lead text-center text-muted mb-5">
+        O BankFlow nasceu da visão de um time de desenvolvedores apaixonados
+        por tecnologia e eficiência.
+      </p>
+      <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="col">
+          <div class="card border-0 shadow-sm h-100 p-3">
+            <div class="card-body text-center">
+              <div class="feature-icon-small d-inline-flex align-items-center justify-content-center
+                          text-bg-primary bg-gradient fs-4 rounded-3 mb-3 p-2">
+                <i class="bi bi-clock-history"></i>
+              </div>
+              <h3 class="fs-4 fw-bold">Agendamento Inteligente</h3>
+              <p class="text-muted">
+                Direcionamos você para o atendimento certo, na hora certa.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card border-0 shadow-sm h-100 p-3">
+            <div class="card-body text-center">
+              <div class="feature-icon-small d-inline-flex align-items-center justify-content-center
+                          text-bg-primary bg-gradient fs-4 rounded-3 mb-3 p-2">
+                <i class="bi bi-bar-chart-line-fill"></i>
+              </div>
+              <h3 class="fs-4 fw-bold">Análise de Dados</h3>
+              <p class="text-muted">
+                Fornecemos aos bancos insights para otimizar o fluxo de clientes.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card border-0 shadow-sm h-100 p-3">
+            <div class="card-body text-center">
+              <div class="feature-icon-small d-inline-flex align-items-center justify-content-center
+                          text-bg-primary bg-gradient fs-4 rounded-3 mb-3 p-2">
+                <i class="bi bi-shield-lock-fill"></i>
+              </div>
+              <h3 class="fs-4 fw-bold">Segurança em Primeiro Lugar</h3>
+              <p class="text-muted">
+                Seus dados são protegidos com os mais altos padrões de segurança.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contato" class="py-5 bg-light">
+    <div class="container text-center">
+      <h2 class="display-5 fw-bold">Vamos Conversar?</h2>
+      <p class="lead text-muted my-4">
+        Seja você um cliente buscando agilidade ou um gestor querendo otimizar
+        sua operação, fale conosco.
+      </p>
+      <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-4 fs-5">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-telephone-fill text-primary"></i>
+          <span>(43) 9 9844-1269</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-envelope-fill text-primary"></i>
+          <span>contato&#64;bankflow.com.br</span>
+        </div>
+      </div>
+      <a routerLink="/register" class="btn btn-primary btn-lg rounded-pill px-4 mt-5">
+        Comece Agora
+      </a>
+    </div>
+  </section>
+
+  <footer class="py-4 bg-dark text-white">
+    <div class="container text-center">
+      <p class="mb-2">&copy; 2025 BankFlow. Todos os direitos reservados.</p>
+      <div>
+        <a href="#" class="text-white mx-2 fs-4"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="text-white mx-2 fs-4"><i class="bi bi-twitter-x"></i></a>
+        <a href="#" class="text-white mx-2 fs-4"><i class="bi bi-linkedin"></i></a>
+      </div>
+    </div>
+  </footer>
+</div>
+ 

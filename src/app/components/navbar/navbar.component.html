@@ -1,0 +1,83 @@
+<!-- <nav class="navbar">
+  <div class="navbar-logo" (click)="navigateToMenu()" style="cursor:pointer">
+    <img src="/assets/BankFlow.png" alt="Logo da Empresa">
+  </div>
+
+  <div class="navbar-user">
+    <label class="user-icon">
+      <img *ngIf="userPhoto; else defaultPhoto" [src]="userPhoto" alt="Foto de perfil">
+      <ng-template #defaultPhoto>
+        <img src="../../../assets/user-default.png" alt="Foto default">
+      </ng-template>
+    </label>
+
+    <button class="arrow-toggle" (click)="toggleDropdown()">
+      <i [class]="isDropdownOpen ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+    </button>
+
+    <div *ngIf="isDropdownOpen" class="dropdown-menu">
+      <div class="dropdown-header">
+        <div class="dropdown-user-photo">
+          <img *ngIf="userPhoto; else defaultPhoto2" [src]="userPhoto" alt="Foto de perfil">
+          <ng-template #defaultPhoto2>
+            <img src="../../../assets/user-default.png" alt="Foto default">
+          </ng-template>
+
+          <input type="file" (change)="onPhotoSelected($event)" hidden #fileInput>
+          <span class="edit-icon" (click)="fileInput.click()">
+            <i class="fa fa-pencil-alt"></i>
+          </span>
+        </div>
+        <h3 class="greeting-text">Olá, {{ userFirstName }}!</h3>
+        <p class="userEmail-text">{{ userEmail }}</p>
+      </div>
+
+      <a (click)="confirmLogout()" class="dropdown-item logout-button">
+        <i class="fa fa-sign-out-alt"></i> Sair
+      </a>
+    </div>
+  </div>
+</nav> -->
+
+<nav class="navbar">
+  <div class="navbar-logo" (click)="navigateToMenu()" style="cursor:pointer">
+    <img src="/assets/BankFlow.png" alt="Logo da Empresa">
+  </div>
+
+  <div class="navbar-user">
+    <label class="user-icon">
+      <img *ngIf="userPhoto; else defaultPhoto" [src]="userPhoto" alt="Foto de perfil">
+      <ng-template #defaultPhoto>
+        <img src="../../../assets/user-default.png" alt="Foto default">
+      </ng-template>
+    </label>
+
+    <button class="arrow-toggle" (click)="toggleDropdown()">
+      <i [class]="isDropdownOpen ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+    </button>
+
+    <div *ngIf="isDropdownOpen" class="dropdown-menu">
+      <div class="dropdown-header">
+        <div class="dropdown-user-photo">
+          <img *ngIf="userPhoto; else defaultPhoto2" [src]="userPhoto" alt="Foto de perfil">
+          <ng-template #defaultPhoto2>
+            <img src="../../../assets/user-default.png" alt="Foto default">
+          </ng-template>
+          
+          <input *ngIf="isCliente()" type="file" (change)="onPhotoSelected($event)" hidden #fileInput>
+          
+          <span *ngIf="isCliente()" class="edit-icon" (click)="fileInput.nativeElement.click()">
+            <i class="fa fa-pencil-alt"></i>
+          </span>
+
+        </div>
+        <h3 class="greeting-text">Olá, {{ userFirstName }}!</h3>
+        <p class="userEmail-text">{{ userEmail }}</p>
+      </div>
+
+      <a (click)="confirmLogout()" class="dropdown-item logout-button">
+        <i class="fa fa-sign-out-alt"></i> Sair
+      </a>
+    </div>
+  </div>
+</nav>

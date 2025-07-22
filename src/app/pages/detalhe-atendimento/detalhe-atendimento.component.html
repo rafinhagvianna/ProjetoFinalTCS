@@ -1,0 +1,58 @@
+<app-navbar></app-navbar>
+
+<div class="d-flex justify-content-center align-items-center menu-funcionario-bg">
+
+  <div class="detalhe-container p-4 p-md-5 rounded-4 border border-white border-opacity-10 text-light">
+    
+    <h1 class="text-center mb-4">Detalhes do Atendimento</h1>
+
+    <div *ngIf="isLoading" class="text-center mt-5">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+      <p class="mt-2">Carregando detalhes...</p>
+    </div>
+
+    <div *ngIf="errorMsg" class="alert alert-danger mt-4">{{ errorMsg }}</div>
+
+    <div *ngIf="!isLoading && triagem">
+      <h2 class="text-center text-primary mb-4">{{ triagem.nomeClienteSnapshot }}</h2>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label-static">Serviço Solicitado</label>
+          <input type="text" class="form-control" [value]="triagem.nomeServicoSnapshot" disabled>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label-static">Status</label>
+          <input type="text" class="form-control" [value]="triagem.status" disabled>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label-static">Horário da Solicitação</label>
+          <input type="text" class="form-control" [value]="getFormattedDateTime(triagem.horarioSolicitacao)" disabled>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label-static">Atendimento Estimado / Realizado</label>
+          <input type="text" class="form-control" [value]="getFormattedDateTime(triagem.horarioEstimadoAtendimento)" disabled>
+        </div>
+        
+        <div class="col-12 mt-4">
+          <h4 class="mb-2">Documentos</h4>
+          <ul *ngIf="triagem.documentosPendentes.length > 0; else noDocuments" class="list-group list-group-flush">
+            <li *ngFor="let doc of triagem.documentosPendentes" class="list-group-item d-flex justify-content-between align-items-center">
+              <span>{{ doc.nomeDocumentoSnapshot }} - <span class="badge text-bg-info">{{ doc.status }}</span></span>
+              <a *ngIf="doc.urlDocumento" [href]="doc.urlDocumento" target="_blank" class="btn btn-sm btn-outline-light">Visualizar</a>
+            </li>
+          </ul>
+          <ng-template #noDocuments>
+            <p class="text-white-50">Nenhum documento foi associado a este atendimento.</p>
+          </ng-template>
+        </div>
+      </div>
+      
+      <div class="d-flex justify-content-end mt-4">
+        <button class="btn btn-secondary" (click)="voltar()">Voltar</button>
+      </div>
+    </div>
+  </div>
+</div>

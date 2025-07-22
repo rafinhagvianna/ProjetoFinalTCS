@@ -1,0 +1,102 @@
+<body class="vh-100 d-flex justify-content-center align-items-center m-lg-0 mt-5 mb-5">
+  <main class="d-flex justify-content-center align-items-center">
+  <section class="card p-4 p-lg-5 shadow-lg text-center login-box-custom">
+    <div class="mb-4 logo-custom">
+      <img src="assets/BankFlow.png" alt="Logo BankFlow" class="img-fluid">
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      <div class="mb-3 form-group-custom">
+        <input type="text" placeholder="Nome Completo" formControlName="nome" class="form-control form-control-underline">
+        <div *ngIf="registerForm.get('nome')?.touched && registerForm.get('nome')?.errors" class="text-danger small text-start mt-1">
+          <div *ngIf="registerForm.get('nome')?.errors?.['required']">
+            O nome é obrigatório.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3 form-group-custom">
+        <input type="text" mask="000.000.000-00" [showMaskTyped]="false" placeholder="CPF" formControlName="cpf" class="form-control form-control-underline">
+        <div *ngIf="registerForm.get('cpf')?.touched && registerForm.get('cpf')?.errors" class="text-danger small text-start mt-1">
+          <div *ngIf="registerForm.get('cpf')?.errors?.['cpfInvalido']">
+            O CPF deve conter exatamente 11 números.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3 form-group-custom">
+        <input type="tel" mask="(00) 00000-0000" [showMaskTyped]="false" placeholder="Telefone" formControlName="telefone" class="form-control form-control-underline">
+        <div *ngIf="registerForm.get('telefone')?.touched && registerForm.get('telefone')?.errors" class="text-danger small text-start mt-1">
+          Telefone deve ter 11 dígitos.
+        </div>
+      </div>
+
+      <div class="mb-3 form-group-custom">
+        <input type="text" mask="0000" [showMaskTyped]="false" placeholder="Agência" formControlName="agencia" class="form-control form-control-underline">
+        <div *ngIf="registerForm.get('agencia')?.touched && registerForm.get('agencia')?.errors" class="text-danger small text-start mt-1">
+          <div *ngIf="registerForm.get('agencia')?.errors?.['agenciaInvalida']">
+            A agência deve conter 4 dígitos.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3 form-group-custom">
+        <input type="text" mask="00000000-0" [showMaskTyped]="false" placeholder="Conta" formControlName="conta" class="form-control form-control-underline">
+        <div *ngIf="registerForm.get('conta')?.touched && registerForm.get('conta')?.errors" class="text-danger small text-start mt-1">
+          <div *ngIf="registerForm.get('conta')?.errors?.['contaInvalida']">
+            A conta deve conter exatamente 9 dígitos.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3 form-group-custom">
+        <input type="email" placeholder="E-mail" formControlName="email" class="form-control form-control-underline">
+        <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors" class="text-danger small text-start mt-1">
+          
+          <div *ngIf="registerForm.get('email')?.errors?.['required']">
+            O e-mail é obrigatório.
+          </div>
+      
+          <div *ngIf="registerForm.get('email')?.errors?.['email']">
+            Formato de e-mail inválido.
+          </div>
+          
+          <div *ngIf="registerForm.get('email')?.errors?.['emailDeFuncionario']">
+            Não é permitido cadastrar um e-mail de funcionário.
+          </div>
+      
+        </div>
+      </div>
+
+      <div class="mb-3 form-group-custom position-relative">
+        <input [type]="hideRegisterPassword ? 'password' : 'text'" placeholder="Crie sua Senha" formControlName="senha" class="form-control form-control-underline pe-5">
+        <i (click)="hideRegisterPassword = !hideRegisterPassword" class="material-icons input-icon-custom clickable text-muted">
+          {{ hideRegisterPassword ? 'visibility_off' : 'visibility' }}
+        </i>
+        <div *ngIf="registerForm.get('senha')?.touched && registerForm.get('senha')?.errors" class="text-danger small text-start mt-1">
+          <div *ngIf="registerForm.get('senha')?.errors?.['required']">
+            Senha é obrigatória.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4 form-group-custom position-relative">
+        <input [type]="hideRegisterPassword ? 'password' : 'text'" placeholder="Confirme sua Senha" formControlName="confirmarSenha" class="form-control form-control-underline pe-5">
+        <i (click)="hideRegisterPassword = !hideRegisterPassword" class="material-icons input-icon-custom clickable text-muted">
+          {{ hideRegisterPassword ? 'visibility_off' : 'visibility' }}
+        </i>
+      </div>
+
+      <div *ngIf="registerForm.hasError('senhasNaoCorrespondem') && registerForm.get('confirmarSenha')?.touched" class="text-danger small text-start mt-1 mb-3">
+        As senhas não correspondem.
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 mb-3 py-3 rounded-pill login-button-custom">Cadastrar</button>
+      <button type="reset" class="btn btn-outline-danger w-100 mb-3 py-3 rounded-pill register-button-custom">Limpar</button>
+      <button type="button" class="btn btn-outline-danger w-100 py-3 rounded-pill register-button-custom" routerLink="/login">Voltar</button>
+
+    </form>
+  </section>
+</main>
+</body>

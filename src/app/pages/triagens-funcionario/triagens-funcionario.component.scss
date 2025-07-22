@@ -1,0 +1,63 @@
+// Importamos a cor primária definida no seu styles.scss
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+:host {
+  display: block; 
+  background: url('/assets/Background/darkBackground.png') center/cover no-repeat fixed;
+  min-height: 100vh;
+  padding-top: 120px;
+}
+
+.triagens-container {
+  width: 90%;
+  max-width: 1200px;
+  background: rgba(25, 35, 50, 0.6);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.empty-state {
+  padding: 4rem 2rem;
+  opacity: 0.7;
+  
+  i {
+    font-size: 4rem;
+    color: $primary; 
+    margin-bottom: 1rem;
+  }
+}
+
+.btn-custom-primary {
+  background-color: $primary; 
+  color: white;
+  border: 1px solid $primary;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: darken($primary, 10%); 
+    border-color: darken($primary, 10%);
+  }
+}
+
+.btn-custom-secondary-outline {
+  background-color: transparent;
+  color: #adb5bd; // Mesmo cinza claro do cabeçalho da tabela
+  border: 1px solid #adb5bd;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: $primary;
+    color: white;
+    border-color: $primary;
+  }
+}
+
+.linha-clicavel {
+  cursor: pointer; // Muda o cursor do mouse para uma "mãozinha"
+
+  &:hover {
+    // Escurece levemente o fundo da linha ao passar o mouse
+    background-color: rgba(255, 255, 255, 0.1); 
+  }
+}

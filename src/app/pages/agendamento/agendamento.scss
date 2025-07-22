@@ -1,0 +1,29 @@
+body {
+    padding-top: 100px;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+table thead tr th:first-child {
+    border-top-left-radius: 8px;
+}
+
+table thead tr th:last-child {
+    border-top-right-radius: 8px;
+}
+
+table thead tr th {
+    background-color: #0947a2;
+    color: #fefefe;
+}
+
+tbody tr {
+    cursor: pointer;
+}
+
+button{
+    background-color: #0d55c1;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+}

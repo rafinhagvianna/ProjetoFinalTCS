@@ -1,0 +1,115 @@
+// Importa a cor primária do seu tema global
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+// Define o fundo e o espaçamento da página inteira
+:host {
+  display: block;
+  min-height: 100vh;
+  padding: 120px 1rem 2rem; // Espaçamento para a navbar e conteúdo
+  background: url('/assets/Background/darkBackground.png') center/cover no-repeat fixed;
+}
+
+// Estilo do contêiner principal com efeito de "vidro"
+.historico-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem;
+  background: rgba(25, 35, 50, 0.6);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  color: #f8f9fa;
+}
+
+// Estilização da barra de busca
+.search-bar {
+  position: relative;
+  
+  .form-control {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding-left: 2.5rem; // Espaço para o ícone
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    &:focus {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-color: $primary;
+      box-shadow: 0 0 0 0.25rem rgba($primary, 0.25);
+    }
+  }
+
+  .bi-search {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+// Estilização customizada da tabela para o tema escuro
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.05);
+  --bs-table-color: #f8f9fa;
+  --bs-table-border-color: rgba(255, 255, 255, 0.15);
+  --bs-table-hover-bg: rgba(255, 255, 255, 0.1);
+  --bs-table-hover-color: #fff;
+}
+
+thead th {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #adb5bd;
+}
+
+// Badge de status para atendimentos concluídos
+.status-finalizado {
+  background-color: #28a745; // Verde para sucesso
+  color: white;
+}
+
+// Estilo para a mensagem de "histórico vazio"
+.empty-state {
+  padding: 4rem 2rem;
+  opacity: 0.7;
+  
+  i {
+    font-size: 4rem;
+    color: #495057;
+    margin-bottom: 1rem;
+  }
+}
+
+thead th.sortable {
+    cursor: pointer; 
+    
+    &:hover {
+      color: #fff; 
+    }
+  }
+  
+  // Estilo para o cabeçalho que está ativo (ordenado)
+  thead th.sorted {
+    color: $primary; // Usa a cor primária do seu tema para destacar
+  }
+  
+  // Pequeno ajuste no ícone da seta
+  thead th i {
+    margin-left: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .linha-clicavel {
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1); 
+  }
+}

@@ -1,0 +1,52 @@
+<app-navbar></app-navbar>
+
+<div class="d-flex justify-content-center menu-funcionario-bg">
+
+  <div class="custom-container p-4 p-md-5 rounded-4 border border-white border-opacity-10 text-light">
+    
+    <div class="content-wrapper">
+    <h1 class="text-center mb-4">Gerenciamento de Setores</h1>
+
+    <div *ngIf="isLoading" class="text-center mt-4">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+      <p class="mt-2">Carregando setores...</p>
+    </div>
+
+    <div *ngIf="!isLoading && setores.length > 0" class="table-responsive">
+      <table class="table table-dark table-hover align-middle mt-2 text-center">
+        <thead>
+          <tr class="text-uppercase">
+            <th>Nome do Setor</th>
+            <th>Documentos Obrigatórios</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let setor of setores">
+            <td>{{ setor.nome }}</td>
+            <td>{{ setor.documentosObrigatoriosIds.length }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-danger" (click)="confirmarExclusao(setor)">
+                <i class="fa-solid fa-trash me-1"></i> Excluir
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="!isLoading && setores.length === 0" class="text-center py-5">
+      <p class="lead text-white-50">Nenhum setor cadastrado no sistema.</p>
+    </div>
+    
+    <div class="d-flex justify-content-end mt-4">
+        <button class="btn btn-secondary" routerLink="/menu-funcionario/cadastro-setor">Voltar</button>
+      </div>
+
+    </div>
+
+  </div> 
+
+</div> 

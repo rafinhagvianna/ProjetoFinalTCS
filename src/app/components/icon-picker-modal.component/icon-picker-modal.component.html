@@ -1,0 +1,39 @@
+<div class="mb-3"> 
+    <div class="d-flex align-items-center justify-content-center flex-wrap gap-3">
+        <i *ngIf="selectedIcon" [class]="selectedIcon" class="fa-lg text-primary"></i> 
+        <input type="text" id="selectedIconInput" [value]="selectedIcon" readonly
+            class="form-control flex-grow-1" style="max-width: 250px;" placeholder="Nenhum ícone selecionado">
+        <button type="button" (click)="openModal()" class="btn btn-outline-primary">Selecionar Ícone</button>
+    </div>
+
+    <div *ngIf="isModalOpen" class="modal d-block" tabindex="-1" role="dialog" (click)="closeModal()">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document" (click)="$event.stopPropagation()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Selecionar Ícone</h5>
+                    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" [(ngModel)]="searchTerm" (input)="filterIcons()"
+                        class="form-control mb-3" placeholder="Buscar ícones..." id="iconSearch">
+
+                    <div class="row row-cols-3 row-cols-sm-4 row-cols-md-5 row-cols-lg-6 g-2 text-center">
+                        <div *ngFor="let icon of filteredIcons" class="col">
+                            <div class="card h-100 d-flex flex-column justify-content-center align-items-center p-2 cursor-pointer icon-item"
+                                (click)="selectIcon(icon)">
+                                <i [class]="icon" class="fa-2x text-info mb-2"></i>
+                                <span class="text-muted small text-truncate w-100">{{ getIconName(icon) }}</span>
+                            </div>
+                        </div>
+                        <div *ngIf="filteredIcons.length === 0" class="col-12 text-center text-muted py-3">
+                            Nenhum ícone encontrado para "{{ searchTerm }}"
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeModal()">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

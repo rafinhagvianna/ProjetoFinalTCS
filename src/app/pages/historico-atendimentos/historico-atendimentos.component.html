@@ -1,0 +1,96 @@
+<app-navbar></app-navbar>
+
+<div class="historico-page">
+  <div class="historico-container">
+    
+    <div class="text-center mb-4">
+      <h1>Histórico de Atendimentos</h1>
+      <p class="lead text-white-50">Lista de todos os atendimentos que já foram concluídos.</p>
+    </div>
+
+    <div class="search-bar mb-4">
+      <i class="bi bi-search"></i>
+      <input 
+        type="text" 
+        class="form-control" 
+        placeholder="Pesquisar por nome do cliente ou serviço..."
+        [(ngModel)]="termoBusca"
+        (input)="filtrarHistorico()">
+    </div>
+
+    <div *ngIf="isLoading" class="text-center mt-5">
+      <div class="spinner-border" role="status"></div>
+      <p class="mt-2">Carregando histórico...</p>
+    </div>
+    
+    <div *ngIf="!isLoading && historicoExibido.length === 0" class="text-center empty-state">
+      <i class="bi bi-search"></i>
+      <h2 *ngIf="termoBusca">Nenhum resultado para "{{ termoBusca }}"</h2>
+      <h2 *ngIf="!termoBusca">Nenhum Atendimento no Histórico</h2>
+      <p *ngIf="!termoBusca" class="text-white-50">Ainda não há atendimentos concluídos para exibir.</p>
+    </div>
+
+    <div *ngIf="!isLoading && historicoExibido.length > 0" class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr class="text-uppercase">
+        
+            <th class="sortable" (click)="ordenarPor('nomeClienteSnapshot')" 
+                [class.sorted]="colunaOrdenada === 'nomeClienteSnapshot'">
+              Cliente
+              <i *ngIf="colunaOrdenada === 'nomeClienteSnapshot'" 
+                 class="bi" 
+                 [ngClass]="{'bi-arrow-down': direcaoOrdenacao === 'desc', 'bi-arrow-up': direcaoOrdenacao === 'asc'}">
+              </i>
+            </th>
+        
+            <th>Serviço Realizado</th>
+            <th>Status</th>
+        
+            <th class="sortable" (click)="ordenarPor('horarioSolicitacao')"
+                [class.sorted]="colunaOrdenada === 'horarioSolicitacao'">
+              Data da Solicitação
+              <i *ngIf="colunaOrdenada === 'horarioSolicitacao'" 
+                 class="bi" 
+                 [ngClass]="{'bi-arrow-down': direcaoOrdenacao === 'desc', 'bi-arrow-up': direcaoOrdenacao === 'asc'}">
+              </i>
+            </th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let h of historicoExibido"
+          class="linha-clicavel"
+          (click)="verDetalhes(h)"
+          title="Clique para ver os detalhes deste atendimento">
+            <td>{{ h.nomeClienteSnapshot || 'Cliente não identificado' }}</td>
+            <td>{{ h.nomeServicoSnapshot }}</td>
+            <td>
+              <span class="badge rounded-pill status-finalizado">
+                {{ h.status }}
+              </span>
+            </td>
+            <td>{{ h.horarioSolicitacao | date:'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- <div class="text-center mt-4">
+      <button class="btn btn-outline-light" (click)="retornar()">Voltar</button>
+    </div> -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+  <div>
+    <button class="btn btn-outline-success me-2" (click)="exportarParaExcel()" [disabled]="historicoExibido.length === 0">
+      <i class="bi bi-file-earmark-excel-fill me-1"></i> Exportar Excel
+    </button>
+    <button class="btn btn-outline-danger" (click)="exportarParaPdf()" [disabled]="historicoExibido.length === 0">
+      <i class="bi bi-file-earmark-pdf-fill me-1"></i> Exportar PDF
+    </button>
+  </div>
+
+  <button class="btn btn-outline-light" (click)="retornar()">Voltar</button>
+</div>
+
+  </div>
+</div>

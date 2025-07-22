@@ -1,0 +1,24 @@
+:host {
+    display: block;
+  }
+  
+  .custom-container {
+    width: 90%;
+    max-width: 1200px;
+    background: rgba(25, 35, 50, 0.6);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    display: flex;
+    flex-direction: column; // Organiza os itens em uma coluna
+    min-height: 500px; // Altura mínima para o card, ajuste se necessário
+  } 
+
+  .content-wrapper {
+    flex-grow: 1; // Faz este container crescer e ocupar todo o espaço disponível
+  }
+
+  .menu-funcionario-bg {
+    min-height: 100vh;
+    padding: 120px 20px 40px 20px; // Adiciona padding: topo, lados, base
+  }
+  

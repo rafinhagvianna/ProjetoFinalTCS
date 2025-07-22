@@ -1,0 +1,111 @@
+$bankflow-red: #e53935;
+$bankflow-dark-red: #c62828;
+
+:host {
+
+}
+
+.login-box-custom {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+}
+
+.logo-custom {
+  margin-bottom: 30px;
+  img {
+    display: block;
+    margin: 0 auto;
+    width: 180px;
+  }
+}
+
+.form-group-custom {
+
+}
+
+.form-control-underline {
+  padding: 8px 7px 0px 5px; 
+  border: none;
+  border-bottom: 2px solid #ddd;
+  border-radius: 0;
+  background-color: transparent;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+
+  &:focus {
+    outline: none;
+    border-bottom-color: $bankflow-red;
+    box-shadow: none; 
+  }
+}
+
+.input-icon-custom {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  color: var(--bs-gray-600);
+  &.clickable {
+    cursor: pointer;
+    transition: color 0.3s;
+    &:hover {
+      color: var(--bs-gray-900);
+    }
+  }
+}
+
+.login-button-custom {
+  background: linear-gradient(45deg, $bankflow-red, $bankflow-dark-red);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba($bankflow-red, 0.4);
+    background: linear-gradient(45deg, $bankflow-dark-red, $bankflow-red);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.register-button-custom {
+  border: 2px solid $bankflow-red;
+  color: $bankflow-red;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #ffffff;
+    color: $bankflow-red; 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba($bankflow-red, 0.4);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.text-danger.small {
+  color: $bankflow-red !important; 
+  font-size: 0.8rem; 
+  font-weight: 500;
+  text-align: left;
+}
+
+input.ng-invalid.ng-touched {
+  border-bottom-color: $bankflow-red;
+  animation: shake 0.3s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
