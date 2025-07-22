@@ -38,12 +38,12 @@ public class AuthController {
             // Retorna 401 Unauthorized para credenciais inválidas
             // Certifique-se que LoginResponseDTO tenha um construtor compatível com String e nulls
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new LoginResponseDTO(e.getMessage(), null,  null, null, null));
+                    .body(new LoginResponseDTO(e.getMessage(), null,  null, null, null, null, null));
         } catch (Exception e) {
             // Para outros erros internos
             System.err.println("Erro interno no login: " + e.getMessage()); // Loga o erro
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new LoginResponseDTO("Erro interno no servidor.", null,   null, null, null));
+                    .body(new LoginResponseDTO("Erro interno no servidor.", null,   null, null, null, null, null));
         }
     }
 

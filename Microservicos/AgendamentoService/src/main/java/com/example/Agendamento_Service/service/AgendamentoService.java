@@ -1,9 +1,6 @@
 package com.example.Agendamento_Service.service;
 
-import com.example.Agendamento_Service.dto.AgendamentoRequestDTO;
-import com.example.Agendamento_Service.dto.DocumentoPendenteResponseDTO;
-import com.example.Agendamento_Service.dto.DocumentoStatusUpdateRequestDTO;
-import com.example.Agendamento_Service.dto.TokenValidationDTO;
+import com.example.Agendamento_Service.dto.*;
 import com.example.Agendamento_Service.client.AuthServiceClient;
 import com.example.Agendamento_Service.client.DocumentoCatalogoResponse;
 import com.example.Agendamento_Service.client.ServicoResponse;
@@ -30,7 +27,6 @@ import java.util.List;
 import java.util.Objects; // Adicionado para Objects.equals no PATCH
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class AgendamentoService {
@@ -65,113 +61,190 @@ public class AgendamentoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado com o ID: " + id));
     }
 
+    public List<Agendamento> getAgendamentosPorData(LocalDate data) {
+        LocalDateTime inicioDoDia = data.atStartOfDay(); // 00:00:00 do dia
+        LocalDateTime fimDoDia = data.atTime(LocalTime.MAX); // 23:59:59.999... do dia
+
+        return repository.findByDataHoraBetween(inicioDoDia, fimDoDia);
+    }
+
     public List<Agendamento> buscarPorCliente(UUID id) {
         return repository.findByUsuarioIdAndStatus(id, StatusAgendamento.AGENDADO);
     }
 
+    @Transactional(readOnly = true)
+    public Agendamento buscarAgendamentoAtivoPorCliente(UUID clienteId) {
+        return repository.findFirstByUsuarioIdAndStatusAndDataHoraAfterOrderByDataHoraAsc(
+                clienteId,
+                StatusAgendamento.AGENDADO,
+                LocalDateTime.now() // Busca apenas agendamentos a partir de agora
+        ).orElseThrow(() -> new RecursoNaoEncontradoException("Nenhum agendamento ativo encontrado para este cliente."));
+    }
+
+//    @Transactional
+//    public Agendamento salvar(AgendamentoRequestDTO agendamentoDTO, UUID idCliente) {
+//        // log.info("Iniciando criação de novo agendamento para usuário ID: {} e serviço ID: {}", agendamentoDTO.usuarioId(), agendamentoDTO.servicoId());
+//
+//        if (!isDataEHoraDeTrabalhoValido(agendamentoDTO.dataHora())) {
+//            // log.warn("Tentativa de agendamento em horário inválido: {}", agendamentoDTO.dataHora());
+//            throw new IllegalArgumentException("A data e hora do agendamento devem ser de segunda a sexta, entre 10h00 e 16h00, e em horas cheias.");
+//        }
+//
+//        if (repository.findByUsuarioIdAndServicoIdAndDataHora(
+//                idCliente,
+//                agendamentoDTO.servicoId(),
+//                agendamentoDTO.dataHora()).isPresent()) {
+//            // log.warn("Agendamento duplicado detectado para usuário ID: {}, serviço ID: {}, data/hora: {}",
+//            // agendamentoDTO.usuarioId(), agendamentoDTO.servicoId(), agendamentoDTO.dataHora());
+//            throw new IllegalArgumentException("Este usuário já possui um agendamento para o mesmo serviço neste horário.");
+//        }
+//
+//        // 1. Obter informações do serviço/setor usando o Facade
+//        ServicoResponse setorInfo = catalogoServiceFacade.buscarSetorPorId(agendamentoDTO.servicoId());
+//        // A verificação de "Serviço Indisponível" deve ser feita no Facade ou GlobalExceptionHandler
+//        // Se o Facade já lança ComunicacaoServicoException, essa checagem pode ser redundante aqui.
+//        // Por simplicidade, vou manter a checagem de nome para o caso do fallback do Facade retornar um objeto com nome padrão.
+//        if (setorInfo == null || "Serviço Indisponível".equals(setorInfo.nome())) {
+//            throw new ComunicacaoServicoException("Não foi possível obter detalhes do serviço de catálogo. Tente novamente mais tarde.");
+//        }
+//
+//        Integer tempoEstimadoServico = Optional.ofNullable(setorInfo.tempoMedioMinutos()).orElse(0);
+//        if (tempoEstimadoServico <= 0) {
+//            // log.warn("Tempo estimado para o serviço ID {} é inválido ({} minutos).", agendamentoDTO.servicoId(), tempoEstimadoServico);
+//            tempoEstimadoServico = 15; // Usar um padrão para serviços com tempo não configurado, ou lançar exceção
+//        }
+//
+//        // 2. Verificar disponibilidade do horário
+//        // CORREÇÃO AQUI: Passar agendamentoDTO.servicoId() em vez de tempoEstimadoServico
+//        if (!isHorarioDisponivel(agendamentoDTO.dataHora(), agendamentoDTO.servicoId(), null)) {
+//            // log.warn("Horário selecionado não tem capacidade suficiente para o serviço ID {}.", agendamentoDTO.servicoId());
+//            throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço.");
+//        }
+//
+//        Agendamento agendamento = new Agendamento();
+//        agendamento.setUsuarioId(idCliente);
+//        agendamento.setAtendenteId(agendamentoDTO.atendenteId()); // atendenteId pode ser nulo agora
+//        agendamento.setServicoId(agendamentoDTO.servicoId());
+//        agendamento.setDataHora(agendamentoDTO.dataHora());
+//        agendamento.setCriadoEm(LocalDateTime.now()); // Garantir que está sendo setado
+//
+//        // 3. Obter nome do cliente/usuário usando o Facade
+//        String nomeClienteSnapshot = usuarioServiceFacade.buscarNomeCliente(idCliente);
+//        agendamento.setNomeClienteSnapshot(nomeClienteSnapshot);
+//
+//        // 4. Adicionar snapshot do nome do serviço
+//        agendamento.setNomeServicoSnapshot(setorInfo.nome());
+//        agendamento.setStatus(StatusAgendamento.AGENDADO); // Definir um status inicial, se houver
+//
+//        // 5. Lógica de documentos obrigatórios: Igual à triagem
+//        List<UUID> documentosObrigatoriosIds = Optional.ofNullable(setorInfo.documentosObrigatoriosIds()).orElse(new ArrayList<>());
+//
+//        if (!documentosObrigatoriosIds.isEmpty()) {
+//            // log.debug("Processando {} documentos obrigatórios para o agendamento.", documentosObrigatoriosIds.size());
+//            List<DocumentoCatalogoResponse> detalhesDocumentos = catalogoServiceFacade.buscarDetalhesDocumentosObrigatorios(documentosObrigatoriosIds);
+//
+//            detalhesDocumentos.forEach(tipoDoc -> {
+//                DocumentoPendente doc = new DocumentoPendente(
+//                        tipoDoc.id(), // Supondo que DocumentoPendente tem construtor com ID, Nome
+//                        tipoDoc.nome(),
+//                        StatusDocumento.PENDENTE // Status inicial para documentos de agendamento
+//                );
+//                agendamento.addDocumentoPendente(doc);
+//                // log.debug("Documento '{}' (ID: {}) adicionado como pendente para o agendamento.", tipoDoc.nome(), tipoDoc.id());
+//            });
+//        } else {
+//            // log.info("Nenhum documento obrigatório configurado para o serviço ID: {}.", agendamentoDTO.servicoId());
+//        }
+//
+//        Agendamento agendamentoSalvo = repository.save(agendamento);
+//        // log.info("Agendamento ID: {} criado com sucesso.", agendamentoSalvo.getId());
+//        return agendamentoSalvo;
+//    }
+
     @Transactional
     public Agendamento salvar(AgendamentoRequestDTO agendamentoDTO, UUID idCliente) {
-        // log.info("Iniciando criação de novo agendamento para usuário ID: {} e serviço ID: {}", agendamentoDTO.usuarioId(), agendamentoDTO.servicoId());
-
+        // Validação de horário de trabalho
         if (!isDataEHoraDeTrabalhoValido(agendamentoDTO.dataHora())) {
-            // log.warn("Tentativa de agendamento em horário inválido: {}", agendamentoDTO.dataHora());
             throw new IllegalArgumentException("A data e hora do agendamento devem ser de segunda a sexta, entre 10h00 e 16h00, e em horas cheias.");
         }
 
+        // Validação de agendamento duplicado
         if (repository.findByUsuarioIdAndServicoIdAndDataHora(
                 idCliente,
                 agendamentoDTO.servicoId(),
                 agendamentoDTO.dataHora()).isPresent()) {
-            // log.warn("Agendamento duplicado detectado para usuário ID: {}, serviço ID: {}, data/hora: {}",
-            // agendamentoDTO.usuarioId(), agendamentoDTO.servicoId(), agendamentoDTO.dataHora());
             throw new IllegalArgumentException("Este usuário já possui um agendamento para o mesmo serviço neste horário.");
         }
 
-        // 1. Obter informações do serviço/setor usando o Facade
+        // Busca informações do serviço/setor
         ServicoResponse setorInfo = catalogoServiceFacade.buscarSetorPorId(agendamentoDTO.servicoId());
-        // A verificação de "Serviço Indisponível" deve ser feita no Facade ou GlobalExceptionHandler
-        // Se o Facade já lança ComunicacaoServicoException, essa checagem pode ser redundante aqui.
-        // Por simplicidade, vou manter a checagem de nome para o caso do fallback do Facade retornar um objeto com nome padrão.
         if (setorInfo == null || "Serviço Indisponível".equals(setorInfo.nome())) {
             throw new ComunicacaoServicoException("Não foi possível obter detalhes do serviço de catálogo. Tente novamente mais tarde.");
         }
 
-        Integer tempoEstimadoServico = Optional.ofNullable(setorInfo.tempoMedioMinutos()).orElse(0);
-        if (tempoEstimadoServico <= 0) {
-            // log.warn("Tempo estimado para o serviço ID {} é inválido ({} minutos).", agendamentoDTO.servicoId(), tempoEstimadoServico);
-            tempoEstimadoServico = 15; // Usar um padrão para serviços com tempo não configurado, ou lançar exceção
-        }
-
-        // 2. Verificar disponibilidade do horário
-        // CORREÇÃO AQUI: Passar agendamentoDTO.servicoId() em vez de tempoEstimadoServico
+        // Validação de disponibilidade de horário
         if (!isHorarioDisponivel(agendamentoDTO.dataHora(), agendamentoDTO.servicoId(), null)) {
-            // log.warn("Horário selecionado não tem capacidade suficiente para o serviço ID {}.", agendamentoDTO.servicoId());
             throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço.");
         }
 
+        // Criação da entidade Agendamento
         Agendamento agendamento = new Agendamento();
         agendamento.setUsuarioId(idCliente);
-        agendamento.setAtendenteId(agendamentoDTO.atendenteId()); // atendenteId pode ser nulo agora
+        agendamento.setAtendenteId(agendamentoDTO.atendenteId());
         agendamento.setServicoId(agendamentoDTO.servicoId());
         agendamento.setDataHora(agendamentoDTO.dataHora());
-        agendamento.setCriadoEm(LocalDateTime.now()); // Garantir que está sendo setado
+        agendamento.setCriadoEm(LocalDateTime.now());
 
-        // 3. Obter nome do cliente/usuário usando o Facade
+        // Busca e armazena snapshots de nomes
         String nomeClienteSnapshot = usuarioServiceFacade.buscarNomeCliente(idCliente);
         agendamento.setNomeClienteSnapshot(nomeClienteSnapshot);
-
-        // 4. Adicionar snapshot do nome do serviço
         agendamento.setNomeServicoSnapshot(setorInfo.nome());
-        agendamento.setStatus(StatusAgendamento.AGENDADO); // Definir um status inicial, se houver
+        agendamento.setStatus(StatusAgendamento.AGENDADO);
 
-        // 5. Lógica de documentos obrigatórios: Igual à triagem
-        List<UUID> documentosObrigatoriosIds = Optional.ofNullable(setorInfo.documentosObrigatoriosIds()).orElse(new ArrayList<>());
+        // LÓGICA DE DOCUMENTOS OBRIGATÓRIOS
+        List<UUID> documentosObrigatoriosIds = Optional.ofNullable(setorInfo.documentosObrigatoriosIds())
+                .orElse(new ArrayList<>());
 
         if (!documentosObrigatoriosIds.isEmpty()) {
-            // log.debug("Processando {} documentos obrigatórios para o agendamento.", documentosObrigatoriosIds.size());
             List<DocumentoCatalogoResponse> detalhesDocumentos = catalogoServiceFacade.buscarDetalhesDocumentosObrigatorios(documentosObrigatoriosIds);
 
             detalhesDocumentos.forEach(tipoDoc -> {
-                DocumentoPendente doc = new DocumentoPendente(
-                        tipoDoc.id(), // Supondo que DocumentoPendente tem construtor com ID, Nome
-                        tipoDoc.nome(),
-                        StatusDocumento.PENDENTE // Status inicial para documentos de agendamento
-                );
+                DocumentoPendente doc = new DocumentoPendente();
+                doc.setDocumentoCatalogoId(tipoDoc.id());
+                doc.setNomeDocumentoSnapshot(tipoDoc.nome());
+                doc.setStatus(StatusDocumento.PENDENTE);
                 agendamento.addDocumentoPendente(doc);
-                // log.debug("Documento '{}' (ID: {}) adicionado como pendente para o agendamento.", tipoDoc.nome(), tipoDoc.id());
             });
-        } else {
-            // log.info("Nenhum documento obrigatório configurado para o serviço ID: {}.", agendamentoDTO.servicoId());
         }
 
+        // Salva o agendamento com os documentos pendentes associados
         Agendamento agendamentoSalvo = repository.save(agendamento);
-        // log.info("Agendamento ID: {} criado com sucesso.", agendamentoSalvo.getId());
         return agendamentoSalvo;
     }
 
     @Transactional
-    public Agendamento atualizarAgendamento(UUID id, AgendamentoRequestDTO agendamentoDTO, UUID idCliente) {
-        // log.info("Atualizando agendamento ID: {}", id);
+    public Agendamento atualizarAgendamento(UUID id, AgendamentoRequestDTO dto) {
+        // log.info("Requisição para atualizar agendamento ID: {}", id);
         return repository.findById(id).map(agendamentoExistente -> {
 
-            if (!isDataEHoraDeTrabalhoValido(agendamentoDTO.dataHora())) {
-                // log.warn("Tentativa de atualização de agendamento ID {} para horário inválido: {}", id, agendamentoDTO.dataHora());
+            if (!isDataEHoraDeTrabalhoValido(dto.dataHora())) {
+                // log.warn("Tentativa de atualização de agendamento ID {} para horário inválido: {}", id, dto.dataHora());
                 throw new IllegalArgumentException("A data e hora do agendamento atualizado devem ser de segunda a sexta, entre 10h00 e 16h00, e em horas cheias.");
             }
 
             Optional<Agendamento> duplicado = repository.findByUsuarioIdAndServicoIdAndDataHora(
-                    idCliente,
-                    agendamentoDTO.servicoId(),
-                    agendamentoDTO.dataHora());
+                    agendamentoExistente.getUsuarioId(),
+                    dto.servicoId(),
+                    dto.dataHora());
 
             if (duplicado.isPresent() && !duplicado.get().getId().equals(agendamentoExistente.getId())) {
                 // log.warn("Conflito na atualização do agendamento ID {}: Outro agendamento já existe com as mesmas credenciais.", id);
                 throw new IllegalArgumentException("Já existe outro agendamento com as mesmas credenciais (usuário, serviço, data/hora).");
             }
 
-            ServicoResponse setorInfo = catalogoServiceFacade.buscarSetorPorId(agendamentoDTO.servicoId());
+            ServicoResponse setorInfo = catalogoServiceFacade.buscarSetorPorId(dto.servicoId());
             if (setorInfo == null || "Serviço Indisponível".equals(setorInfo.nome())) {
-                // log.error("Falha ao obter detalhes do serviço de catálogo ID {} durante a atualização do agendamento {}.", agendamentoDTO.servicoId(), id);
+                // log.error("Falha ao obter detalhes do serviço de catálogo ID {} durante a atualização do agendamento {}.", dto.servicoId(), id);
                 throw new ComunicacaoServicoException("Não foi possível obter detalhes do serviço de catálogo para validação. Tente novamente mais tarde.");
             }
             Integer tempoEstimadoServico = Optional.ofNullable(setorInfo.tempoMedioMinutos()).orElse(0);
@@ -180,17 +253,20 @@ public class AgendamentoService {
             }
 
             // CORREÇÃO AQUI: Passar agendamentoDTO.servicoId() em vez de tempoEstimadoServico
-            if (!isHorarioDisponivel(agendamentoDTO.dataHora(), agendamentoDTO.servicoId(), agendamentoExistente.getId())) {
+            if (!isHorarioDisponivel(dto.dataHora(), dto.servicoId(), agendamentoExistente.getId())) {
                 // log.warn("Horário selecionado para atualização do agendamento ID {} não tem capacidade suficiente.", id);
                 throw new IllegalStateException("O horário selecionado não tem capacidade suficiente para este serviço após a atualização.");
             }
 
-            agendamentoExistente.setUsuarioId(idCliente);
-            agendamentoExistente.setAtendenteId(agendamentoDTO.atendenteId());
-            agendamentoExistente.setServicoId(agendamentoDTO.servicoId());
-            agendamentoExistente.setDataHora(agendamentoDTO.dataHora());
+            agendamentoExistente.setAtendenteId(dto.atendenteId());
+            agendamentoExistente.setServicoId(dto.servicoId());
+            agendamentoExistente.setDataHora(dto.dataHora());
+            agendamentoExistente.setObservacoes(dto.observacoes());
+            agendamentoExistente.setStatus(dto.status());
+            agendamentoExistente.setAtendidoEm(dto.atendidoEm());
+
             // Se necessário, atualizar snapshots de nome de cliente/serviço
-            agendamentoExistente.setNomeClienteSnapshot(usuarioServiceFacade.buscarNomeCliente(idCliente));
+            agendamentoExistente.setNomeClienteSnapshot(usuarioServiceFacade.buscarNomeCliente(agendamentoExistente.getUsuarioId()));
             agendamentoExistente.setNomeServicoSnapshot(setorInfo.nome());
 
 
@@ -201,28 +277,28 @@ public class AgendamentoService {
     }
 
     @Transactional
-    public Agendamento atualizarParcialAgendamento(UUID id, AgendamentoRequestDTO agendamentoDTO, UUID idCliente) {
+    public Agendamento atualizarParcialAgendamento(UUID id, AgendamentoRequestDTO dto) {
         // log.info("Atualizando parcialmente agendamento ID: {}", id);
         return repository.findById(id).map(agendamentoExistente -> {
             boolean dataHoraChanged = false;
             boolean servicoChanged = false;
             boolean usuarioChanged = false;
-
-            if (idCliente != null && !idCliente.equals(agendamentoExistente.getUsuarioId())) {
-                agendamentoExistente.setUsuarioId(idCliente);
-                usuarioChanged = true;
+            if (dto.atendenteId() != null && !Objects.equals(dto.atendenteId(), agendamentoExistente.getAtendenteId())) {
+                agendamentoExistente.setAtendenteId(dto.atendenteId());
             }
-            if (agendamentoDTO.atendenteId() != null && !Objects.equals(agendamentoDTO.atendenteId(), agendamentoExistente.getAtendenteId())) {
-                agendamentoExistente.setAtendenteId(agendamentoDTO.atendenteId());
-            }
-            if (agendamentoDTO.servicoId() != null && !agendamentoDTO.servicoId().equals(agendamentoExistente.getServicoId())) {
-                agendamentoExistente.setServicoId(agendamentoDTO.servicoId());
+            if (dto.servicoId() != null && !dto.servicoId().equals(agendamentoExistente.getServicoId())) {
+                agendamentoExistente.setServicoId(dto.servicoId());
                 servicoChanged = true;
             }
-            if (agendamentoDTO.dataHora() != null && !agendamentoDTO.dataHora().equals(agendamentoExistente.getDataHora())) {
-                agendamentoExistente.setDataHora(agendamentoDTO.dataHora());
+            if (dto.dataHora() != null && !dto.dataHora().equals(agendamentoExistente.getDataHora())) {
+                agendamentoExistente.setDataHora(dto.dataHora());
                 dataHoraChanged = true;
             }
+            // ADICIONE ESTA LÓGICA PARA ATUALIZAÇÃO PARCIAL DE OBSERVAÇÕES
+            if (dto.observacoes() != null && !Objects.equals(dto.observacoes(), agendamentoExistente.getObservacoes())) {
+                agendamentoExistente.setObservacoes(dto.observacoes());
+            }
+
 
             if (dataHoraChanged && !isDataEHoraDeTrabalhoValido(agendamentoExistente.getDataHora())) {
                 // log.warn("Tentativa de atualização parcial do agendamento ID {} para horário inválido: {}", id, agendamentoExistente.getDataHora());
@@ -429,5 +505,11 @@ public class AgendamentoService {
         }
 
         return idCliente;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ContagemPorItemDTO> contarAtendimentosPorServico() {
+        // Simplesmente chama o método do repositório e retorna o resultado
+        return repository.contarAtendimentosPorServico();
     }
 }

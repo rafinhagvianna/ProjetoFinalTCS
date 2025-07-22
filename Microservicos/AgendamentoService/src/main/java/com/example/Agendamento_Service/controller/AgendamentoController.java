@@ -1,11 +1,9 @@
 package com.example.Agendamento_Service.controller;
 
-import com.example.Agendamento_Service.dto.AgendamentoRequestDTO;
-import com.example.Agendamento_Service.dto.AgendamentoResponseDTO; // Importe o novo DTO
-import com.example.Agendamento_Service.dto.DocumentoPendenteResponseDTO;
-import com.example.Agendamento_Service.dto.DocumentoStatusUpdateRequestDTO;
+import com.example.Agendamento_Service.dto.*;
 import com.example.Agendamento_Service.exception.AuthServiceException;
 import com.example.Agendamento_Service.exception.InvalidTokenException;
+import com.example.Agendamento_Service.exception.RecursoNaoEncontradoException;
 import com.example.Agendamento_Service.model.Agendamento;
 import com.example.Agendamento_Service.service.AgendamentoService;
 import jakarta.validation.Valid;
@@ -72,6 +70,15 @@ public class AgendamentoController {
         return ResponseEntity.ok(agendamentos);
     }
 
+    @GetMapping("/data") // Endpoint para GET /api/agendamentos/data?data=YYYY-MM-DD
+    public ResponseEntity<List<AgendamentoResponseDTO>> getAgendamentosPorData(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+        List<AgendamentoResponseDTO> agendamentos = service.getAgendamentosPorData(data).stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(agendamentos);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<AgendamentoResponseDTO> buscarPorId(@PathVariable UUID id) {
         // log.info("Requisição para buscar agendamento por ID: {}", id);
@@ -109,42 +116,16 @@ public class AgendamentoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable UUID id, @Valid @RequestBody AgendamentoRequestDTO agendamentoDTO,
-                @RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<AgendamentoResponseDTO> atualizar(@PathVariable UUID id, @Valid @RequestBody AgendamentoRequestDTO agendamentoDTO) {
 
-        UUID idCliente;
-        try {
-            idCliente = service.validateTokenAndGetUserId(authorizationHeader);
-        } catch (InvalidTokenException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        } catch (AuthServiceException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Erro inesperado ao buscar agendamentos: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro interno ao processar a requisição.");
-        }
         // log.info("Requisição para atualizar agendamento ID: {}", id);
-        Agendamento agendamentoAtualizado = service.atualizarAgendamento(id, agendamentoDTO, idCliente);
+        Agendamento agendamentoAtualizado = service.atualizarAgendamento(id, agendamentoDTO);
         return ResponseEntity.ok(toResponseDTO(agendamentoAtualizado));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> atualizarParcial(@PathVariable UUID id, @RequestBody AgendamentoRequestDTO agendamentoDTO,
-                @RequestHeader("Authorization") String authorizationHeader) {
-
-        UUID idCliente;
-        try {
-            idCliente = service.validateTokenAndGetUserId(authorizationHeader);
-        } catch (InvalidTokenException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        } catch (AuthServiceException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Erro inesperado ao buscar agendamentos: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro interno ao processar a requisição.");
-        }
-        // log.info("Requisição para atualização parcial do agendamento ID: {}", id);
-        Agendamento agendamentoAtualizado = service.atualizarParcialAgendamento(id, agendamentoDTO, idCliente);
+    public ResponseEntity<AgendamentoResponseDTO> atualizarParcial(@PathVariable UUID id, @RequestBody AgendamentoRequestDTO agendamentoDTO) {
+        Agendamento agendamentoAtualizado = service.atualizarParcialAgendamento(id, agendamentoDTO);
         return ResponseEntity.ok(toResponseDTO(agendamentoAtualizado));
     }
 
@@ -188,6 +169,45 @@ public class AgendamentoController {
                                                             .collect(Collectors.toList());
 
         return ResponseEntity.ok(agendamentos);
+    }
+    
+    @GetMapping("/cliente/{id}")
+    public ResponseEntity<List<AgendamentoResponseDTO>>  buscarPorClienteId(@PathVariable UUID id) {
+        List<AgendamentoResponseDTO> agendamentos = service.buscarPorCliente(id).stream()
+                                                            .map(this::toResponseDTO)
+                                                            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(agendamentos);
+    }
+
+    @GetMapping("/cliente/ativo")
+    public ResponseEntity<?> buscarAgendamentoAtivo(
+            @RequestHeader("Authorization") String authorizationHeader) {
+
+        UUID idCliente;
+        try {
+            // 1. Valida o token e obtém o ID do cliente
+            idCliente = service.validateTokenAndGetUserId(authorizationHeader);
+        } catch (InvalidTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao validar sessão.");
+        }
+
+        try {
+            // 2. Tenta buscar o agendamento ativo no serviço
+            Agendamento agendamentoAtivo = service.buscarAgendamentoAtivoPorCliente(idCliente);
+            // 3. Se encontrar, converte para DTO e retorna com status 200 OK
+            return ResponseEntity.ok(toResponseDTO(agendamentoAtivo));
+        } catch (RecursoNaoEncontradoException e) {
+            // 4. Se o serviço lançar a exceção (não encontrou), retorna 404 Not Found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/analytics/atendimentos-por-servico")
+    public ResponseEntity<List<ContagemPorItemDTO>> getAtendimentosPorServico() {
+        return ResponseEntity.ok(service.contarAtendimentosPorServico());
     }
     
 }

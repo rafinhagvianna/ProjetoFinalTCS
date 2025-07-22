@@ -2,6 +2,7 @@ package com.microsservicos.documentacao.controller;
 
 import com.microsservicos.documentacao.dto.DocumentoResponseDTO;
 import com.microsservicos.documentacao.dto.ValidacaoDocumentoRequestDTO;
+import com.microsservicos.documentacao.dto.ValidacaoDocumentoRequestIdDTO;
 import com.microsservicos.documentacao.service.DocumentoService;
 import jakarta.servlet.http.HttpServletRequest; // NOVO
 import jakarta.validation.Valid;
@@ -39,11 +40,18 @@ public class DocumentoController {
     }
 
     @PutMapping("/{id}/validar")
-    public ResponseEntity<DocumentoResponseDTO> validarDocumento(
+    public ResponseEntity<DocumentoResponseDTO> validarDocumentoId(
             @PathVariable UUID id,
+            @Valid @RequestBody ValidacaoDocumentoRequestIdDTO validacaoDTO) {
+
+        DocumentoResponseDTO response = documentoService.validarDocumentoId(id, validacaoDTO);
+        return ResponseEntity.ok(response);
+    }
+    @PutMapping("/validar")
+    public ResponseEntity<DocumentoResponseDTO> validarDocumento(
             @Valid @RequestBody ValidacaoDocumentoRequestDTO validacaoDTO) {
 
-        DocumentoResponseDTO response = documentoService.validarDocumento(id, validacaoDTO);
+        DocumentoResponseDTO response = documentoService.validarDocumento(validacaoDTO);
         return ResponseEntity.ok(response);
     }
 

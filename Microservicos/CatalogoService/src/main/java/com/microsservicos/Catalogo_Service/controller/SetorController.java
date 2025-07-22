@@ -14,10 +14,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/setor")
-@RequiredArgsConstructor // Usando Lombok para injeção de dependência via construtor
+ // Usando Lombok para injeção de dependência via construtor
 public class SetorController {
 
     private final SetorService setorService;
+
+    public SetorController(SetorService setorService) {
+        this.setorService = setorService;
+    }
 
     // Se estiver usando @RequiredArgsConstructor, você não precisa mais de um construtor explícito
     // Mas se não usar Lombok, mantenha o @Autowired ou o construtor manual como você tinha.
