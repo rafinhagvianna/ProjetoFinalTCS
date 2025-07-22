@@ -412,4 +412,17 @@ public class TriagemService {
                 documentos
         );
     }
+
+    @Transactional(readOnly = true)
+    public List<ContagemPorItemDTO> contarAtendimentosPorServico() {
+        // Simplesmente chama o método do repositório e retorna o resultado
+        return triagemRepository.contarAtendimentosPorServico();
+    }
+
+    // 👇 MÉTODO PARA O GRÁFICO 2 👇
+    @Transactional(readOnly = true)
+    public List<ContagemPorDataDTO> contarAtendimentosPorDia() {
+        // Simplesmente chama o método do repositório e retorna o resultado
+        return triagemRepository.contarAtendimentosPorDia();
+    }
 }

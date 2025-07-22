@@ -1,11 +1,9 @@
 package com.example.Agendamento_Service.controller;
 
-import com.example.Agendamento_Service.dto.AgendamentoRequestDTO;
-import com.example.Agendamento_Service.dto.AgendamentoResponseDTO; // Importe o novo DTO
-import com.example.Agendamento_Service.dto.DocumentoPendenteResponseDTO;
-import com.example.Agendamento_Service.dto.DocumentoStatusUpdateRequestDTO;
+import com.example.Agendamento_Service.dto.*;
 import com.example.Agendamento_Service.exception.AuthServiceException;
 import com.example.Agendamento_Service.exception.InvalidTokenException;
+import com.example.Agendamento_Service.exception.RecursoNaoEncontradoException;
 import com.example.Agendamento_Service.model.Agendamento;
 import com.example.Agendamento_Service.service.AgendamentoService;
 import jakarta.validation.Valid;
@@ -180,6 +178,36 @@ public class AgendamentoController {
                                                             .collect(Collectors.toList());
 
         return ResponseEntity.ok(agendamentos);
+    }
+
+    @GetMapping("/cliente/ativo")
+    public ResponseEntity<?> buscarAgendamentoAtivo(
+            @RequestHeader("Authorization") String authorizationHeader) {
+
+        UUID idCliente;
+        try {
+            // 1. Valida o token e obtém o ID do cliente
+            idCliente = service.validateTokenAndGetUserId(authorizationHeader);
+        } catch (InvalidTokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao validar sessão.");
+        }
+
+        try {
+            // 2. Tenta buscar o agendamento ativo no serviço
+            Agendamento agendamentoAtivo = service.buscarAgendamentoAtivoPorCliente(idCliente);
+            // 3. Se encontrar, converte para DTO e retorna com status 200 OK
+            return ResponseEntity.ok(toResponseDTO(agendamentoAtivo));
+        } catch (RecursoNaoEncontradoException e) {
+            // 4. Se o serviço lançar a exceção (não encontrou), retorna 404 Not Found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/analytics/atendimentos-por-servico")
+    public ResponseEntity<List<ContagemPorItemDTO>> getAtendimentosPorServico() {
+        return ResponseEntity.ok(service.contarAtendimentosPorServico());
     }
     
 }

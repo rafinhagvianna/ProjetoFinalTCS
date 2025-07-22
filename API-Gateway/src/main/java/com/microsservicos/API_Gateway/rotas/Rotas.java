@@ -221,6 +221,20 @@ public class Rotas {
                 .build();
     }
 
+    @Bean
+    public RouterFunction<ServerResponse> analyticsServiceRota() {
+        return route("analytics_service")
+                .route(RequestPredicates.path("/api/analytics/**"), HandlerFunctions.http("http://localhost:8081"))
+                .build();
+    }
+
+//    @Bean
+//    public RouterFunction<ServerResponse> agendamentoAnalyticsServiceRota() {
+//        return route("agendamento_analytics_service")
+//                .route(RequestPredicates.path("/api/agendamentos/analytics/**"), HandlerFunctions.http("http://localhost:8082"))
+//                .build();
+//    }
+
 
 
 

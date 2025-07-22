@@ -1,9 +1,6 @@
 package com.example.Agendamento_Service.service;
 
-import com.example.Agendamento_Service.dto.AgendamentoRequestDTO;
-import com.example.Agendamento_Service.dto.DocumentoPendenteResponseDTO;
-import com.example.Agendamento_Service.dto.DocumentoStatusUpdateRequestDTO;
-import com.example.Agendamento_Service.dto.TokenValidationDTO;
+import com.example.Agendamento_Service.dto.*;
 import com.example.Agendamento_Service.client.AuthServiceClient;
 import com.example.Agendamento_Service.client.DocumentoCatalogoResponse;
 import com.example.Agendamento_Service.client.ServicoResponse;
@@ -30,7 +27,6 @@ import java.util.List;
 import java.util.Objects; // Adicionado para Objects.equals no PATCH
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class AgendamentoService {
@@ -74,6 +70,15 @@ public class AgendamentoService {
 
     public List<Agendamento> buscarPorCliente(UUID id) {
         return repository.findByUsuarioIdAndStatus(id, StatusAgendamento.AGENDADO);
+    }
+
+    @Transactional(readOnly = true)
+    public Agendamento buscarAgendamentoAtivoPorCliente(UUID clienteId) {
+        return repository.findFirstByUsuarioIdAndStatusAndDataHoraAfterOrderByDataHoraAsc(
+                clienteId,
+                StatusAgendamento.AGENDADO,
+                LocalDateTime.now() // Busca apenas agendamentos a partir de agora
+        ).orElseThrow(() -> new RecursoNaoEncontradoException("Nenhum agendamento ativo encontrado para este cliente."));
     }
 
 //    @Transactional
@@ -256,7 +261,9 @@ public class AgendamentoService {
             agendamentoExistente.setAtendenteId(dto.atendenteId());
             agendamentoExistente.setServicoId(dto.servicoId());
             agendamentoExistente.setDataHora(dto.dataHora());
-            agendamentoExistente.setObservacoes(dto.observacoes()); // <-- ADICIONE ESTA LINHA AQUI!
+            agendamentoExistente.setObservacoes(dto.observacoes());
+            agendamentoExistente.setStatus(dto.status());
+            agendamentoExistente.setAtendidoEm(dto.atendidoEm());
 
             // Se necessário, atualizar snapshots de nome de cliente/serviço
             agendamentoExistente.setNomeClienteSnapshot(usuarioServiceFacade.buscarNomeCliente(agendamentoExistente.getUsuarioId()));
@@ -498,5 +505,11 @@ public class AgendamentoService {
         }
 
         return idCliente;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ContagemPorItemDTO> contarAtendimentosPorServico() {
+        // Simplesmente chama o método do repositório e retorna o resultado
+        return repository.contarAtendimentosPorServico();
     }
 }
