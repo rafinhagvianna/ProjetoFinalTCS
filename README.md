@@ -5,7 +5,12 @@
 
 Slides: [clique aqui](https://www.canva.com/design/DAGtbrEnMdM/63F3ElAnO-EUj-Qb3vlKXQ/edit?utm_content=DAGtbrEnMdM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
-Acesse nosso site pelo link : http://bankflow.ddns-ip.net/
+Acesse nosso site pelo link ou pelo qr code abaixo : 
+
+http://bankflow.ddns-ip.net/
+
+<img width="300" height="300" alt="QR-CODE" src="https://github.com/user-attachments/assets/b8853e6e-2cb7-4882-9682-d00c9d07a8aa" />
+
 ## 📌 Funcionalidades
 
 - **Triagem inteligente**: O cliente seleciona o serviço desejado e, com base no tipo e no tempo estimado de espera, é direcionado para uma fila com temporizador (até 10 minutos) ou para o setor de agendamento.
