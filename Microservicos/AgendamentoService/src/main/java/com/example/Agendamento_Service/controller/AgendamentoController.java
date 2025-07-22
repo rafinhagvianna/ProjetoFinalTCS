@@ -1,9 +1,6 @@
 package com.example.Agendamento_Service.controller;
 
-import com.example.Agendamento_Service.dto.AgendamentoRequestDTO;
-import com.example.Agendamento_Service.dto.AgendamentoResponseDTO; // Importe o novo DTO
-import com.example.Agendamento_Service.dto.DocumentoPendenteResponseDTO;
-import com.example.Agendamento_Service.dto.DocumentoStatusUpdateRequestDTO;
+import com.example.Agendamento_Service.dto.*;
 import com.example.Agendamento_Service.exception.AuthServiceException;
 import com.example.Agendamento_Service.exception.InvalidTokenException;
 import com.example.Agendamento_Service.exception.RecursoNaoEncontradoException;
@@ -206,6 +203,11 @@ public class AgendamentoController {
             // 4. Se o serviço lançar a exceção (não encontrou), retorna 404 Not Found
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/analytics/atendimentos-por-servico")
+    public ResponseEntity<List<ContagemPorItemDTO>> getAtendimentosPorServico() {
+        return ResponseEntity.ok(service.contarAtendimentosPorServico());
     }
     
 }
